@@ -21,6 +21,7 @@ public final class SchemeToken {
     public final static int BACKQUOTE = 11;
     public final static int UNQUOTE = 12;
     public final static int UNQUOTE_SPLICING = 13;
+    public final static int COMMENT = 14;
 
     public final static SchemeToken EOF = new SchemeToken(EOFTOK, -1, -1);
 
@@ -102,6 +103,10 @@ public final class SchemeToken {
 
     public static SchemeToken createError(int offset, int length) {
         return new SchemeToken(ERROR, offset, length);
+    }
+    
+    public static SchemeToken createComment(int offset, int length) {
+        return new SchemeToken(COMMENT, offset, length);
     }
 
     public String toString() {

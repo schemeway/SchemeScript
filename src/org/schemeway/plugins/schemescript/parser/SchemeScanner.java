@@ -30,11 +30,8 @@ public class SchemeScanner {
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.text.rules.ITokenScanner#nextToken() TODO -
-     *      support quote, unquote, quasiquote, unquote-splicing, constant
-     *      vectors TODO - support #e..., #i..., #o..., #b..., #d....
+     * TODO - support quote, unquote, quasiquote, unquote-splicing, constant, vectors 
+     * TODO - support #e..., #i..., #o..., #b..., #d....
      */
     public SchemeToken nextToken() {
         // start a new token
@@ -76,6 +73,14 @@ public class SchemeScanner {
                 case '#':
                 {
                     return parseDashPrefixedToken();
+                }
+                case ';':
+                {
+                    return parseComment(false);
+                }
+                case '"':
+                {
+                    return parseString();
                 }
                 case ' ':
                 case '\t':
@@ -137,6 +142,65 @@ public class SchemeScanner {
         return SchemeToken.createWhitespace(getTokenOffset(), getTokenLength());
     }
 
+    private SchemeToken parseComment(boolean multiline) throws BadLocationException {
+        if (multiline) {
+            // we assume that the leading '#|' has been read and consumed
+            boolean vbarSeen = false;
+            char ch = lookahead();
+            while (ch != EOR) {
+                consume();
+                if (ch == '#' && vbarSeen) {
+                    break;
+                }
+                else if (ch == '|') {
+                    vbarSeen = true;
+                }
+                else {
+                    vbarSeen = false;
+                }
+                ch = lookahead();
+            }
+            if (ch != EOR)
+                return SchemeToken.createComment(getTokenOffset(), getTokenLength());
+            else
+                return SchemeToken.createError(getTokenOffset(), getTokenLength());
+        }
+        else {
+            // we assume that the leading ';' has been seen
+            consume();
+            char ch = lookahead();
+            while (ch != EOR && ch != '\r' && ch != '\n') {
+                consume();
+                ch = lookahead();
+            }
+            return SchemeToken.createComment(getTokenOffset(), getTokenLength());
+        }
+    }
+
+    private SchemeToken parseString() throws BadLocationException {
+        // we assume that the leading '"' has been read
+        consume();
+        boolean backslashSeen = false;
+        char ch = lookahead();
+        while (ch != EOR) {
+            consume();
+            if (ch == '"' && !backslashSeen) {
+                break;
+            }
+            else if (ch == '\\' && !backslashSeen) {
+                backslashSeen = true;
+            }
+            else 
+                backslashSeen = false;
+            ch = lookahead();
+        }
+        if (ch != EOR)
+            return SchemeToken.createString(getTokenOffset(), getTokenLength());
+        else
+            return SchemeToken.createError(getTokenOffset(), getTokenLength());
+    }
+
+
     private SchemeToken parseDashPrefixedToken() throws BadLocationException {
         char ch;
         consume();
@@ -160,12 +224,17 @@ public class SchemeScanner {
             {
                 return SchemeToken.createVectorPrefix(getTokenOffset());
             }
+            case '|':
+            {
+                consume();
+                return parseComment(true);
+            }
             default:
                 return parseDefaultToken(ch);
-                //return SchemeToken.createError(getTokenOffset(), getTokenLength());
+        //return SchemeToken.createError(getTokenOffset(), getTokenLength());
         }
     }
-
+    
     // -- Helpers
 
     private SchemeToken parseCharacterToken() throws BadLocationException {
@@ -179,13 +248,12 @@ public class SchemeScanner {
             }
             return SchemeToken.createConstant(getTokenOffset(), getTokenLength());
         }
+        else if (ch != EOR && !(SchemeScannerUtilities.isWhitespaceChar(ch))) {
+            consume();
+            return SchemeToken.createConstant(getTokenOffset(), getTokenLength());
+        }
         else
-            if (ch != EOR && !(SchemeScannerUtilities.isWhitespaceChar(ch))) {
-                consume();
-                return SchemeToken.createConstant(getTokenOffset(), getTokenLength());
-            }
-            else
-                return SchemeToken.createError(getTokenOffset(), getTokenLength());
+            return SchemeToken.createError(getTokenOffset(), getTokenLength());
     }
 
     private SchemeToken parseSpecialKeyword() throws BadLocationException {
@@ -219,12 +287,6 @@ public class SchemeScanner {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.text.rules.ITokenScanner#setRange(org.eclipse.jface.text.IDocument,
-     *      int, int)
-     */
     public void setRange(IDocument document, int offset, int length) {
         mDocument = document;
         mRangeStart = offset;
