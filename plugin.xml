@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="0.4.0"
+   version="0.4.16"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -11,7 +11,7 @@
       <library name="schemescript.jar">
          <export name="*"/>
       </library>
-      <library name="kawa.jar">
+      <library name="lib/kawa.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -29,7 +29,13 @@
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.jdt"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.jdt.debug"/>
+      <import plugin="org.eclipse.jdt.debug.ui"/>
    </requires>
+   <extension-point id="interpreters" name="interpreters" schema="schema/interpreters.exsd"/>
 
    <extension
          point="org.eclipse.ui.editors">
@@ -131,6 +137,13 @@
             description="Formats the selection"
             categoryId="Scheme Editing"
             id="org.schemeway.plugins.schemescript.sexp.format">
+      </command>
+      <command
+            name="Expand Selection"
+            category="Scheme Editing"
+            description="Expands the selection to the enclosing S-expressions"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.expand-selection">
       </command>
       <command
             name="Chapter comment"
@@ -266,6 +279,34 @@
             id="org.schemeway.plugins.schemescript.eval.fast9">
       </command>
       <command
+            name="Add require"
+            description="Adds a require clause"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.code.addRequire">
+      </command>
+      <command
+            name="Expand namespace"
+            description="Replace the previous symbol by a define-namespace clause"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.code.expandNamespace">
+      </command>
+      <command
+            name="Expand typename"
+            description="Replace the previous symbol by the corresponding fully-qualified type name"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.code.expandTypename">
+      </command>
+      <command
+            name="Expand package"
+            description="Replace the previous symbol by 'define-namespace' clauses of a whole package"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.code.expandPackage">
+      </command>
+      <command
             name="Start Interpreter"
             description="Starts the Scheme interpreter and show the console"
             category="Scheme Editing"
@@ -280,11 +321,32 @@
             id="org.schemeway.plugins.schemescript.eval.restart">
       </command>
       <command
+            name="Interrupt Evaluation"
+            description="Interrupts the evaluation and show the console"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.interrupt">
+      </command>
+      <command
             name="Compress Spaces"
             description="Replaces all surrounding whitespaces by a single space"
             category="Scheme Editing"
             categoryId="Scheme Editing"
             id="org.schemeway.plugins.schemescript.format.compress">
+      </command>
+      <command
+            name="Move Closing Parenthesis"
+            description="Move the closing parenthesis past the next S-expression"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.format.moveRparen">
+      </command>
+      <command
+            name="Move Opening Parenthesis"
+            description="Move the opening parenthesis in front of the previous S-expression"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.format.moveLparen">
       </command>
       <command
             name="Jump to Definition"
@@ -376,6 +438,12 @@
             commandId="org.schemeway.plugins.schemescript.sexp.format"
             contextId="Scheme Editing"
             keySequence="TAB"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.sexp.expand-selection"
+            contextId="Scheme Editing"
+            keySequence="ALT+CTRL+E"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
@@ -493,6 +561,30 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.schemeway.plugins.schemescript.code.addRequire"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="CTRL+SHIFT+M"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.code.expandNamespace"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="ALT+CTRL+SHIFT+N"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.code.expandTypename"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="ALT+CTRL+SHIFT+T"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.code.expandPackage"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="ALT+CTRL+SHIFT+P"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.start"
             scope="org.eclipse.ui.globalScope"
             keySequence="F9"
@@ -505,9 +597,27 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.interrupt"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="ALT+F9"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.schemeway.plugins.schemescript.format.compress"
             contextId="Scheme Editing"
             keySequence="ALT+CTRL+SPACE"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.format.moveRparen"
+            contextId="Scheme Editing"
+            keySequence="ALT+SHIFT+0"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.format.moveLparen"
+            contextId="Scheme Editing"
+            keySequence="ALT+SHIFT+9"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
@@ -557,14 +667,14 @@
             id="org.schemeway.plugins.schemescript.preferences.indentation">
       </page>
       <page
-            name="Interpreter"
+            name="External Interpreter"
             category="org.schemeway.plugins.schemescript.preferences.scheme"
             class="org.schemeway.plugins.schemescript.preferences.InterpreterPreferences"
             id="org.schemeway.plugins.schemescript.preferences.interpreter">
       </page>
       <page
-            name="Fast Eval"
-            category="org.schemeway.plugins.schemescript.preferences.interpreter"
+            name="Fast Eval Keys"
+            category="org.schemeway.plugins.schemescript.preferences.scheme"
             class="org.schemeway.plugins.schemescript.preferences.FastEvalPreferences"
             id="org.schemeway.plugins.schemescript.preferences.fasteval">
       </page>
@@ -598,6 +708,18 @@
             category="org.schemeway.plugins.schemescript.views"
             name="Definitions"
             id="org.schemeway.plugins.schemescript.views.definitionList"/>
+      <view
+            icon="icons/stacktrace/stackElement.gif"
+            class="org.schemeway.plugins.schemescript.views.KawaStackTraceView"
+            category="org.schemeway.plugins.schemescript.views"
+            name="Kawa Stack Trace"
+            id="org.schemeway.plugins.schemescript.kawa.stackTraceView"/>
+      <view
+            icon="icons/scheme.gif"
+            class="org.schemeway.plugins.schemescript.views.KawaScratchpadView"
+            category="org.schemeway.plugins.schemescript.views"
+            name="Kawa ScratchPad"
+            id="org.schemeway.plugins.schemescript.kawa.scratchpadView"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -610,10 +732,18 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.schemeway.plugins.schemescript.interpreter.SchemeInterpreterDelegate"
+            delegate="org.schemeway.plugins.schemescript.interpreter.ExternalInterpreterDelegate"
             name="Scheme Interpreter"
             modes="run"
             id="org.schemeway.plugins.schemescript.interpreter"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.schemeway.plugins.schemescript.interpreter.KawaInterpreterDelegate"
+            name="Kawa Interpreter"
+            modes="run"
+            id="org.schemeway.plugins.schemescript.kawaInterpreter"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -678,11 +808,44 @@
                class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction9"
                id="org.schemeway.plugins.schemescript.eval.fast9"/>
          <action
+         	   label="Add Require"
+               definitionId="org.schemeway.plugins.schemescript.code.addRequire"
+               class="org.schemeway.plugins.schemescript.action.SchemeProcedureAction:add-require-clause"
+               id="org.schemeway.plugins.schemescript.code.addRequire">
+         </action>
+         <action
+         	   label="Expand Namespace"
+               definitionId="org.schemeway.plugins.schemescript.code.expandNamespace"
+               class="org.schemeway.plugins.schemescript.action.SchemeProcedureAction:expand-namespace"
+               id="org.schemeway.plugins.schemescript.code.expandNamespace">
+         </action>
+         <action
+         	   label="Expand Typename"
+               definitionId="org.schemeway.plugins.schemescript.code.expandTypename"
+               class="org.schemeway.plugins.schemescript.action.SchemeProcedureAction:expand-typename"
+               id="org.schemeway.plugins.schemescript.code.expandTypename">
+         </action>
+         <action
+         	   label="Expand Package"
+               definitionId="org.schemeway.plugins.schemescript.code.expandPackage"
+               class="org.schemeway.plugins.schemescript.action.SchemeProcedureAction:expand-package"
+               id="org.schemeway.plugins.schemescript.code.expandPackage">
+         </action>
+         <action
                label="Find Scheme Symbol..."
                definitionId="org.schemeway.plugins.schemescript.dictionary.find"
                class="org.schemeway.plugins.schemescript.action.FindSymbolAction"
                menubarPath="org.schemeway.plugins.schemescript.schemeMenu/additions"
                id="org.schemeway.plugins.schemescript.FindSymbol"/>
+         <action
+               toolbarPath="Normal/additions"
+               label="Interrupt Evaluation"
+               definitionId="org.schemeway.plugins.schemescript.eval.interrupt"
+               class="org.schemeway.plugins.schemescript.action.InterruptEvaluationAction"
+               icon="icons/interruptScheme.gif"
+               tooltip="Interrupt the evaluation"
+               menubarPath="org.schemeway.plugins.schemescript.schemeMenu/interpreter"
+               id="org.schemeway.plugins.schemescript.InterruptEvaluation"/>
          <action
                toolbarPath="Normal/additions"
                label="Restart Interpreter"
@@ -701,6 +864,13 @@
                tooltip="Start the Scheme interpreter if not already started"
                menubarPath="org.schemeway.plugins.schemescript.schemeMenu/interpreter"
                id="org.schemeway.plugins.schemescript.LaunchInterpreter"/>
+         <action
+               label="Select Interpreter"
+               class="org.schemeway.plugins.schemescript.action.ChooseInterpreterAction"
+               pulldown="true"
+               style="pulldown"
+               menubarPath="org.schemeway.plugins.schemescript.schemeMenu/interpreter"
+               id="org.schemeway.plugins.schemescript.SelectInterpreter"/>
       </actionSet>
    </extension>
    <extension
@@ -715,5 +885,16 @@
             class="org.schemeway.plugins.schemescript.interpreter.SchemeErrorLineTracker"
             id="org.schemeway.plugins.schemescript.interpreter.consoleLineTracker"
             processType="scheme"/>
+   </extension>
+   <extension
+         point="org.schemeway.plugins.schemescript.interpreters">
+      <interpreter
+            class="org.schemeway.plugins.schemescript.interpreter.ExternalInterpreter"
+            name="External Interpreter"
+            id="external"/>
+      <interpreter
+      		class="org.schemeway.plugins.schemescript.interpreter.KawaInterpreter"
+      		name="Embedded Kawa"
+      		id="kawa"/>
    </extension>
 </plugin>
