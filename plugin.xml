@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="0.1.5"
+   version="0.1.6"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -12,7 +12,7 @@
          <export name="*"/>
       </library>
       <library name="kawa.jar">
-      	 <export name="*"/>
+         <export name="*"/>
       </library>
    </runtime>
 
@@ -33,282 +33,333 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            icon="icons/scheme.gif"
-            class="org.schemeway.plugins.schemescript.editor.SchemeEditor"
-            default="true"
             name="Scheme Editor"
+            default="true"
+            extensions="sch,scm,ss"
+            icon="icons/scheme.gif"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            id="org.schemeway.plugins.schemescript.editor.SchemeEditor"
-            extensions="sch,scm,ss">
+            class="org.schemeway.plugins.schemescript.editor.SchemeEditor"
+            id="org.schemeway.plugins.schemescript.editor.SchemeEditor">
       </editor>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            parentId="org.eclipse.ui.textEditorScope"
-            description="Scheme Editor Context"
             name="Editing Scheme"
-            id="Scheme Editing"/>
+            description="Scheme Editor Context"
+            id="Scheme Editing"
+            parentId="org.eclipse.ui.textEditorScope">
+      </context>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <activeKeyConfiguration keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <activeKeyConfiguration
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </activeKeyConfiguration>
       <category
-            description="Scheme-specific editing commands"
             name="Scheme Editing"
-            id="Scheme Editing"/>
+            description="Scheme-specific editing commands"
+            id="Scheme Editing">
+      </category>
       <command
-            category="Scheme Editing"
-            description="Forward S-expression"
-            categoryId="Scheme Editing"
             name="Forward S-expression"
-            id="org.schemeway.plugins.schemescript.sexp.forward"/>
-      <command
+            description="Forward S-expression"
             category="Scheme Editing"
-            description="Select Forward S-expression"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.forward">
+      </command>
+      <command
             name="Select Forward S-expression"
-            id="org.schemeway.plugins.schemescript.sexp.select-forward"/>
-      <command
-            description="Backward S-expression"
+            description="Select Forward S-expression"
             category="Scheme Editing"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.select-forward">
+      </command>
+      <command
             name="Backward S-expression"
-            id="org.schemeway.plugins.schemescript.sexp.backward"/>
-      <command
-            description="Select Backward S-expression"
             category="Scheme Editing"
+            description="Backward S-expression"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.backward">
+      </command>
+      <command
             name="Select Backward S-expression"
-            id="org.schemeway.plugins.schemescript.sexp.select-backward"/>
-      <command
-            description="Moves to the start of the enclosing S-expression"
             category="Scheme Editing"
+            description="Select Backward S-expression"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.select-backward">
+      </command>
+      <command
             name="Up S-expression"
-            id="org.schemeway.plugins.schemescript.sexp.up"/>
-      <command
-            description="Selects the enclosing S-expression"
             category="Scheme Editing"
+            description="Moves to the start of the enclosing S-expression"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.up">
+      </command>
+      <command
             name="Select Up S-expression"
-            id="org.schemeway.plugins.schemescript.sexp.select-up"/>
-      <command
-            description="Restores the previous selection"
             category="Scheme Editing"
+            description="Selects the enclosing S-expression"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.select-up">
+      </command>
+      <command
             name="Restore the previous selection"
-            id="org.schemeway.plugins.schemescript.sexp.restore-selection"/>
-      <command
-            description="Enters the next S-expression"
             category="Scheme Editing"
+            description="Restores the previous selection"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.restore-selection">
+      </command>
+      <command
             name="Down S-expression"
-            id="org.schemeway.plugins.schemescript.sexp.down"/>
-      <command
-            description="Swaps the S-expressions around point"
             category="Scheme Editing"
+            description="Enters the next S-expression"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.down">
+      </command>
+      <command
             name="Swap S-expressions"
-            id="org.schemeway.plugins.schemescript.sexp.swap"/>
-      <command
-            description="Formats the selection"
             category="Scheme Editing"
+            description="Swaps the S-expressions around point"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.swap">
+      </command>
+      <command
             name="Format Selection"
-            id="org.schemeway.plugins.schemescript.sexp.format"/>
-      <command
-            description="Inserts a chapter-style comment"
             category="Scheme Editing"
+            description="Formats the selection"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.format">
+      </command>
+      <command
             name="Chapter comment"
-            id="org.schemeway.plugins.schemescript.comment.chapter"/>
-      <command
-            description="Inserts a section-style comment"
             category="Scheme Editing"
+            description="Inserts a chapter-style comment"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.comment.chapter">
+      </command>
+      <command
             name="Section comment"
-            id="org.schemeway.plugins.schemescript.comment.section"/>
-      <command
-            description="Comments/uncomments the selected lines"
             category="Scheme Editing"
+            description="Inserts a section-style comment"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.comment.section">
+      </command>
+      <command
             name="Toggle Comment"
-            id="org.schemeway.plugins.schemescript.comment.selection"/>
-      <command
-            description="Inserts a file header comment"
             category="Scheme Editing"
+            description="Comments/uncomments the selected lines"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.comment.selection">
+      </command>
+      <command
             name="Scheme file header comment"
-            id="org.schemeway.plugins.schemescript.comment.header"/>
-      <command
             category="Scheme Editing"
-            description="Copies the S-expression nears the mouse"
+            description="Inserts a file header comment"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.comment.header">
+      </command>
+      <command
             name="Mouse Copy"
-            id="org.schemeway.plugins.schemescript.sexp.mousecopy"/>
-      <command
+            description="Copies the S-expression nears the mouse"
             category="Scheme Editing"
-            description="Sends the previous S-expression to the interpreter"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.mousecopy">
+      </command>
+      <command
             name="Eval Expression"
-            id="org.schemeway.plugins.schemescript.eval.expression"/>
-      <command
+            description="Sends the previous S-expression to the interpreter"
             category="Scheme Editing"
-            description="Sends the current definition to the interpreter"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.expression">
+      </command>
+      <command
             name="Eval Toplevel Definition"
-            id="org.schemeway.plugins.schemescript.eval.definition"/>
-      <command
+            description="Sends the current definition to the interpreter"
             category="Scheme Editing"
-            description="Replaces all surrounding whitespaces by a single space"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.definition">
+      </command>
+      <command
             name="Compress Spaces"
-            id="org.schemeway.plugins.schemescript.format.compress"/>
-      <command
+            description="Replaces all surrounding whitespaces by a single space"
             category="Scheme Editing"
-            description="Jump to symbol definition"
             categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.format.compress">
+      </command>
+      <command
             name="Jump to Definition"
-            id="org.schemeway.plugins.schemescript.jump.definition"/>
+            description="Jump to symbol definition"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.jump.definition">
+      </command>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.forward"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+F"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.select-forward"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+SHIFT+F"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.backward"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+B"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.select-backward"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+SHIFT+B"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.up"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+U"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.select-up"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+SHIFT+U"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.select-up"
+            contextId="Scheme Editing"
             keySequence="CTRL+SHIFT+ARROW_UP"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.restore-selection"
+            contextId="Scheme Editing"
             keySequence="CTRL+SHIFT+ARROW_DOWN"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.down"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+ARROW_RIGHT"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.swap"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+T"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.format"
+            contextId="Scheme Editing"
             keySequence="CTRL+SHIFT+F"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.format"
+            contextId="Scheme Editing"
             keySequence="CTRL+I"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.format"
+            contextId="Scheme Editing"
             keySequence="TAB"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.comment.chapter"
+            contextId="Scheme Editing"
             keySequence="ALT+C C"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.comment.section"
+            contextId="Scheme Editing"
             keySequence="ALT+C S"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.comment.selection"
+            contextId="Scheme Editing"
             keySequence="CTRL+/"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.comment.header"
+            contextId="Scheme Editing"
             keySequence="ALT+C H"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.mousecopy"
+            contextId="Scheme Editing"
             keySequence="ALT+CTRL+C"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.eval.expression"
+            contextId="Scheme Editing"
             keySequence="CTRL+CR"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.eval.definition"
+            contextId="Scheme Editing"
             keySequence="CTRL+SHIFT+CR"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
-            contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.format.compress"
-            keySequence="ALT+CTRL+SPACE"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-      <keyBinding
             contextId="Scheme Editing"
+            keySequence="ALT+CTRL+SPACE"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.schemeway.plugins.schemescript.jump.definition"
+            contextId="Scheme Editing"
             keySequence="F12"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          id="org.schemeway.plugins.schemescript.preferences"
          name="Scheme"
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.schemeway.plugins.schemescript.preferences.SchemePreferences"
             name="Scheme"
-            id="org.schemeway.plugins.schemescript.preferences.scheme"/>
+            class="org.schemeway.plugins.schemescript.preferences.SchemePreferences"
+            id="org.schemeway.plugins.schemescript.preferences.scheme">
+      </page>
       <page
-            class="org.schemeway.plugins.schemescript.preferences.CommentPreferences"
-            category="org.schemeway.plugins.schemescript.preferences.scheme"
             name="Comments"
-            id="org.schemeway.plugins.schemescript.preferences.comments"/>
-      <page
-            class="org.schemeway.plugins.schemescript.preferences.ColorPreferences"
             category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.CommentPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.comments">
+      </page>
+      <page
             name="Colors"
-            id="org.schemeway.plugins.schemescript.preferences.colors"/>
-      <page
-            class="org.schemeway.plugins.schemescript.preferences.SyntaxPreferences"
             category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.ColorPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.colors">
+      </page>
+      <page
             name="Syntax"
-            id="org.schemeway.plugins.schemescript.preferences.syntax"/>
-      <page
-            class="org.schemeway.plugins.schemescript.preferences.IndentationPreferences"
             category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.SyntaxPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.syntax">
+      </page>
+      <page
             name="Indentation"
-            id="org.schemeway.plugins.schemescript.preferences.indentation"/>
+            category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.IndentationPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.indentation">
+      </page>
    </extension>
+
 </plugin>
