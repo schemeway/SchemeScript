@@ -6,6 +6,7 @@
 package org.schemeway.plugins.schemescript.action;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.text.*;
 
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.tools.*;
@@ -20,8 +21,7 @@ public class FileHeaderCommentAction extends Action {
     }
 
     public void run() {
-        String[] lineDelimiters = mEditor.getDocument().getLegalLineDelimiters();
-        String newline = lineDelimiters.length == 0 ? "\n" : lineDelimiters[0];
+        String newline = TextUtilities.getDefaultLineDelimiter(mEditor.getDocument());
 
         mEditor.insertText(0, Comments.createHeaderComment(newline));
         mEditor.setPoint(8 + newline.length());

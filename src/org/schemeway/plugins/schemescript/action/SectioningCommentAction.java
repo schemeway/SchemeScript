@@ -6,6 +6,7 @@
 package org.schemeway.plugins.schemescript.action;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.text.*;
 
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.tools.*;
@@ -23,8 +24,7 @@ public class SectioningCommentAction extends Action {
 
     public void run() {
         int point = mEditor.getPoint();
-        String[] lineDelimiters = mEditor.getDocument().getLegalLineDelimiters();
-        String newline = lineDelimiters.length == 0 ? "\n" : lineDelimiters[0];
+        String newline = TextUtilities.getDefaultLineDelimiter(mEditor.getDocument());
 
         if (mSubsection) {
             mEditor.insertText(point, Comments.createSectionComment(newline));
