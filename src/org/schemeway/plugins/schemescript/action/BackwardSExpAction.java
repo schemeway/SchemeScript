@@ -26,7 +26,7 @@ public class BackwardSExpAction extends SchemeAction implements ISchemeEditorAct
 
         Region selection = editor.getSelection();
         int selectionEnd = selection.getOffset() + selection.getLength();
-        SexpExplorer explorer = editor.getExplorer();
+        SexpNavigator explorer = editor.getExplorer();
         if (explorer.backwardSexpression(selection.getOffset())) {
             int start = explorer.getSexpStart();
             if (mSelectExpression) {

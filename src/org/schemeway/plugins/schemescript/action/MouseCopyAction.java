@@ -31,7 +31,7 @@ public class MouseCopyAction extends SchemeAction implements MouseMoveListener {
             return;
 
         Region selection = editor.getSelection();
-        SexpExplorer explorer = editor.getExplorer();
+        SexpNavigator explorer = editor.getExplorer();
         IDocument document = editor.getDocument();
 
         try {

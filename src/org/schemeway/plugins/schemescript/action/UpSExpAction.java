@@ -28,7 +28,7 @@ public class UpSExpAction extends SchemeAction {
         if (editor == null) return;
         
         Region selection = editor.getSelection();
-        SexpExplorer explorer = editor.getExplorer();
+        SexpNavigator explorer = editor.getExplorer();
         if (explorer.upSexpression(selection.getOffset())) {
             if (mSelectExpression && explorer.forwardSexpression(explorer.getSexpStart())) {
                 int start = explorer.getSexpStart();

@@ -21,7 +21,7 @@ public class SwapSexpAction extends SchemeAction {
         if (editor == null) return;
 
         int point = editor.getPoint();
-        SexpExplorer explorer = editor.getExplorer();
+        SexpNavigator explorer = editor.getExplorer();
         if (explorer.backwardSexpression(point)) {
             int previousStart = explorer.getSexpStart();
             int previousEnd = explorer.getSexpEnd();

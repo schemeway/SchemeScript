@@ -23,7 +23,7 @@ public class FormatAction extends SchemeAction {
         if (editor == null) return;
         
         final Region selection = editor.getSelection();
-        final SexpExplorer explorer = editor.getExplorer();
+        final SexpNavigator explorer = editor.getExplorer();
         final IDocument document = explorer.getDocument();
         final SchemeIndentationContext context = new SchemeIndentationContext(explorer,
                                                                               editor.getIndentationManager(),

@@ -23,7 +23,7 @@ public class DownSExpAction extends SchemeAction {
         
         Region selection = editor.getSelection();
 
-        SexpExplorer explorer = editor.getExplorer();
+        SexpNavigator explorer = editor.getExplorer();
         if (explorer.downSexpression(selection.getOffset()))
             editor.setPoint(explorer.getSexpStart());
     }

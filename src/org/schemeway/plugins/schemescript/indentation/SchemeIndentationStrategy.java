@@ -13,7 +13,7 @@ import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
 public class SchemeIndentationStrategy implements IAutoIndentStrategy {
-    private SexpExplorer mExplorer;
+    private SexpNavigator mExplorer;
     private SchemeIndentationManager mIndentationManager;
 
     public SchemeIndentationStrategy(SchemeIndentationManager indentManager) {
@@ -55,7 +55,7 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
         if (mExplorer == null || document != mExplorer.getDocument()) {
             if (mExplorer != null)
                 mExplorer.dispose();
-            mExplorer = new SexpExplorer(document);
+            mExplorer = new SexpNavigator(document);
         }
     }
 
@@ -79,7 +79,7 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
 
     public static int findIndentation(SchemeIndentationContext context) throws BadLocationException {
         int indentation = 0;
-        SexpExplorer explorer = context.getExplorer();
+        SexpNavigator explorer = context.getExplorer();
         IDocument document = explorer.getDocument();
 
         if (explorer.backwardSexpression(context.getOffset())) {
@@ -98,7 +98,7 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
                 explorer.downSexpression(outerStart);
                 explorer.forwardSexpression(explorer.getSexpStart());
                 // we have a form '(symbol ...)'
-                if (explorer.getSexpType() == SexpExplorer.TYPE_SYMBOL) {
+                if (explorer.getSexpType() == SexpNavigator.TYPE_SYMBOL) {
                     // Find the indentation scheme
                     String text = explorer.getText();
                     IndentationScheme scheme = context.getManager().getFunction(text);
@@ -109,7 +109,7 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
                                                             outerStart,
                                                             scheme);
                 }
-                else if (explorer.getSexpType() == SexpExplorer.TYPE_LIST) {
+                else if (explorer.getSexpType() == SexpNavigator.TYPE_LIST) {
                     indentation = findColumn(document, explorer.getSexpStart());
                 }
                 else
@@ -125,7 +125,7 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
         return indentation;
     }
 
-    private static int findIndentationFromScheme(SexpExplorer explorer,
+    private static int findIndentationFromScheme(SexpNavigator explorer,
                                                  int insertionOffset,
                                                  int previousStart,
                                                  int outerStart,

@@ -147,7 +147,7 @@ public final void paint(final int reason) {
             return;
         }
         
-        SexpExplorer explorer = mEditor.getExplorer();
+        SexpNavigator explorer = mEditor.getExplorer();
         
         boolean backward = true;
         boolean closeToParen = false;

@@ -31,7 +31,7 @@ public class EvalExpressionAction extends SchemeAction {
             return;
         
         String textToEval = null;
-        SexpExplorer explorer = editor.getExplorer();
+        SexpNavigator explorer = editor.getExplorer();
 
         Region selection = editor.getSelection();
         if (selection.getLength() > 0) {

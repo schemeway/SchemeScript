@@ -8,17 +8,17 @@ package org.schemeway.plugins.schemescript.indentation;
 import org.schemeway.plugins.schemescript.parser.*;
 
 public class SchemeIndentationContext {
-    private SexpExplorer mExplorer;
+    private SexpNavigator mExplorer;
     private SchemeIndentationManager mManager;
     private int mOffset;
 
-    public SchemeIndentationContext(SexpExplorer explorer, SchemeIndentationManager manager, int offset) {
+    public SchemeIndentationContext(SexpNavigator explorer, SchemeIndentationManager manager, int offset) {
         this.mExplorer = explorer;
         this.mManager = manager;
         this.mOffset = offset;
     }
 
-    public SexpExplorer getExplorer() {
+    public SexpNavigator getExplorer() {
         return mExplorer;
     }
 
@@ -30,7 +30,7 @@ public class SchemeIndentationContext {
         return mOffset;
     }
 
-    public void setExplorer(SexpExplorer explorer) {
+    public void setExplorer(SexpNavigator explorer) {
         mExplorer = explorer;
     }
 

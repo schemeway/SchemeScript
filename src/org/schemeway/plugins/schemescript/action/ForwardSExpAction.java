@@ -25,7 +25,7 @@ public class ForwardSExpAction extends SchemeAction {
 
         Region selection = editor.getSelection();
 
-        SexpExplorer explorer = editor.getExplorer();
+        SexpNavigator explorer = editor.getExplorer();
         if (explorer.forwardSexpression(selection.getOffset() + selection.getLength())) {
             int start = explorer.getSexpStart();
             int end = explorer.getSexpEnd();

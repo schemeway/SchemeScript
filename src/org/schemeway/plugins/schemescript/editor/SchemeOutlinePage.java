@@ -5,7 +5,6 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
-import java.io.*;
 import java.util.*;
 import java.util.List;
 

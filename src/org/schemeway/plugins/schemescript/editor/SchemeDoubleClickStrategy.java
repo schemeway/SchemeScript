@@ -10,7 +10,7 @@ import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
 public class SchemeDoubleClickStrategy implements ITextDoubleClickStrategy {
-    private SexpExplorer mExplorer;
+    private SexpNavigator mExplorer;
     private ITextViewer mText;
 
     public void doubleClicked(ITextViewer part) {
@@ -29,7 +29,7 @@ public class SchemeDoubleClickStrategy implements ITextDoubleClickStrategy {
         if (mExplorer == null || mExplorer.getDocument() != part.getDocument()) {
             if (mExplorer != null)
                 mExplorer.dispose();
-            mExplorer = new SexpExplorer(part.getDocument());
+            mExplorer = new SexpNavigator(part.getDocument());
         }
     }
 
