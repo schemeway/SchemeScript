@@ -89,6 +89,11 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
             if (explorer.upSexpression(previousStart)) {
                 // We are inside an S-expression
                 int outerStart = explorer.getSexpStart();
+                char ch = document.getChar(outerStart);
+                while (!SchemeScannerUtilities.isOpeningParenthesis(ch)) {
+                    outerStart++;
+                    ch = document.getChar(outerStart);
+                }
 
                 explorer.downSexpression(outerStart);
                 explorer.forwardSexpression(explorer.getSexpStart());
