@@ -162,6 +162,7 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
                 ITypedRegion partition = document.getPartition(offset);
                 if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
                     String text = document.get(partition.getOffset(), partition.getLength());
+                    text = text.trim();
                     if (text.startsWith(SECTION_START)) {
                         position = new Position(offset + 7, text.length() - 7);
                         document.addPosition(CHAPTER_CATEGORY, position);

@@ -130,6 +130,14 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
             consume();
             ch = lookahead();
         }
+        // Ensure that the end-of-line is also part of the partition
+        // This simplifies a lot of partition-related processing.
+        if (mPosition < mEnd && ch == '\r') {
+            consume();
+        }
+        if (mPosition < mEnd && ch == '\n') {
+            consume();
+        }
         return TOKEN_COMMENT;
     }
 
