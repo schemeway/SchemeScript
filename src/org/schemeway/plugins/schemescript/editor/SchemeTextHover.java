@@ -5,6 +5,8 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
+import java.util.*;
+
 import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
 
@@ -31,11 +33,18 @@ public class SchemeTextHover implements ITextHover {
             if (entries.length == 0) {
                 return null;
             }
+            Set descriptionSet = new HashSet();
+            
             StringBuffer buffer = new StringBuffer();
             buffer.append(entries[0].getDescription());
+            descriptionSet.add(entries[0].getDescription());
             for (int i=1; i<entries.length; i++) {
-                buffer.append('\n');
-                buffer.append(entries[i].getDescription());
+                String description = entries[i].getDescription();
+                if (!descriptionSet.contains(description)) {
+                    buffer.append('\n');
+                    buffer.append(description);
+                    descriptionSet.add(description);
+                }
             }
             return buffer.toString();
         }
