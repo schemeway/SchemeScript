@@ -12,6 +12,7 @@ public interface ISchemeColorConstants {
     RGB SCHEME_CONSTANT = new RGB(92, 0, 0);
     RGB SCHEME_DEFINE = new RGB(0, 0, 0);
     RGB SCHEME_KEYWORD = new RGB(50, 128, 50);
+    RGB SCHEME_KEY = new RGB(0, 255, 0);
     RGB SCHEME_SPECIAL = new RGB(0, 0, 255);
     RGB SCHEME_MUTATOR = new RGB(196, 0, 0);
     RGB SCHEME_TYPE = new RGB(128, 0, 128);

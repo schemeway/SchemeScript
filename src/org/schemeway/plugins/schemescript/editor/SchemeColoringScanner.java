@@ -18,6 +18,7 @@ import org.schemeway.plugins.schemescript.preferences.*;
 public class SchemeColoringScanner implements ITokenScanner {
     private Token defaultToken = new Token(null);
     private Token keywordToken = new Token(null);
+    private Token keyToken = new Token(null);
     private Token defineToken = new Token(null);
     private Token constantToken = new Token(null);
     private Token specialToken = new Token(null);
@@ -40,6 +41,7 @@ public class SchemeColoringScanner implements ITokenScanner {
         defaultToken.setData(new TextAttribute(findColor(store, ColorPreferences.DEFAULT_COLOR)));
         defineToken.setData(new TextAttribute(findColor(store, ColorPreferences.DEFINE_COLOR), null, SWT.BOLD));
         keywordToken.setData(new TextAttribute(findColor(store, ColorPreferences.KEYWORD_COLOR), null, SWT.BOLD));
+        keyToken.setData(new TextAttribute(findColor(store, ColorPreferences.KEY_COLOR), null, SWT.ITALIC|SWT.BOLD));
         specialToken.setData(new TextAttribute(findColor(store, ColorPreferences.SPECIAL_COLOR), null, SWT.BOLD));
         constantToken.setData(new TextAttribute(findColor(store, ColorPreferences.CONSTANT_COLOR)));
         mutatorToken.setData(new TextAttribute(findColor(store, ColorPreferences.MUTATOR_COLOR), null, SWT.BOLD));
@@ -72,6 +74,8 @@ public class SchemeColoringScanner implements ITokenScanner {
                 String text = mScanner.getText(mOffset, mLength);
                 if (isSchemeType(text))
                     return typeToken;
+                if (isSchemeKey(text))
+                    return keyToken;
                 
                 String category = mKeywordManager.getType(text);
                 if (category == KeywordManager.TYPE_OTHER)
@@ -104,6 +108,17 @@ public class SchemeColoringScanner implements ITokenScanner {
 
     private boolean isSchemeType(String text) {
         return mLength > 2 && text.charAt(0) == '<' && text.charAt(mLength - 1) == '>';
+    }
+    
+    private boolean isSchemeKey(String text) {
+        int length = text.length();
+        if (length == 1)
+            return false;
+        if (text.charAt(0) == ':' && text.lastIndexOf(':') == 0)
+            return true;
+        if (text.charAt(length - 1) == ':' && (text.indexOf(':') == (length - 1)))
+            return true;
+        return false;
     }
 
     public int getTokenOffset() {

@@ -112,8 +112,8 @@ public class SyntaxPreferences extends PreferencePage implements IWorkbenchPrefe
         folder.setLayoutData(data);
 
         mDefineList = createListControl(folder, "Define", "Defining forms");
-        mKeywordList = createListControl(folder, "Keyword", "Keywords");
-        mSpecialList = createListControl(folder, "Special", "Special forms");
+        mKeywordList = createListControl(folder, "Special names", "Special names");
+        mSpecialList = createListControl(folder, "Special forms", "Special forms");
         mMutatorList = createListControl(folder, "Mutator", "Mutating special forms/functions");
         mConstantList = createListControl(folder, "Constant", "Constants");
 

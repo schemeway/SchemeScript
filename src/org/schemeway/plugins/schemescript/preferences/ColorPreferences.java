@@ -21,6 +21,7 @@ public class ColorPreferences extends FieldEditorPreferencePage implements IWork
     public final static String COMMENT_COLOR = PREFIX + "comment";
     public final static String DEFINE_COLOR = PREFIX + "define";
     public final static String KEYWORD_COLOR = PREFIX + "keyword";
+    public final static String KEY_COLOR = PREFIX + "key";
     public final static String SPECIAL_COLOR = PREFIX + "special";
     public final static String ERROR_COLOR = PREFIX + "error";
     public final static String STRING_COLOR = PREFIX + "string";
@@ -52,6 +53,7 @@ public class ColorPreferences extends FieldEditorPreferencePage implements IWork
         PreferenceConverter.setDefault(store, COMMENT_COLOR, ISchemeColorConstants.SCHEME_COMMENT);
         PreferenceConverter.setDefault(store, DEFINE_COLOR, ISchemeColorConstants.SCHEME_DEFINE);
         PreferenceConverter.setDefault(store, KEYWORD_COLOR, ISchemeColorConstants.SCHEME_KEYWORD);
+        PreferenceConverter.setDefault(store, KEY_COLOR, ISchemeColorConstants.SCHEME_KEY);
         PreferenceConverter.setDefault(store, SPECIAL_COLOR, ISchemeColorConstants.SCHEME_SPECIAL);
         PreferenceConverter.setDefault(store, STRING_COLOR, ISchemeColorConstants.SCHEME_STRING);
         PreferenceConverter.setDefault(store, CONSTANT_COLOR, ISchemeColorConstants.SCHEME_CONSTANT);
@@ -71,8 +73,9 @@ public class ColorPreferences extends FieldEditorPreferencePage implements IWork
         addField(new ColorFieldEditor(BACKGROUND_COLOR, "Background color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(COMMENT_COLOR, "Comments color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(DEFINE_COLOR, "Defining form color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(KEYWORD_COLOR, "Special keywords color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(SPECIAL_COLOR, "Special forms color:", getFieldEditorParent()));
+        addField(new ColorFieldEditor(KEY_COLOR, "Keywords color:", getFieldEditorParent()));
+        addField(new ColorFieldEditor(KEYWORD_COLOR, "Special named constants color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(STRING_COLOR, "Strings color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(CONSTANT_COLOR, "Constants color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(MUTATOR_COLOR, "Mutators color:", getFieldEditorParent()));
