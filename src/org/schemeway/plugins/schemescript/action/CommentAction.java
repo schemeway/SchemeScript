@@ -16,7 +16,7 @@ public class CommentAction extends Action {
 
     public CommentAction(SchemeEditor editor) {
         Assert.isNotNull(editor);
-        setText("Comment lines");
+        setText("Toggle comment");
         setToolTipText("Comment/Uncomment the selected lines");
         mEditor = editor;
     }

@@ -25,7 +25,10 @@ public class EvalExpressionAction extends Action
     public EvalExpressionAction(SchemeEditor editor, boolean topExpression)
     {
         Assert.isNotNull(editor);
-        setText("Send text to interpreter");
+        if (topExpression)
+            setText("Eval top expression");
+        else
+            setText("Eval previous expression");
         setToolTipText("Send text to interpreter");
         mEditor = editor;
         mMoveToTop = topExpression;

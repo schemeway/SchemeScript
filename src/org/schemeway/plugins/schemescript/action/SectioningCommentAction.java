@@ -17,7 +17,7 @@ public class SectioningCommentAction extends Action {
     protected SectioningCommentAction(SchemeEditor editor, boolean subsection) {
         mEditor = editor;
         mSubsection = subsection;
-        setText(subsection ? "Insert section" : "Insert chapter");
+        setText(subsection ? "Insert section comment" : "Insert chapter comment");
         setToolTipText(subsection ? "Insert section comment" : "Insert chapter comment");
     }
 

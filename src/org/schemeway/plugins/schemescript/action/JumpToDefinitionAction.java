@@ -19,7 +19,7 @@ public class JumpToDefinitionAction extends Action {
     private SchemeEditor mEditor;
 
     public JumpToDefinitionAction(SchemeEditor editor) {
-        setText("Jump to the symbol definition");
+        setText("Find definition");
         setToolTipText("Jump to the symbol definition");
         mEditor = editor;
     }

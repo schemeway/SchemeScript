@@ -15,7 +15,7 @@ public class FileHeaderCommentAction extends Action {
 
     public FileHeaderCommentAction(SchemeEditor editor) {
         mEditor = editor;
-        setText("Scheme file header");
+        setText("Insert header comment");
         setToolTipText("Insert a Scheme file header comment");
     }
 

@@ -17,7 +17,7 @@ public class FormatAction extends Action {
 
     public FormatAction(SchemeEditor editor) {
         Assert.isNotNull(editor);
-        setText("Format the selection");
+        setText("Format");
         setToolTipText("Formats the current selection");
         mEditor = editor;
     }
