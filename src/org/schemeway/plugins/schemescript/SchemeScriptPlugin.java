@@ -51,6 +51,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
         }
         catch (MissingResourceException x) {
             resourceBundle = null;
+            logException("Unable to locate resource bundle!", x);
         }
     }
 
