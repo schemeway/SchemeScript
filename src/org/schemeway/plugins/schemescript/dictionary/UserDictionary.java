@@ -52,7 +52,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
                 IProject project = projects[i];
                 collectSchemeSources(project);
             }
-            processPendingResources();
+            processPendingResources(false);
         }
         catch (Exception exception) {
         }
@@ -88,7 +88,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
             }
     }
     
-    private void processPendingResources() {
+    private void processPendingResources(boolean displayProgress) {
         if (!mPendingResources.isEmpty()) {
             try {
                 final IFile[] files = new IFile[mPendingResources.size()];
@@ -96,32 +96,50 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
                     mPendingResources.toArray(files);
                     mPendingResources.clear();
                 }
-                new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell())
-                .run(true, true, new IRunnableWithProgress() {
-                    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                        synchronized (mPendingResources) {
-                            monitor.beginTask("SchemeScript - Updating symbol dictionary:", files.length);
-                            for (int i=0; i<files.length; i++) {
-                                IFile file = (IFile)files[i];
-                                try {
-                                    file.deleteMarkers(IMarker.TEXT, false, 0);
-                                }
-                                catch (CoreException exception) {
-                                    exception.printStackTrace();
-                                }
-                                scanSchemeFile(file, monitor);
-                                monitor.worked(1);
-                            }
-                            monitor.done();
+                ProgressMonitorDialog dialog = null;
+                try {
+                    if (displayProgress)
+                        dialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+                }
+                catch (Exception exception) {
+                    dialog = null;
+                }
+                if (dialog != null) {
+                    dialog.run(true, true, new IRunnableWithProgress() {
+                        public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                            scanPendingChangedFiles(files, monitor);
                         }
-                    }
-                });
+                    });
+                }
+                else
+                    scanPendingChangedFiles(files, null);
             }
             catch (Exception exception) {
                 exception.printStackTrace();
             }
         }
     }
+    
+    private void scanPendingChangedFiles(final IFile[] files, IProgressMonitor monitor) {
+        if (monitor != null)
+            monitor.beginTask("SchemeScript - Updating symbol dictionary:", files.length);
+        for (int i=0; i<files.length; i++) {
+            IFile file = (IFile)files[i];
+            try {
+                file.deleteMarkers(IMarker.TEXT, false, 0);
+            }
+            catch (CoreException exception) {
+                exception.printStackTrace();
+            }
+            scanSchemeFile(file, monitor);
+            if (monitor != null)
+                monitor.worked(1);
+        }
+        if (monitor != null)
+            monitor.done();
+    }
+
+
 
     private void scanSchemeFile(IFile file, IProgressMonitor monitor) {
         if (monitor != null) {
@@ -221,14 +239,15 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
     }
 
     protected void findSymbols(String name, List entries) {
-        processPendingResources();
+        processPendingResources(true);
         SymbolEntry entry = (SymbolEntry) mEntries.get(name);
         if (entry != null)
             entries.add(entry);
     }
 
     protected void completeSymbols(String prefix, List entries) {
-        processPendingResources();
+        processPendingResources(true);
+
         if (prefix.length() < 3) 
             return;
         

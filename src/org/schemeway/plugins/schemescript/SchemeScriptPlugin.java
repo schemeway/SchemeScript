@@ -54,6 +54,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 
         Scheme.registerEnvironment();
         textTools = new SchemeTextTools(new ColorManager());
+        getDictionary();
     }
 
     /**
