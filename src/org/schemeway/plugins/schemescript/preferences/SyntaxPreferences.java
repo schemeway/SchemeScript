@@ -16,7 +16,7 @@ import org.eclipse.ui.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class SyntaxPreferences extends PreferencePage implements IWorkbenchPreferencePage {
+public class SyntaxPreferences extends SchemePreferencePage {
     public final static String PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".syntax.";
     public final static String SYNTAX_KEYWORD = PREFIX + "keywords";
     public final static String SYNTAX_DEFINE = PREFIX + "define";
@@ -96,9 +96,6 @@ public class SyntaxPreferences extends PreferencePage implements IWorkbenchPrefe
     private final static String[] DEFAULT_CONSTANTS = new String[] {
                 "#!eof", "#!null", "#!void"
     };
-
-    public void init(IWorkbench workbench) {
-    }
 
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
@@ -197,10 +194,6 @@ public class SyntaxPreferences extends PreferencePage implements IWorkbenchPrefe
         mSpecialList.setItems(DEFAULT_SPECIALS);
         mMutatorList.setItems(DEFAULT_MUTATORS);
         mConstantList.setItems(DEFAULT_CONSTANTS);
-    }
-
-    protected IPreferenceStore doGetPreferenceStore() {
-        return SchemeScriptPlugin.getDefault().getPreferenceStore();
     }
 
     public static void initializeDefaults(IPreferenceStore store) {

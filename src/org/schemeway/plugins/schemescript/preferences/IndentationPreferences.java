@@ -17,7 +17,7 @@ import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class IndentationPreferences extends PreferencePage implements IWorkbenchPreferencePage {
+public class IndentationPreferences extends SchemePreferencePage {
     public final static String PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".indentation.";
     public final static String INDENT_SCHEMES = PREFIX + "schemes";
     public final static String TAB_WIDTH = PREFIX + "tabwidth";
@@ -66,9 +66,6 @@ public class IndentationPreferences extends PreferencePage implements IWorkbench
                 new IndentationScheme("receive", IndentationScheme.WITH, 2),
                 new IndentationScheme("catch", IndentationScheme.WITH, 2)
     };
-
-    public void init(IWorkbench workbench) {
-    }
 
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
@@ -204,10 +201,6 @@ public class IndentationPreferences extends PreferencePage implements IWorkbench
         mSchemeList = new IndentationSchemeList(INDENT_DEFAULTS);
         mViewer.setInput(mSchemeList);
         storeValues();
-    }
-
-    protected IPreferenceStore doGetPreferenceStore() {
-        return SchemeScriptPlugin.getDefault().getPreferenceStore();
     }
 
     public static void initializeDefaults(IPreferenceStore store) {

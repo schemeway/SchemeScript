@@ -10,12 +10,9 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-
 import org.schemeway.plugins.schemescript.*;
 
-public class SchemePreferences extends PreferencePage implements IWorkbenchPreferencePage {
+public class SchemePreferences extends SchemePreferencePage {
 
     private final static String PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".editor.";
     public final static String TAB_WIDTH = PREFIX + "tabWidth";
@@ -26,10 +23,6 @@ public class SchemePreferences extends PreferencePage implements IWorkbenchPrefe
     
     private int mTabWidth; 
     
-    protected IPreferenceStore doGetPreferenceStore() {
-        return SchemeScriptPlugin.getDefault().getPreferenceStore();
-    }
-
     protected Control createContents(Composite parent) {
         initializeValues();
         Composite composite = new Composite(parent, SWT.NULL);
@@ -109,14 +102,6 @@ public class SchemePreferences extends PreferencePage implements IWorkbenchPrefe
                 }
             }
         });
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-     */
-    public void init(IWorkbench workbench) {
     }
     
     public boolean performOk() {
