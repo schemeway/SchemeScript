@@ -26,7 +26,7 @@ public class SexpDeleter implements IAutoEditStrategy {
                     SexpUtils.deleteBackwardSexp(document, command);
                 }
             }
-            else if (command.text.length() == 0 && command.length > 0) {
+            else if (command.text.length() == 0 && command.length > 1) {
                 if (SexpUtils.whitespacesOnly(document, command.offset, command.length))
                     return;
                 SexpUtils.deleteSelection(document, command);
