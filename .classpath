@@ -4,6 +4,6 @@
 	<classpathentry kind="src" path="bin"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/cygwin/home/dboucher/personal/other/SchemeWay/SchemeScript/kawa.jar"/>
+	<classpathentry kind="lib" path="kawa.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
