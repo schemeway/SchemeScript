@@ -7,7 +7,7 @@ package org.schemeway.plugins.schemescript.editor.autoedits;
 
 import org.eclipse.jface.text.*;
 
-final class DoubleQuoteInserter implements IAutoEditStrategy {
+public class DoubleQuoteInserter implements IAutoEditStrategy {
 
     DoubleQuoteInserter() {
     }
