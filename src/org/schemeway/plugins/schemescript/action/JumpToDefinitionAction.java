@@ -93,8 +93,11 @@ public class JumpToDefinitionAction extends Action {
     private void openEditorAtLine(IFile file, int linenumber) throws PartInitException
     {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IDE.openEditor(page, file, true);
-        IEditorPart editor = page.getActiveEditor();
+        IEditorPart editor = IDE.openEditor(page, file, true);
+        if (editor == null) {
+            return;
+        }
+        
         if (editor instanceof SchemeEditor) {
             SchemeEditor schemeEditor = (SchemeEditor)editor;
             try {
