@@ -11,8 +11,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
@@ -181,14 +179,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
         return list;
     }
 
-    public boolean performOk() {
-        storeValues();
-        return true;
-    }
-
-    public void performDefaults() {
-        super.performDefaults();
-
+    protected void doPerformDefaults() {
         mDefineList.setItems(DEFAULT_DEFINES);
         mKeywordList.setItems(DEFAULT_KEYWORDS);
         mSpecialList.setItems(DEFAULT_SPECIALS);
@@ -204,7 +195,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
         PreferenceUtil.setDefaultKeywords(store, SYNTAX_CONSTANT, DEFAULT_CONSTANTS);
     }
 
-    private void initializeValues() {
+    protected void initializeValues() {
         IPreferenceStore store = getPreferenceStore();
         mDefineList.setItems(PreferenceUtil.getKeywords(store, SYNTAX_DEFINE));
         mKeywordList.setItems(PreferenceUtil.getKeywords(store, SYNTAX_KEYWORD));
@@ -213,7 +204,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
         mConstantList.setItems(PreferenceUtil.getKeywords(store, SYNTAX_CONSTANT));
     }
 
-    private void storeValues() {
+    protected void storeValues() {
         IPreferenceStore store = getPreferenceStore();
         PreferenceUtil.setKeywords(store, SYNTAX_DEFINE, mDefineList.getItems());
         PreferenceUtil.setKeywords(store, SYNTAX_KEYWORD, mKeywordList.getItems());

@@ -11,8 +11,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 import org.schemeway.plugins.schemescript.parser.*;
@@ -77,7 +75,7 @@ public class IndentationPreferences extends SchemePreferencePage {
 
         createAllControls(composite);
 
-        initializeProvider();
+        initializeValues();
         return composite;
     }
 
@@ -190,24 +188,16 @@ public class IndentationPreferences extends SchemePreferencePage {
         });
     }
 
-    public boolean performOk() {
-        storeValues();
-        return true;
-    }
-
-    public void performDefaults() {
-        super.performDefaults();
-
+    protected void doPerformDefaults() {
         mSchemeList = new IndentationSchemeList(INDENT_DEFAULTS);
         mViewer.setInput(mSchemeList);
-        storeValues();
     }
 
     public static void initializeDefaults(IPreferenceStore store) {
         PreferenceUtil.setDefaultIndentationSchemes(store, INDENT_SCHEMES, INDENT_DEFAULTS);
     }
 
-    private void initializeProvider() {
+    protected void initializeValues() {
         IPreferenceStore store = getPreferenceStore();
         IndentationScheme[] schemes = PreferenceUtil.getIndentationSchemes(store, INDENT_SCHEMES);
         mSchemeList = new IndentationSchemeList(schemes);
@@ -216,7 +206,7 @@ public class IndentationPreferences extends SchemePreferencePage {
         mViewer.setInput(mSchemeList);
     }
 
-    private void storeValues() {
+    protected void storeValues() {
         IPreferenceStore store = getPreferenceStore();
         PreferenceUtil.setIndentationSchemes(store, INDENT_SCHEMES, mSchemeList.getSchemes());
     }

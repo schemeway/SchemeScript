@@ -17,4 +17,20 @@ public abstract class SchemePreferencePage extends PreferencePage implements IWo
     protected IPreferenceStore doGetPreferenceStore() {
         return SchemeScriptPlugin.getDefault().getPreferenceStore();
     }
+
+    public boolean performOk() {
+        storeValues();
+        return true;
+    }
+    
+    public void performDefaults() {
+        super.performDefaults();
+
+        doPerformDefaults();
+        storeValues();
+    }
+    
+    protected abstract void storeValues();
+    protected abstract void doPerformDefaults();
+    protected abstract void initializeValues();
 }

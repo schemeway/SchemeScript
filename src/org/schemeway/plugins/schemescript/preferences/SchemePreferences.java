@@ -104,27 +104,20 @@ public class SchemePreferences extends SchemePreferencePage {
         });
     }
     
-    public boolean performOk() {
-        storeValues();
-        return true;
-    }
-
-    public void performDefaults() {
-        super.performDefaults();
+    protected void doPerformDefaults() {
         mTabWidth = DEFAULT_TABWIDTH;
-        storeValues();
     }
     
     public static void initializeDefaults(IPreferenceStore store) {
         store.setDefault(TAB_WIDTH, DEFAULT_TABWIDTH);
     }
     
-    private void initializeValues() {
+    protected void initializeValues() {
         IPreferenceStore store = getPreferenceStore();
         mTabWidth = store.getInt(TAB_WIDTH);
     }
     
-    private void storeValues() {
+    protected void storeValues() {
         IPreferenceStore store = getPreferenceStore();
         store.setValue(TAB_WIDTH, mTabWidth);
     }
