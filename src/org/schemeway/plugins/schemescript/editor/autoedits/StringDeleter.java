@@ -47,7 +47,8 @@ public class StringDeleter implements IAutoEditStrategy {
                 
                 if (startPartition.getType() == SchemePartitionScanner.SCHEME_STRING)
                     start = startPartition.getOffset();
-                if (endPartition.getType() == SchemePartitionScanner.SCHEME_STRING) 
+                if (endPartition.getType() == SchemePartitionScanner.SCHEME_STRING
+                        && end > endPartition.getOffset()) 
                     end = endPartition.getOffset() + endPartition.getLength();
                 
                 command.offset = start;
