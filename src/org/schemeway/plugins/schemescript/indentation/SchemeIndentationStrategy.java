@@ -38,7 +38,10 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
                 IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
                 boolean continueComment = store.getBoolean(CommentPreferences.COMMENT_CONTINUE);
 
-                if (continueComment && line.startsWith(prefix) && (!line.equals(prefix + " "))) {
+                // make sure we are not at the start of the line, in which case
+                // we simply insert a line break
+                if (continueComment && line.startsWith(prefix) && (!line.equals(prefix + " "))
+                        && command.offset != lineInfo.getOffset()) {
                     command.text = command.text + prefix + " ";
                 }
                 else {
