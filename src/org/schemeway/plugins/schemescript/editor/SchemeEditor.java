@@ -41,6 +41,7 @@ public class SchemeEditor extends TextEditor {
     private IAutoEditStrategy mMatchinDelimiterInserter;
     private IAutoEditStrategy mSexpDeleter;
     private IAutoEditStrategy mStringDeleter;
+    private IAutoEditStrategy mCommentDeleter;
 
     public SchemeEditor() {
         super();
@@ -135,7 +136,7 @@ public class SchemeEditor extends TextEditor {
             textTools.updateIndentationSchemes();
         }
         else if (property.equals(SchemePreferences.SEXP_EDIT)) {
-            if (SchemePreferences.getSexpEditing()) 
+            if (SchemePreferences.isStructuralEditingEnabled()) 
                 addAutoEditStrategies();
             else
                 removeAutoEditStrategies();
@@ -151,7 +152,7 @@ public class SchemeEditor extends TextEditor {
         getSourceViewer().getTextWidget().setBackground(color);
         startParenthesisHighlighting();
 
-        if (SchemePreferences.getSexpEditing())
+        if (SchemePreferences.isStructuralEditingEnabled())
             addAutoEditStrategies();
     }
 
@@ -166,6 +167,8 @@ public class SchemeEditor extends TextEditor {
         viewer2.prependAutoEditStrategy(mSexpDeleter, IDocument.DEFAULT_CONTENT_TYPE);
         viewer2.prependAutoEditStrategy(mStringDeleter, SchemePartitionScanner.SCHEME_STRING);
         viewer2.prependAutoEditStrategy(mStringDeleter, IDocument.DEFAULT_CONTENT_TYPE);
+        viewer2.prependAutoEditStrategy(mCommentDeleter, SchemePartitionScanner.SCHEME_COMMENT);
+        viewer2.prependAutoEditStrategy(mCommentDeleter, IDocument.DEFAULT_CONTENT_TYPE);
     }
     
     private void removeAutoEditStrategies() {
@@ -177,6 +180,8 @@ public class SchemeEditor extends TextEditor {
         viewer.removeAutoEditStrategy(mSexpDeleter, IDocument.DEFAULT_CONTENT_TYPE);
         viewer.removeAutoEditStrategy(mStringDeleter, SchemePartitionScanner.SCHEME_STRING);
         viewer.removeAutoEditStrategy(mStringDeleter, IDocument.DEFAULT_CONTENT_TYPE);
+        viewer.removeAutoEditStrategy(mCommentDeleter, SchemePartitionScanner.SCHEME_COMMENT);
+        viewer.removeAutoEditStrategy(mCommentDeleter, IDocument.DEFAULT_CONTENT_TYPE);
     }
 
     private void createEditStrategies() {
@@ -187,6 +192,7 @@ public class SchemeEditor extends TextEditor {
             mQuoteInserter = new DoubleQuoteInserter();
             mSexpDeleter = new SexpDeleter();
             mStringDeleter = new StringDeleter();
+            mCommentDeleter = new CommentDeleter();
         }
     }
 
@@ -261,6 +267,10 @@ public class SchemeEditor extends TextEditor {
         action = new FormatAction(this);
         action.setActionDefinitionId(SchemeActionConstants.SEXP_FORMAT);
         this.setAction(SchemeActionConstants.SEXP_FORMAT, action);
+        
+        action = new ExpandSelectionToSexpressions(this);
+        action.setActionDefinitionId(SchemeActionConstants.SEXP_EXPAND_SELECTION);
+        this.setAction(SchemeActionConstants.SEXP_EXPAND_SELECTION, action);
 
         action = SectioningCommentAction.createChapterCommentAction(this);
         action.setActionDefinitionId(SchemeActionConstants.COMMENT_CHAPTER);

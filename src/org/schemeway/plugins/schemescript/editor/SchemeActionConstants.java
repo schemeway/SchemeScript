@@ -25,6 +25,7 @@ public final class SchemeActionConstants {
     public final static String SEXP_MOUSECOPY = SEXP_PREFIX + "mousecopy";
     public final static String SEXP_EXTENDED_MOUSECOPY = SEXP_PREFIX + "extended-mousecopy";
     public final static String SEXP_RESTORE_SELECTION = SEXP_PREFIX + "restore-selection";
+    public final static String SEXP_EXPAND_SELECTION = SEXP_PREFIX + "expand-selection";
     
     private final static String COMMENT_PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".comment.";
     public final static String COMMENT_CHAPTER = COMMENT_PREFIX + "chapter";
