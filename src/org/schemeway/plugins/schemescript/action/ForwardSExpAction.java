@@ -5,29 +5,27 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.util.Assert;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class ForwardSExpAction extends Action {
-    private SchemeEditor mEditor;
+public class ForwardSExpAction extends SchemeAction {
     private boolean mSelectExpression;
 
     public ForwardSExpAction(SchemeEditor editor, boolean selectExpression) {
-        Assert.isNotNull(editor);
+        super(editor);
         setText("Select Forward Sexp");
         setToolTipText("Selects the next S-expression");
-        mEditor = editor;
         mSelectExpression = selectExpression;
     }
 
     public void run() {
-        Region selection = mEditor.getSelection();
+        final SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
 
-        SexpExplorer explorer = mEditor.getExplorer();
+        Region selection = editor.getSelection();
+
+        SexpExplorer explorer = editor.getExplorer();
         if (explorer.forwardSexpression(selection.getOffset() + selection.getLength())) {
             int start = explorer.getSexpStart();
             int end = explorer.getSexpEnd();
@@ -38,10 +36,10 @@ public class ForwardSExpAction extends Action {
                 else if (start > selection.getOffset()) {
                     start = selection.getOffset();
                 }
-                mEditor.setSelection(start, end);
+                editor.setSelection(start, end);
             }
             else {
-                mEditor.setPoint(end);
+                editor.setPoint(end);
             }
         }
     }

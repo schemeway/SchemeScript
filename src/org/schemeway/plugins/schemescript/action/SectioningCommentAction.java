@@ -5,34 +5,34 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.tools.*;
 
-public class SectioningCommentAction extends Action {
-    private SchemeEditor mEditor;
+public class SectioningCommentAction extends SchemeAction {
     private boolean mSubsection;
 
     protected SectioningCommentAction(SchemeEditor editor, boolean subsection) {
-        mEditor = editor;
+        super(editor);
         mSubsection = subsection;
         setText(subsection ? "Insert section comment" : "Insert chapter comment");
         setToolTipText(subsection ? "Insert section comment" : "Insert chapter comment");
     }
 
     public void run() {
-        int point = mEditor.getPoint();
-        String newline = TextUtilities.getDefaultLineDelimiter(mEditor.getDocument());
+        final SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+        
+        int point = editor.getPoint();
+        String newline = TextUtilities.getDefaultLineDelimiter(editor.getDocument());
 
         if (mSubsection) {
-            mEditor.insertText(point, Comments.createSectionComment(newline));
-            mEditor.setPoint(point + 10 + newline.length());
+            editor.insertText(point, Comments.createSectionComment(newline));
+            editor.setPoint(point + 10 + newline.length());
         }
         else {
-            mEditor.insertText(point, Comments.createChapterComment(newline));
-            mEditor.setPoint(point + 15 + 2 * newline.length());
+            editor.insertText(point, Comments.createChapterComment(newline));
+            editor.setPoint(point + 15 + 2 * newline.length());
         }
     }
 

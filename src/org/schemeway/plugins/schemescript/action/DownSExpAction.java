@@ -5,28 +5,27 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class DownSExpAction extends Action {
-    private SchemeEditor mEditor;
-
+public class DownSExpAction extends SchemeAction {
+    
     public DownSExpAction(SchemeEditor editor) {
-        Assert.isNotNull(editor);
+        super(editor);
         setText("Enters the next enclosed S-expression");
         setToolTipText("Enters the next enclosed  S-expression");
-        mEditor = editor;
     }
 
     public void run() {
-        Region selection = mEditor.getSelection();
+        SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+        
+        Region selection = editor.getSelection();
 
-        SexpExplorer explorer = mEditor.getExplorer();
+        SexpExplorer explorer = editor.getExplorer();
         if (explorer.downSexpression(selection.getOffset()))
-            mEditor.setPoint(explorer.getSexpStart());
+            editor.setPoint(explorer.getSexpStart());
     }
 
 }

@@ -5,32 +5,30 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class SwapSexpAction extends Action {
-    private SchemeEditor mEditor;
+public class SwapSexpAction extends SchemeAction {
 
     public SwapSexpAction(SchemeEditor editor) {
-        Assert.isNotNull(editor);
+        super(editor);
         setText("Swaps S-expressions");
         setToolTipText("Swaps the S-expressions before and after the cursor");
-        mEditor = editor;
     }
 
     public void run() {
-        int point = mEditor.getPoint();
-        SexpExplorer explorer = mEditor.getExplorer();
+        final SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+
+        int point = editor.getPoint();
+        SexpExplorer explorer = editor.getExplorer();
         if (explorer.backwardSexpression(point)) {
             int previousStart = explorer.getSexpStart();
             int previousEnd = explorer.getSexpEnd();
             if (explorer.forwardSexpression(point)) {
                 int nextStart = explorer.getSexpStart();
                 int nextEnd = explorer.getSexpEnd();
-                mEditor.swapText(previousStart, previousEnd - previousStart, nextStart, nextEnd - nextStart);
+                editor.swapText(previousStart, previousEnd - previousStart, nextStart, nextEnd - nextStart);
             }
         }
     }

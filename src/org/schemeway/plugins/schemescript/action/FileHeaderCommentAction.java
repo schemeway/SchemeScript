@@ -5,25 +5,25 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.tools.*;
 
-public class FileHeaderCommentAction extends Action {
-    private SchemeEditor mEditor;
-
+public class FileHeaderCommentAction extends SchemeAction {
+    
     public FileHeaderCommentAction(SchemeEditor editor) {
-        mEditor = editor;
+        super(editor);
         setText("Insert header comment");
         setToolTipText("Insert a Scheme file header comment");
     }
 
     public void run() {
-        String newline = TextUtilities.getDefaultLineDelimiter(mEditor.getDocument());
+        SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+        
+        String newline = TextUtilities.getDefaultLineDelimiter(editor.getDocument());
 
-        mEditor.insertText(0, Comments.createHeaderComment(newline));
-        mEditor.setPoint(8 + newline.length());
+        editor.insertText(0, Comments.createHeaderComment(newline));
+        editor.setPoint(8 + newline.length());
     }
 }

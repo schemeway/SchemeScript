@@ -5,48 +5,48 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class MouseCopyAction extends Action implements MouseMoveListener {
-    private SchemeEditor mEditor;
+public class MouseCopyAction extends SchemeAction implements MouseMoveListener {
     private int mCurrentMouseX;
     private int mCurrentMouseY;
     private boolean mAddLeadingPunctuation;
 
     public MouseCopyAction(SchemeEditor editor, StyledText textWidget, boolean addLeadingPunctuation) {
-        Assert.isNotNull(editor);
+        super(editor);
         Assert.isNotNull(textWidget);
         setText("Copies the S-expression near the mouse");
         setToolTipText("Copies the S-expression near the mouse");
         textWidget.addMouseMoveListener(this);
-        mEditor = editor;
         mAddLeadingPunctuation = addLeadingPunctuation;
     }
 
     public void run() {
-        Region selection = mEditor.getSelection();
-        SexpExplorer explorer = mEditor.getExplorer();
-        IDocument document = mEditor.getDocument();
+        SchemeEditor editor = getSchemeEditor();
+        if (editor == null)
+            return;
+
+        Region selection = editor.getSelection();
+        SexpExplorer explorer = editor.getExplorer();
+        IDocument document = editor.getDocument();
 
         try {
-            int mouseOffset = mEditor.getOffset(mCurrentMouseX, mCurrentMouseY);
+            int mouseOffset = editor.getOffset(mCurrentMouseX, mCurrentMouseY);
             IRegion lineInfo = document.getLineInformationOfOffset(mouseOffset);
             int lineStart = lineInfo.getOffset();
 
             if (document.getPartition(mouseOffset).getType() == SchemePartitionScanner.SCHEME_COMMENT)
                 return;
 
-            if (mouseOffset >= 0 && mouseOffset < mEditor.getDocument().getLength()) {
-                char charAfter = mEditor.getChar(mouseOffset);
+            if (mouseOffset >= 0 && mouseOffset < editor.getDocument().getLength()) {
+                char charAfter = editor.getChar(mouseOffset);
                 while (mouseOffset >= lineStart && (charAfter == '\r' || charAfter == '\n')) {
                     mouseOffset--;
-                    charAfter = mEditor.getChar(mouseOffset);
+                    charAfter = editor.getChar(mouseOffset);
                 }
 
                 if (!Character.isWhitespace(charAfter)) {
@@ -54,17 +54,17 @@ public class MouseCopyAction extends Action implements MouseMoveListener {
                         String text = explorer.getText();
                         int textStart = explorer.getSexpStart();
                         if (textStart > 0 && mAddLeadingPunctuation) {
-                            char ch = mEditor.getChar(textStart - 1);
+                            char ch = editor.getChar(textStart - 1);
                             if (SchemeScannerUtilities.isPunctuationChar(ch) && !SchemeScannerUtilities.isClosingParenthesis(ch)) {
                                 text = ch + text;
                             }
                         }
-                        mouseCopy(text, selection);
+                        mouseCopy(text, selection, editor);
                     }
                     else {
                         if (explorer.backwardSexpression(mouseOffset + 1)
                             && explorer.forwardSexpression(explorer.getSexpStart())) {
-                            mouseCopy(explorer.getText(), selection);
+                            mouseCopy(explorer.getText(), selection, editor);
                         }
                     }
                 }
@@ -74,18 +74,18 @@ public class MouseCopyAction extends Action implements MouseMoveListener {
         }
     }
 
-    private void mouseCopy(String textToInsert, Region selection) {
+    private void mouseCopy(String textToInsert, Region selection, SchemeEditor editor) {
         int offset = selection.getOffset();
         if (offset > 0) {
-            char ch = mEditor.getChar(offset - 1);
+            char ch = editor.getChar(offset - 1);
             if (!Character.isWhitespace(ch) 
                   && (!SchemeScannerUtilities.isPunctuationChar(ch) 
                        || SchemeScannerUtilities.isClosingParenthesis(ch))) {
                 textToInsert = " " + textToInsert;
             }
         }
-        mEditor.replaceText(offset, selection.getLength(), textToInsert);
-        mEditor.setPoint(offset + textToInsert.length());
+        editor.replaceText(offset, selection.getLength(), textToInsert);
+        editor.setPoint(offset + textToInsert.length());
     }
 
     public void mouseMove(MouseEvent e) {

@@ -5,29 +5,28 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class FormatAction extends Action {
-    private SchemeEditor mEditor;
-
+public class FormatAction extends SchemeAction {
+    
     public FormatAction(SchemeEditor editor) {
-        Assert.isNotNull(editor);
+        super(editor);
         setText("Format");
         setToolTipText("Formats the current selection");
-        mEditor = editor;
     }
 
     public void run() {
-        final Region selection = mEditor.getSelection();
-        final SexpExplorer explorer = mEditor.getExplorer();
+        final SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+        
+        final Region selection = editor.getSelection();
+        final SexpExplorer explorer = editor.getExplorer();
         final IDocument document = explorer.getDocument();
         final SchemeIndentationContext context = new SchemeIndentationContext(explorer,
-                                                                              mEditor.getIndentationManager(),
+                                                                              editor.getIndentationManager(),
                                                                               0);
         final int selectionOffset = selection.getOffset();
 
@@ -35,11 +34,11 @@ public class FormatAction extends Action {
             final int firstLine = document.getLineOfOffset(selectionOffset);
             final int lastLine = document.getLineOfOffset(selectionOffset + selection.getLength());
 
-            mEditor.runCompoundChange(new Runnable() {
+            editor.runCompoundChange(new Runnable() {
                 public void run() {
                     indentLines(document, firstLine, lastLine, context);
                     if (selection.getLength() == 0) {
-                        mEditor.setPoint(repositionPoint(document, selectionOffset, firstLine));
+                        editor.setPoint(repositionPoint(document, selectionOffset, firstLine));
                     }
                 }
             });

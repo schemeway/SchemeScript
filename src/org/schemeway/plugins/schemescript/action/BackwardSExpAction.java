@@ -5,35 +5,35 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class BackwardSExpAction extends Action {
-    private SchemeEditor mEditor;
+public class BackwardSExpAction extends SchemeAction implements ISchemeEditorAction {
     private boolean mSelectExpression;
     
     public BackwardSExpAction(SchemeEditor editor, boolean selectExpression) {
+        super(editor);
         Assert.isNotNull(editor);
         setText("Select Backward Sexp");
         setToolTipText("Selects the previous S-expression");
-        mEditor = editor;
         mSelectExpression = selectExpression;
     }
     
     public void run() {
-        Region selection = mEditor.getSelection();
+        SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+
+        Region selection = editor.getSelection();
         int selectionEnd = selection.getOffset() + selection.getLength();
-        SexpExplorer explorer = mEditor.getExplorer();
+        SexpExplorer explorer = editor.getExplorer();
         if (explorer.backwardSexpression(selection.getOffset())) {
             int start = explorer.getSexpStart();
             if (mSelectExpression) {
-                mEditor.setSelection(start, selectionEnd);
+                editor.setSelection(start, selectionEnd);
             }
             else {
-                mEditor.setPoint(start);
+                editor.setPoint(start);
             }
         }
     }

@@ -5,30 +5,30 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
-public class CommentAction extends Action {
-    private SchemeEditor mEditor;
-
+public class CommentAction extends SchemeAction {
+    
     public CommentAction(SchemeEditor editor) {
-        Assert.isNotNull(editor);
+        super(editor);
         setText("Toggle comment");
         setToolTipText("Comment/Uncomment the selected lines");
-        mEditor = editor;
     }
 
     public void run() {
+        SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+        
         try {
-            final IDocument document = mEditor.getDocument();
-            Region selection = mEditor.getSelection();
+            
+            final IDocument document = editor.getDocument();
+            Region selection = editor.getSelection();
 
             final int startLine = document.getLineOfOffset(selection.getOffset());
             final int endLine = document.getLineOfOffset(selection.getOffset() + selection.getLength());
-            mEditor.runCompoundChange(new Runnable() {
+            editor.runCompoundChange(new Runnable() {
                 public void run() {
                     processLines(document, startLine, endLine);
                 }

@@ -8,7 +8,6 @@ package org.schemeway.plugins.schemescript.action;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.schemeway.plugins.schemescript.*;
@@ -16,35 +15,32 @@ import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.views.*;
 
-public class JumpToDefinitionAction extends Action {
-    private SchemeEditor mEditor;
-    private IResource mResource;
-
+public class JumpToDefinitionAction extends SchemeAction {
+    
     public JumpToDefinitionAction(SchemeEditor editor) {
+        super(editor);
         setText("Find definition");
         setToolTipText("Jump to the symbol definition");
-        mEditor = editor;
-        setupResource();
-    }
-
-    private void setupResource() {
-        IEditorInput input = mEditor.getEditorInput();
-        if (input instanceof FileEditorInput) {
-            mResource = ((FileEditorInput) input).getFile();
-        }
     }
 
     private IResource getResource() {
-        return mResource;
+        IEditorInput input = getSchemeEditor().getEditorInput();
+        if (input instanceof FileEditorInput) {
+            return ((FileEditorInput) input).getFile();
+        }
+        return null;
     }
 
     public void run() {
+        final SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+
         try {
-            String symbol = SchemeTextUtilities.findSymbolAroundPoint(mEditor.getDocument(), mEditor.getPoint());
+            String symbol = SchemeTextUtilities.findSymbolAroundPoint(editor.getDocument(), editor.getPoint());
             if (symbol == null)
                 return;
 
-            ISymbolDictionary dictionary = mEditor.getSymbolDictionary();
+            ISymbolDictionary dictionary = editor.getSymbolDictionary();
             if (dictionary == null)
                 return;
 

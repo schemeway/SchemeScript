@@ -5,32 +5,30 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class UpSExpAction extends Action {
-    private SchemeEditor mEditor;
+public class UpSExpAction extends SchemeAction {
     private boolean mSelectExpression;
     private SelectionStack mStack;
     private Region mPreviousSelection;
 
     public UpSExpAction(SchemeEditor editor, boolean selectExpression, SelectionStack stack) {
-        Assert.isNotNull(editor);
+        super(editor);
         setText("Moves to enclosing S-expression");
         setToolTipText("Moves to the enclosing S-expression");
-        mEditor = editor;
         mSelectExpression = selectExpression;
         mStack = stack;
         mPreviousSelection = null;
     }
 
     public void run() {
-        Region selection = mEditor.getSelection();
-
-        SexpExplorer explorer = mEditor.getExplorer();
+        final SchemeEditor editor = getSchemeEditor();
+        if (editor == null) return;
+        
+        Region selection = editor.getSelection();
+        SexpExplorer explorer = editor.getExplorer();
         if (explorer.upSexpression(selection.getOffset())) {
             if (mSelectExpression && explorer.forwardSexpression(explorer.getSexpStart())) {
                 int start = explorer.getSexpStart();
@@ -41,13 +39,13 @@ public class UpSExpAction extends Action {
                     mStack.push(selection, mPreviousSelection);
                     mPreviousSelection = selection;
                 }
-                mEditor.setSelection(start, end);
+                editor.setSelection(start, end);
             }
             else {
                 if (mStack != null) {
                     mStack.clear();
                 }
-                mEditor.setPoint(explorer.getSexpStart());
+                editor.setPoint(explorer.getSexpStart());
             }
         }
     }
