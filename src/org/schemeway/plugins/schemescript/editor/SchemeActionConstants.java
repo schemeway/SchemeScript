@@ -23,6 +23,7 @@ public final class SchemeActionConstants {
     public final static String SEXP_SWAP = SEXP_PREFIX + "swap";
     public final static String SEXP_FORMAT = SEXP_PREFIX + "format";
     public final static String SEXP_MOUSECOPY = SEXP_PREFIX + "mousecopy";
+    public final static String SEXP_EXTENDED_MOUSECOPY = SEXP_PREFIX + "extended-mousecopy";
     public final static String SEXP_RESTORE_SELECTION = SEXP_PREFIX + "restore-selection";
     
     private final static String COMMENT_PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".comment.";
@@ -38,6 +39,8 @@ public final class SchemeActionConstants {
     private final static String FORMAT_PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".format.";
     public final static String COMPRESS_SPACES = FORMAT_PREFIX + "compress";
     
-    public final static String JUMP_DEF = SchemeScriptPlugin.PLUGIN_NS + ".jump.definition"; 
+    public final static String JUMP_DEF = SchemeScriptPlugin.PLUGIN_NS + ".jump.definition";
+    public final static String CHOOSE_SYMBOL = SchemeScriptPlugin.PLUGIN_NS + ".dictionary.choose-symbol";
+    
     
 }
