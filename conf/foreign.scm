@@ -15,7 +15,7 @@
 (define-namespace String           "class:java.lang.String")
 
 (define-namespace Region           "class:org.eclipse.jface.text.Region")
-(define-namespace Document         "class:org.eclipse.jface.text.IDocument")
+(define-namespace IDocument         "class:org.eclipse.jface.text.IDocument")
 (define-namespace MessageDialog    "class:org.eclipse.jface.dialogs.MessageDialog")
 
 (define-namespace SchemeEditor     "class:org.schemeway.plugins.schemescript.editor.SchemeEditor")
@@ -73,3 +73,5 @@
 
 (define-namespace PairWithPosition "class:gnu.lists.PairWithPosition")
 
+(define-namespace TextViewer "class:org.eclipse.jface.text.TextViewer")
+(define-namespace Document "class:org.eclipse.jface.text.Document")

@@ -59,7 +59,7 @@
 
 
 (define (buffer-size #!optional (buffer (current-buffer)))
-  (Document:getLength (SchemeEditor:getDocument buffer)))
+  (IDocument:getLength (SchemeEditor:getDocument buffer)))
 
 
 (define (with-buffer-text start end proc #!optional (buffer (current-buffer)))
@@ -107,11 +107,11 @@
 
 
 (define (line-offset line #!optional (buffer (current-buffer)))
-  (Document:getLineOffset (SchemeEditor:getDocument buffer) line))
+  (IDocument:getLineOffset (SchemeEditor:getDocument buffer) line))
 
 
 (define (offset-line offset #!optional (buffer (current-buffer)))
-  (Document:getLineOfOffset (SchemeEditor:getDocument buffer) offset))
+  (IDocument:getLineOfOffset (SchemeEditor:getDocument buffer) offset))
 
 
 (define (beginning-of-line #!optional (offset (point)) (buffer (current-buffer)))
