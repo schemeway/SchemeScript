@@ -31,8 +31,6 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 
     private SchemeTextTools textTools;
     
-    private ISymbolDictionary mDictionary;
-
     /**
      * The constructor.
      */
@@ -55,7 +53,6 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 
         Scheme.registerEnvironment();
         textTools = new SchemeTextTools(new ColorManager());
-        getDictionary();
     }
 
     /**
@@ -63,8 +60,6 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
-        if (mDictionary != null)
-            mDictionary.dispose();
     }
 
     /**
@@ -97,13 +92,6 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 
     public SchemeTextTools getTextTools() {
         return textTools;
-    }
-    
-    public ISymbolDictionary getDictionary() {
-        if (mDictionary == null) {
-            mDictionary = UserDictionary.getInstance();
-        }
-        return mDictionary;
     }
     
     public static void logException(String message, Throwable exception) {

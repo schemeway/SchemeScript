@@ -24,6 +24,8 @@ import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
 public class SchemeEditor extends TextEditor {
+    private static ISymbolDictionary mDictionary;
+
     private SexpExplorer mExplorer;
     private PaintManager mPaintManager;
     private SchemeParenthesisPainter mParenPainter;
@@ -31,7 +33,7 @@ public class SchemeEditor extends TextEditor {
     public SchemeEditor() {
         super();
         SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
-        setSourceViewerConfiguration(new SchemeConfiguration(textTools));
+        setSourceViewerConfiguration(new SchemeConfiguration(textTools, this));
         setDocumentProvider(new SchemeDocumentProvider());
         setPreferenceStore(SchemeScriptPlugin.getDefault().getPreferenceStore());
     }
@@ -83,7 +85,10 @@ public class SchemeEditor extends TextEditor {
     }
     
     public ISymbolDictionary getSymbolDictionary() {
-        return null;
+        if (mDictionary == null) {
+            mDictionary = UserDictionary.getInstance();
+        }
+        return mDictionary;
     }
 
     protected void initializeKeyBindingScopes() {

@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.dictionary;
 
+import gnu.expr.*;
 import gnu.kawa.lispexpr.*;
 import gnu.lists.*;
 import gnu.mapping.*;
@@ -14,27 +15,56 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import kawa.standard.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.ui.*;
 import org.schemeway.plugins.schemescript.*;
 
-public class UserDictionary extends AbstractSymbolDictionary implements IResourceChangeListener {
+/**
+ * User dictionary. Holds all the symbols defined by user code. All Scheme files
+ * in all open projects are considered.
+ * 
+ * TODO Remove entries from removed resources (like when closing a project)
+ * TODO Use a better technique to disable dictionaries...
+ */
+public class UserDictionary extends AbstractSymbolDictionary implements IUserDictionary, IResourceChangeListener {
     private static UserDictionary mInstance;
     private static List mSchemeExtensions;
+    private static String mUserFile;
 
     private List mPendingResources = Collections.synchronizedList(new LinkedList());
     private Hashtable mEntries = new Hashtable();
+    private Hashtable mFormProcessors = new Hashtable();
+    
+    private static class FormProcessorDefiner extends Procedure2 {
+        UserDictionary mDictionary;
+        
+        public FormProcessorDefiner(UserDictionary dictionary) {
+            mDictionary = dictionary;
+        }
+        public Object apply2(Object arg0, Object arg1) {
+            if (arg0 instanceof String && arg1 instanceof Procedure) {
+                mDictionary.mFormProcessors.put(arg0, arg1);
+            }
+            return null;
+        }
+    }
 
     private UserDictionary() {
         super(KawaDictionary.getInstance());
+        loadFormProcessors();
         initialize();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
     }
 
     public void dispose() {
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+        mInstance = null;
+        mEntries = null;
+        mPendingResources = null;
     }
 
     public static UserDictionary getInstance() {
@@ -42,6 +72,18 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
             mInstance = new UserDictionary();
         }
         return mInstance;
+    }
+
+    private void loadFormProcessors() {
+        Interpreter interp = Interpreter.getInterpreter();
+        interp.defineFunction("define-form-processor", new FormProcessorDefiner(this));
+        IPath kawaConfigPath = new Path(mUserFile);
+        try {
+            load.load.apply1(SchemeScriptPlugin.getDefault().find(kawaConfigPath).toString());
+        }
+        catch (Throwable exception) {
+            SchemeScriptPlugin.logException("unable to load config file", exception);
+        }
     }
 
     private void initialize() {
@@ -52,7 +94,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
                 IProject project = projects[i];
                 collectSchemeSources(project);
             }
-            processPendingResources(false);
+            processPendingResources(true);
         }
         catch (Exception exception) {
             SchemeScriptPlugin.logException("Error while updating user dictionary", exception);
@@ -124,7 +166,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
 
     private void scanPendingChangedFiles(final IFile[] files, IProgressMonitor monitor) {
         if (monitor != null)
-            monitor.beginTask("SchemeScript - Updating symbol dictionary:", files.length);
+            monitor.beginTask("Updating dictionary:", files.length);
         removeEntriesForFiles(files);
         for (int i = 0; i < files.length; i++) {
             IFile file = (IFile) files[i];
@@ -144,17 +186,20 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
 
     private void removeEntriesForFiles(IFile[] files) {
         List removedEntries = new LinkedList();
-        for (Iterator elements = mEntries.values().iterator(); elements.hasNext();) {
-            SymbolEntry entry = (SymbolEntry) elements.next();
-            for (int i = 0; i < files.length; i++) {
-                if (entry.getMarker().getResource().equals(files[i])) {
-                    removedEntries.add(entry);
-                    break;
+        for (Iterator entryLists = mEntries.values().iterator(); entryLists.hasNext();) {
+            List entriesForName = (List) entryLists.next();
+            for (Iterator entries = entriesForName.iterator(); entries.hasNext();) {
+                SymbolEntry entry = (SymbolEntry) entries.next();
+                for (int i = 0; i < files.length; i++) {
+                    if (entry.getMarker().getResource().equals(files[i])) {
+                        removedEntries.add(entry);
+                        break;
+                    }
                 }
             }
         }
         for (Iterator iterator = removedEntries.iterator(); iterator.hasNext();) {
-            mEntries.remove(((SymbolEntry) iterator.next()).getName());
+            removeEntry((SymbolEntry) iterator.next());
         }
     }
 
@@ -197,70 +242,48 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
 
                 if ((car instanceof String) && (cdr instanceof Pair)) {
                     String name = ((String) car);
-                    if (name.equals("define") || name.equals("defmacro") || name.equals("define-syntax")) {
-                        processDefineForm(cdr, resource, position, name);
-                        continue;
-                    }
-                    if (name.equals("module-name")) {
-                        processModulenameForm(cdr, resource, position);
-                        continue;
-                    }
-                    if (name.equals("define-simple-class") || name.equals("define-class")) {
-                        processSimpleClassForm(cdr, resource, position);
-                        continue;
+                    Procedure formProcessor = (Procedure)mFormProcessors.get(name);
+                    if (formProcessor != null) {
+                        try {
+                            formProcessor.applyN(new Object[] {this, object, resource, new Integer(position)});
+                        }
+                        catch (Throwable exception) {
+                            SchemeScriptPlugin.logException("Unable to process form", exception);
+                        }
                     }
                 }
             }
         }
     }
 
-    private void processSimpleClassForm(Object cdr, IResource resource, int position) {
-        Object cadr = ((Pair) cdr).car;
-        if (cadr instanceof String) {
-            String name = (String) cadr;
-            mEntries.put(name, new SymbolEntry(name, "Class: " + name, SymbolEntry.VARIABLE, resource, position));
+    
+    public void addEntry(SymbolEntry entry) {
+        String name = entry.getName();
+        List existingEntries = (List)mEntries.get(name);
+        if (existingEntries == null) {
+            existingEntries = new LinkedList();
+            mEntries.put(name, existingEntries);
         }
+        existingEntries.add(entry);
     }
-
-    private void processModulenameForm(Object cdr, IResource resource, int position) {
-        Object cadr = ((Pair) cdr).car;
-        if (cadr instanceof String) {
-            String name = (String) cadr;
-            mEntries.put(name, new SymbolEntry(name, "Module: " + name, SymbolEntry.VARIABLE, resource, position));
-        }
-    }
-
-    private void processDefineForm(Object cdr, IResource resource, int position, String type) {
-        Object cadr = ((Pair) cdr).car;
-        if (cadr instanceof String) {
-            String name = (String) cadr;
-            String description = name;
-            if (type.equals("define"))
-                description += " [variable]";
-            else
-                if (type.equals("defmacro") || type.equals("define-syntax"))
-                    description += " [syntax]";
-            mEntries.put(name, new SymbolEntry(name, description, SymbolEntry.VARIABLE, resource, position));
-            return;
-        }
-        if (cadr instanceof Pair) {
-            Object caadr = ((Pair) cadr).car;
-            if (caadr instanceof String) {
-                String description = cadr.toString();
-                if (type.equals("defmacro") || type.equals("define-syntax"))
-                    description += " [syntax]";
-                String name = (String) caadr;
-                mEntries.put(name, new SymbolEntry(name, description, SymbolEntry.VARIABLE, resource, position));
-            }
-            return;
+    
+    public void removeEntry(SymbolEntry entry) {
+        String name = entry.getName();
+        List existingEntries = (List)mEntries.get(name);
+        if (existingEntries != null) {
+            existingEntries.remove(entry);
         }
     }
 
     protected void findSymbols(String name, List entries) {
         processPendingResources(true);
-        SymbolEntry entry = (SymbolEntry) mEntries.get(name);
-        if (entry != null)
-            entries.add(entry);
+        List existingEntries = (List) mEntries.get(name);
+        if (existingEntries != null) {
+            for (Iterator iterator = existingEntries.iterator(); iterator.hasNext();) {
+                SymbolEntry entry = (SymbolEntry) iterator.next();
+                entries.add(entry);
+            }
+        }
     }
 
     protected void completeSymbols(String prefix, List entries) {
@@ -270,7 +293,11 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
         while (enumeration.hasMoreElements()) {
             String symbolName = (String) enumeration.nextElement();
             if (symbolName.startsWith(prefix)) {
-                entries.add((SymbolEntry) mEntries.get(symbolName));
+                List existingEntries = (List) mEntries.get(symbolName);
+                for (Iterator iterator = existingEntries.iterator(); iterator.hasNext();) {
+                    SymbolEntry entry = (SymbolEntry) iterator.next();
+                    entries.add(entry);
+                }
             }
         }
     }
@@ -316,5 +343,6 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
         // TODO - should be made configurable
         mSchemeExtensions = new LinkedList();
         mSchemeExtensions.add("scm");
+        mUserFile = "forms.scm";
     }
 }

@@ -13,12 +13,18 @@ import org.eclipse.jface.text.source.*;
 public class SchemeConfiguration extends SourceViewerConfiguration {
     private SchemeTextTools mTextTools;
     private IUndoManager mUndoManager;
+    private SchemeEditor mEditor;
 
-    public SchemeConfiguration(SchemeTextTools textTools) {
+    public SchemeConfiguration(SchemeTextTools textTools, SchemeEditor editor) {
         Assert.isNotNull(textTools);
         this.mTextTools = textTools;
+        this.mEditor = editor;
     }
 
+    public SchemeEditor getEditor() {
+        return mEditor;
+    }
+    
     public SchemeTextTools getTextTools() {
         return mTextTools;
     }
@@ -56,7 +62,7 @@ public class SchemeConfiguration extends SourceViewerConfiguration {
     
     public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
         ContentAssistant assistant= new ContentAssistant();
-        assistant.setContentAssistProcessor(new SchemeContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
+        assistant.setContentAssistProcessor(new SchemeContentAssistProcessor(getEditor()), IDocument.DEFAULT_CONTENT_TYPE);
         assistant.enableAutoActivation(true);
         assistant.setAutoActivationDelay(200);
         assistant.enableAutoInsert(true);
@@ -69,7 +75,7 @@ public class SchemeConfiguration extends SourceViewerConfiguration {
     
     
     public ITextHover getTextHover(ISourceViewer viewer, String contentType) {
-        return new SchemeTextHover();
+        return new SchemeTextHover(getEditor());
     }
 
 }

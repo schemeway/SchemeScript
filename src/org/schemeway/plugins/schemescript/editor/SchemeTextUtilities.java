@@ -28,16 +28,15 @@ public final class SchemeTextUtilities {
             return document.get(start, offset - start);
     }
     
-    public static String findSymbolAroundPoint(ITextViewer viewer, int offset) throws BadLocationException {
-        IRegion region = findSymbolRegionAroundPoint(viewer, offset);
+    public static String findSymbolAroundPoint(IDocument document, int offset) throws BadLocationException {
+        IRegion region = findSymbolRegionAroundPoint(document, offset);
         if (region == null)
             return null;
-        return viewer.getDocument().get(region.getOffset(), region.getLength());
+        return document.get(region.getOffset(), region.getLength());
     }
     
     
-    public static IRegion findSymbolRegionAroundPoint(ITextViewer viewer, int offset) throws BadLocationException {
-        IDocument document = viewer.getDocument();
+    public static IRegion findSymbolRegionAroundPoint(IDocument document, int offset) throws BadLocationException {
         int length = document.getLength();
         while (offset > 0 && Character.isWhitespace(document.getChar(offset - 1)))
             offset--;

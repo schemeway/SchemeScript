@@ -16,6 +16,8 @@ import org.schemeway.plugins.schemescript.parser.*;
  * @author Nu Echo Inc.
  */
 public class SchemeContentAssistProcessor implements IContentAssistProcessor {
+    
+    private SchemeEditor mEditor;
 
     private static class SchemeCompletionProposal implements ICompletionProposal, ICompletionProposalExtension3 {
         CompletionProposal mDelegate;
@@ -92,7 +94,12 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         }
     }
 
-    public SchemeContentAssistProcessor() {
+    public SchemeContentAssistProcessor(SchemeEditor editor) {
+        mEditor = editor;
+    }
+    
+    protected SchemeEditor getEditor() {
+        return mEditor;
     }
 
     public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
@@ -102,7 +109,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
             if (symbol != null) {
                 List proposals = new LinkedList();
                 int len = symbol.length();
-                SymbolEntry[] matchingEntries = SchemeScriptPlugin.getDefault().getDictionary().completeSymbol(symbol);
+                SymbolEntry[] matchingEntries = getEditor().getSymbolDictionary().completeSymbol(symbol);
                 for (int index = 0; index < matchingEntries.length; index++) {
                     SymbolEntry entry = matchingEntries[index];
                     String insertion = entry.getName().substring(len);
@@ -122,10 +129,10 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
         IContextInformation[] result = null;
         try {
-            String symbol = SchemeTextUtilities.findSymbolAroundPoint(viewer, offset);
+            String symbol = SchemeTextUtilities.findSymbolAroundPoint(viewer.getDocument(), offset);
             if (symbol != null) {
                 List informations = new LinkedList();
-                SymbolEntry[] matchingEntries = SchemeScriptPlugin.getDefault().getDictionary().findSymbol(symbol);
+                SymbolEntry[] matchingEntries = getEditor().getSymbolDictionary().findSymbol(symbol);
                 for (int index = 0; index < matchingEntries.length; index++)
                     informations.add(makeContextInfo(matchingEntries[index]));
 
@@ -160,7 +167,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     
     private IContextInformation makeContextInfo(SymbolEntry entry) {
         String info = entry.getDescription();
-        String context = "[" + entry.getCategory() + "] " + info;
+        String context = info + "- [" + entry.getContext() + "]";
         return new ContextInformation(context, info);
     }
 }
