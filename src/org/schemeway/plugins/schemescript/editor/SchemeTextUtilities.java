@@ -43,10 +43,10 @@ public final class SchemeTextUtilities {
         int start = offset;
         while (start > 0 && SchemeScannerUtilities.isIdentifierPartChar(document.getChar(start - 1)))
             start--;
-        if (start == offset)
-            return null;
         while (offset < length && SchemeScannerUtilities.isIdentifierPartChar(document.getChar(offset)))
             offset++;
+        if (start == offset)
+            return null;
         
         return new Region(start, offset - start);
     }
