@@ -14,9 +14,6 @@ import org.eclipse.debug.core.model.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
-/**
- * @author Nu Echo Inc.
- */
 public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate {
     private static final String WORKDIR_VAR = "\\{workdir\\}";
     private static final String PIDFILE_VAR = "\\{pidfile\\}";
@@ -35,7 +32,7 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
             if (cmdline == null || cmdline.length == 0)
                 error("Scheme interpreter not set in the preferences");
 
-            Process inferiorProcess = DebugPlugin.exec(getCommandLine(), getWorkingDirectory(), getEnvironment());
+            Process inferiorProcess = DebugPlugin.exec(cmdline, getWorkingDirectory(), getEnvironment());
             Map attributes = new HashMap();
             attributes.put(IProcess.ATTR_PROCESS_TYPE, "scheme");
             DebugPlugin.newProcess(launch, inferiorProcess, getInterpreterName(), attributes);
@@ -48,6 +45,7 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
     private String[] getCommandLine() throws CoreException {
         String command = InterpreterPreferences.getCommandLine();
         String workdir = InterpreterPreferences.getWorkingDirectory().getPath();
+        workdir = workdir.replaceAll("\\\\", "/"); // HACK for Windows
         command = command.replaceAll(WORKDIR_VAR, workdir);
         if (InterpreterPreferences.getSavesPID()) {
             command = command.replaceAll(PIDFILE_VAR, ExternalInterpreter.getPIDFilename());
@@ -88,12 +86,10 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
             else {
                 int start = index;
                 index++;
-                if (index < len - 1) {
-                    ch = command.charAt(index);
-                    while (index < (len - 1) && ch != '\'' && ch != '\"' && ch != ' ' && ch != '\t') {
-                        index++;
+                while (index < len && ch != '\'' && ch != '\"' && ch != ' ' && ch != '\t') {
+                    index++;
+                    if (index < len)
                         ch = command.charAt(index);
-                    }
                 }
                 list.add(command.substring(start, index));
             }
