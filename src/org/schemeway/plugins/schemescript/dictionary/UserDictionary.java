@@ -163,7 +163,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
                 if ((car instanceof String) && (cdr instanceof Pair)) {
                     String name = ((String)car);
                     if (name.equals("define") || name.equals("defmacro") || name.equals("define-syntax")) { 
-                        processDefineForm(cdr, resource, position);
+                        processDefineForm(cdr, resource, position, name);
                         continue;
                     }
                     if (name.equals("module-name")) {
@@ -183,7 +183,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
         Object cadr = ((Pair) cdr).car;
         if (cadr instanceof String) {
             String name = (String) cadr;
-            mEntries.put(name, new SymbolEntry(name, "class-name", SymbolEntry.VARIABLE, resource, position));
+            mEntries.put(name, new SymbolEntry(name, "Class: " + name, SymbolEntry.VARIABLE, resource, position));
         }
     }
 
@@ -191,22 +191,30 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
         Object cadr = ((Pair) cdr).car;
         if (cadr instanceof String) {
             String name = (String) cadr;
-            mEntries.put(name, new SymbolEntry(name, "modulename", SymbolEntry.VARIABLE, resource, position));
+            mEntries.put(name, new SymbolEntry(name, "Module: " + name, SymbolEntry.VARIABLE, resource, position));
         }
     }
 
-    private void processDefineForm(Object cdr, IResource resource, int position) {
+    private void processDefineForm(Object cdr, IResource resource, int position, String type) {
         Object cadr = ((Pair) cdr).car;
         if (cadr instanceof String) {
             String name = (String) cadr;
-            mEntries.put(name, new SymbolEntry(name, "definition", SymbolEntry.VARIABLE, resource, position));
+            String description = name;
+            if (type.equals("define")) 
+                description += " [variable]";
+            else if (type.equals("defmacro") || type.equals("define-syntax")) 
+                description += " [syntax]";
+            mEntries.put(name, new SymbolEntry(name, description, SymbolEntry.VARIABLE, resource, position));
             return;
         }
         if (cadr instanceof Pair) {
             Object caadr = ((Pair) cadr).car;
             if (caadr instanceof String) {
+                String description = cadr.toString();
+                if (type.equals("defmacro") || type.equals("define-syntax")) 
+                    description += " [syntax]";
                 String name = (String) caadr;
-                mEntries.put(name, new SymbolEntry(name, "definition", SymbolEntry.VARIABLE, resource, position));
+                mEntries.put(name, new SymbolEntry(name, description, SymbolEntry.VARIABLE, resource, position));
             }
             return;
         }
