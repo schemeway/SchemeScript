@@ -5,12 +5,16 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
+import java.util.*;
+import java.util.List;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.*;
+import org.eclipse.ui.part.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.dialogs.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
@@ -18,11 +22,24 @@ import org.schemeway.plugins.schemescript.editor.*;
 
 public class JumpToDefinitionAction extends Action {
     private SchemeEditor mEditor;
+    private IResource mResource;
 
     public JumpToDefinitionAction(SchemeEditor editor) {
         setText("Find definition");
         setToolTipText("Jump to the symbol definition");
         mEditor = editor;
+        setupResource();
+    }
+    
+    private void setupResource() {
+        IEditorInput input = mEditor.getEditorInput();
+        if (input instanceof FileEditorInput) {
+            mResource = ((FileEditorInput)input).getFile();
+        }
+    }
+    
+    private IResource getResource() {
+        return mResource;
     }
 
     public void run() {
@@ -42,6 +59,7 @@ public class JumpToDefinitionAction extends Action {
                     entry = entries[0];
                 }
                 else {
+                    entries = boostPriorities(entries);
                     Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                     SymbolSelectionDialog dialog = new SymbolSelectionDialog(shell, entries);
                     dialog.open();
@@ -67,5 +85,27 @@ public class JumpToDefinitionAction extends Action {
         catch (Throwable exception) {
             SchemeScriptPlugin.logException("Exception in jump definition", exception);
         }
+    }
+    
+    private SymbolEntry[] boostPriorities(SymbolEntry[] entries) {
+        List list = Arrays.asList(entries);
+        
+        Collections.sort(list, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                SymbolEntry e1 = (SymbolEntry)o1;
+                SymbolEntry e2 = (SymbolEntry)o2;
+                int p1 = e1.getPriority();
+                int p2 = e2.getPriority();
+                if (e1.getMarker() != null && e1.getMarker().getResource().equals(getResource()))
+                    p1 += 10;
+                if (e2.getMarker() != null && e2.getMarker().getResource().equals(getResource()))
+                    p2 += 10;
+                if (p1 < p2) return 1;
+                if (p1 == p2) return 0;
+                else return -1;
+            }
+        });
+        
+        return (SymbolEntry[]) list.toArray(new SymbolEntry[list.size()]);
     }
 }
