@@ -30,7 +30,9 @@ public class DefinitionListView extends ViewPart {
                 case 1:
                     return ((SymbolEntry) obj).getDescription();
                 case 2:
-                    return ((SymbolEntry) obj).getFile().getRawLocation().toOSString();
+                    return ((SymbolEntry) obj).getFile().getName();
+                case 3:
+                    return ((SymbolEntry) obj).getFile().getParent().getRawLocation().toOSString();
                 default:
                     return "";
             }
@@ -59,6 +61,10 @@ public class DefinitionListView extends ViewPart {
         TableColumn categoryColumn = new TableColumn(table, SWT.LEFT);
         categoryColumn.setText("Description");
         categoryColumn.setWidth(200);
+        
+        TableColumn fileColumn = new TableColumn(table, SWT.LEFT);
+        fileColumn.setText("File");
+        fileColumn.setWidth(150);
 
         TableColumn locationColumn = new TableColumn(table, SWT.LEFT);
         locationColumn.setText("Location");
