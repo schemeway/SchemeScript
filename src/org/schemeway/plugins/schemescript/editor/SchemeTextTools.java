@@ -61,7 +61,8 @@ public class SchemeTextTools {
     }
 
     public IAutoIndentStrategy getAutoIndentStrategy(String contentType) {
-        if (contentType == IDocument.DEFAULT_CONTENT_TYPE) {
+        if (contentType == IDocument.DEFAULT_CONTENT_TYPE 
+                || contentType == SchemePartitionScanner.SCHEME_COMMENT) {
             return new SchemeIndentationStrategy(getIndentationManager());
         }
         return null;
