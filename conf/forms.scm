@@ -9,11 +9,11 @@
 
 (require 'srfi-1)
 
-;;(load-relative "macros.scm")
-;;(load-relative "namespaces.scm")
-;;(load-relative "util.scm")
-;;(load-relative "buffer.scm")
-;;(load-relative "modules.scm")
+(load-relative "macros.scm")
+(load-relative "namespaces.scm")
+(load-relative "util.scm")
+(load-relative "buffer.scm")
+(load-relative "modules.scm")
 
 
 ;;;
