@@ -47,7 +47,7 @@
         (scope (SearchEngine:createWorkspaceScope))
         (collector :: <SimpleSearchCollector> (make <SimpleSearchCollector>)))
     (SearchEngine:search engine (RsrcPlugin:getWorkspace) pattern scope collector)
-    (field collector 'elements))))
+    (field collector 'elements)))
 
 
 
