@@ -41,6 +41,7 @@ public class InterpreterPreferences extends FieldEditorPreferencePage implements
     public final static String INTERPRETER_FILENAME_GROUP = PREFIX + "filenameGroup";
     public final static String INTERPRETER_LINENO_GROUP = PREFIX + "lineNoGroup";
     public final static String INTERPRETER_LINK_GROUP = PREFIX + "linkGroup";
+    public final static String INTERPRETER_SAVE_PID = PREFIX + "savesPID";
 
     Pattern mErrorPattern = null;
     
@@ -67,13 +68,9 @@ public class InterpreterPreferences extends FieldEditorPreferencePage implements
         store.setDefault(INTERPRETER_FILENAME_GROUP, -1);
         store.setDefault(INTERPRETER_LINENO_GROUP, -1);
         store.setDefault(INTERPRETER_LINK_GROUP, -1);
+        store.setDefault(INTERPRETER_SAVE_PID, false);
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-     */
     protected void createFieldEditors() {
         initializeDefaultPreferences(getPreferenceStore());
         addField(new StringFieldEditor(INTERPRETER_NAME, "Interpreter name:", getFieldEditorParent()));
@@ -94,6 +91,8 @@ public class InterpreterPreferences extends FieldEditorPreferencePage implements
         editor = new IntegerFieldEditor(INTERPRETER_LINK_GROUP, "Error link group:", getFieldEditorParent());
         editor.setValidRange(-1, 50);
         addField(editor);
+        
+        addField(new BooleanFieldEditor(INTERPRETER_SAVE_PID, "Interpreter saves PID", getFieldEditorParent()));
     }
 
     public static String getCommandLine() {
@@ -135,5 +134,10 @@ public class InterpreterPreferences extends FieldEditorPreferencePage implements
     public static int getLinkGroup() {
         IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
         return store.getInt(INTERPRETER_LINK_GROUP);
+    }
+    
+    public static boolean getSavesPID() {
+        IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
+        return store.getBoolean(INTERPRETER_SAVE_PID);
     }
 }
