@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="0.2.2"
+   version="0.3.0"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -421,73 +421,73 @@
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast0"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 0"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast1"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 1"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast2"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 2"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast3"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 3"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast4"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 4"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast5"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 5"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast6"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 6"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast7"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 7"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast8"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 8"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.fast9"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="ALT+K 9"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.start"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="F9"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.restart"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="CTRL+F9"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -505,7 +505,7 @@
       </keyBinding>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.dictionary.find"
-            contextId="Scheme Editing"
+            scope="org.eclipse.ui.globalScope"
             keySequence="CTRL+F12"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -589,8 +589,8 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            icon="icons/schemeway.gif"
             class="org.schemeway.plugins.schemescript.SchemePerspective"
+            icon="icons/schemeway.gif"
             name="Scheme"
             id="org.schemeway.plugins.schemescript.schemePerspective"/>
    </extension>
@@ -602,5 +602,48 @@
             modes="run"
             id="org.schemeway.plugins.schemescript.interpreter"/>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Scheme Action Set"
+            visible="false"
+            id="org.schemeway.plugins.schemescript.actionSet">
+         <menu
+               label="Scheme"
+               id="org.schemeway.plugins.schemescript.schemeMenu">
+            <groupMarker name="interpreter"/>         
+            <separator name="additions"/>
+        </menu>
+         <action
+               label="Find Scheme Symbol..."
+               definitionId="org.schemeway.plugins.schemescript.dictionary.find"
+               class="org.schemeway.plugins.schemescript.action.FindSymbolAction"
+               menubarPath="org.schemeway.plugins.schemescript.schemeMenu/additions"
+               id="org.schemeway.plugins.schemescript.FindSymbol"/>
+         <action
+               toolbarPath="Normal/additions"
+               label="Restart Interpreter"
+               definitionId="org.schemeway.plugins.schemescript.eval.restart"
+               class="org.schemeway.plugins.schemescript.action.RestartInterpreterAction"
+               icon="icons/restartScheme.gif"
+               tooltip="Restart the Scheme interpreter"
+               menubarPath="org.schemeway.plugins.schemescript.schemeMenu/interpreter"
+               id="org.schemeway.plugins.schemescript.RestartInterpreter"/>
+         <action
+               toolbarPath="Normal/additions"
+               label="Start Interpreter"
+               definitionId="org.schemeway.plugins.schemescript.eval.start"
+               class="org.schemeway.plugins.schemescript.action.StartInterpreterAction"
+               icon="icons/startScheme.gif"
+               tooltip="Start the Scheme interpreter if not already started"
+               menubarPath="org.schemeway.plugins.schemescript.schemeMenu/interpreter"
+               id="org.schemeway.plugins.schemescript.LaunchInterpreter"/>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.schemeway.plugins.schemescript.schemePerspective">
+         <actionSet id="org.schemeway.plugins.schemescript.actionSet"/>
+      </perspectiveExtension>
+   </extension>
 </plugin>
