@@ -27,6 +27,7 @@
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.ui.views"/>
    </requires>
 
    <extension

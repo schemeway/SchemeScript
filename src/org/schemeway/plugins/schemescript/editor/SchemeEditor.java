@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.text.*;
@@ -16,6 +17,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.views.contentoutline.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.action.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
@@ -29,6 +31,7 @@ public class SchemeEditor extends TextEditor {
     private SexpExplorer mExplorer;
     private PaintManager mPaintManager;
     private SchemeParenthesisPainter mParenPainter;
+    private ISchemeOutlinePage mOutlinePage;
 
     public SchemeEditor() {
         super();
@@ -42,6 +45,51 @@ public class SchemeEditor extends TextEditor {
         super.dispose();
     }
 
+    //
+    //// ContentOutlinePage support
+    //
+    
+    public Object getAdapter(Class adapter)
+    {
+        if (IContentOutlinePage.class.equals(adapter)) {
+            if (mOutlinePage == null) {
+                mOutlinePage = createOutlinePage();
+            }
+            return mOutlinePage;
+        }
+        return super.getAdapter(adapter);
+    }
+    
+    private SchemeOutlinePage createOutlinePage()
+    {
+        return new SchemeOutlinePage(this);
+    }
+
+    public void doSaveAs() {
+        super.doSaveAs();
+        if (mOutlinePage != null) {
+            mOutlinePage.update();
+        }
+    }
+    
+    public void doSave(IProgressMonitor monitor) {
+        super.doSave(monitor);
+        if (mOutlinePage != null) {
+            mOutlinePage.update();
+        }
+    }
+    
+    public void doRevertToSaved() {
+        super.doRevertToSaved();
+        if (mOutlinePage != null) {
+            mOutlinePage.update();
+        }
+    }
+    
+    //
+    //// Preference changes support
+    //
+    
     protected final boolean affectsTextPresentation(final PropertyChangeEvent event) {
         String property = event.getProperty();
 
@@ -84,6 +132,10 @@ public class SchemeEditor extends TextEditor {
         startParenthesisHighlighting();
     }
     
+    //
+    //// SymbolDictionary support
+    //
+    
     public ISymbolDictionary getSymbolDictionary() {
         if (mDictionary == null) {
             mDictionary = UserDictionary.getInstance();
@@ -97,6 +149,10 @@ public class SchemeEditor extends TextEditor {
         });
     }
 
+    //
+    //// Actions, menus
+    //
+    
     protected void createActions() {
         super.createActions();
 
@@ -177,7 +233,7 @@ public class SchemeEditor extends TextEditor {
         action = new JumpToDefinitionAction(this);
         action.setActionDefinitionId(SchemeActionConstants.JUMP_DEF);
         this.setAction(SchemeActionConstants.JUMP_DEF, action);
-
+        
         action= new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
         setAction("ContentAssistProposal", action); 
@@ -220,6 +276,10 @@ public class SchemeEditor extends TextEditor {
         addAction(evalMenu, "group.eval", SchemeActionConstants.EVAL_EXPR);
     }
 
+    //
+    //// Parenthesis highlighting
+    //
+    
     private void startParenthesisHighlighting() {
         if (mParenPainter == null) {
             ISourceViewer sourceViewer = getSourceViewer();
@@ -234,8 +294,10 @@ public class SchemeEditor extends TextEditor {
 
     }
 
-    /** --- Helpers --- * */
-
+    //
+    //// Text editing helper methods
+    //
+    
     public SexpExplorer getExplorer() {
         if (mExplorer == null) {
             mExplorer = new SexpExplorer(getDocument());
