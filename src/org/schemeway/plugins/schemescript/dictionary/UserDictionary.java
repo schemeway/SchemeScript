@@ -16,15 +16,15 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.ui.*;
+import org.schemeway.plugins.schemescript.*;
 
 public class UserDictionary extends AbstractSymbolDictionary implements IResourceChangeListener {
     private static UserDictionary mInstance;
-    private static List           mSchemeExtensions;
-    
-    private List      mPendingResources = Collections.synchronizedList(new LinkedList());
+    private static List mSchemeExtensions;
+
+    private List mPendingResources = Collections.synchronizedList(new LinkedList());
     private Hashtable mEntries = new Hashtable();
 
     private UserDictionary() {
@@ -48,13 +48,14 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         final IProject[] projects = root.getProjects();
         try {
-            for(int i=0; i<projects.length; i++) {
+            for (int i = 0; i < projects.length; i++) {
                 IProject project = projects[i];
                 collectSchemeSources(project);
             }
             processPendingResources(false);
         }
         catch (Exception exception) {
+            SchemeScriptPlugin.logException("Error while updating user dictionary", exception);
         }
     }
 
@@ -87,7 +88,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
                 }
             }
     }
-    
+
     private void processPendingResources(boolean displayProgress) {
         if (!mPendingResources.isEmpty()) {
             try {
@@ -96,17 +97,18 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
                     mPendingResources.toArray(files);
                     mPendingResources.clear();
                 }
-                ProgressMonitorDialog dialog = null;
+                IWorkbenchWindow window = null;
                 try {
                     if (displayProgress)
-                        dialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+                        window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                 }
                 catch (Exception exception) {
-                    dialog = null;
+                    window = null;
                 }
-                if (dialog != null) {
-                    dialog.run(true, true, new IRunnableWithProgress() {
-                        public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                if (window != null) {
+                    window.run(true, true, new IRunnableWithProgress() {
+                        public void run(IProgressMonitor monitor) throws InvocationTargetException,
+                                InterruptedException {
                             scanPendingChangedFiles(files, monitor);
                         }
                     });
@@ -115,16 +117,17 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
                     scanPendingChangedFiles(files, null);
             }
             catch (Exception exception) {
-                exception.printStackTrace();
+                SchemeScriptPlugin.logException("Error while updating user dictionary", exception);
             }
         }
     }
-    
+
     private void scanPendingChangedFiles(final IFile[] files, IProgressMonitor monitor) {
         if (monitor != null)
             monitor.beginTask("SchemeScript - Updating symbol dictionary:", files.length);
-        for (int i=0; i<files.length; i++) {
-            IFile file = (IFile)files[i];
+        removeEntriesForFiles(files);
+        for (int i = 0; i < files.length; i++) {
+            IFile file = (IFile) files[i];
             try {
                 file.deleteMarkers(IMarker.TEXT, false, 0);
             }
@@ -139,7 +142,21 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
             monitor.done();
     }
 
-
+    private void removeEntriesForFiles(IFile[] files) {
+        List removedEntries = new LinkedList();
+        for (Iterator elements = mEntries.values().iterator(); elements.hasNext();) {
+            SymbolEntry entry = (SymbolEntry) elements.next();
+            for (int i = 0; i < files.length; i++) {
+                if (entry.getMarker().getResource().equals(files[i])) {
+                    removedEntries.add(entry);
+                    break;
+                }
+            }
+        }
+        for (Iterator iterator = removedEntries.iterator(); iterator.hasNext();) {
+            mEntries.remove(((SymbolEntry) iterator.next()).getName());
+        }
+    }
 
     private void scanSchemeFile(IFile file, IProgressMonitor monitor) {
         if (monitor != null) {
@@ -175,12 +192,12 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
                 Object cdr = ((Pair) object).cdr;
                 int position = 0;
                 if (object instanceof PairWithPosition) {
-                    position = ((PairWithPosition)object).getLine();
+                    position = ((PairWithPosition) object).getLine();
                 }
 
                 if ((car instanceof String) && (cdr instanceof Pair)) {
-                    String name = ((String)car);
-                    if (name.equals("define") || name.equals("defmacro") || name.equals("define-syntax")) { 
+                    String name = ((String) car);
+                    if (name.equals("define") || name.equals("defmacro") || name.equals("define-syntax")) {
                         processDefineForm(cdr, resource, position, name);
                         continue;
                     }
@@ -218,10 +235,11 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
         if (cadr instanceof String) {
             String name = (String) cadr;
             String description = name;
-            if (type.equals("define")) 
+            if (type.equals("define"))
                 description += " [variable]";
-            else if (type.equals("defmacro") || type.equals("define-syntax")) 
-                description += " [syntax]";
+            else
+                if (type.equals("defmacro") || type.equals("define-syntax"))
+                    description += " [syntax]";
             mEntries.put(name, new SymbolEntry(name, description, SymbolEntry.VARIABLE, resource, position));
             return;
         }
@@ -229,7 +247,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
             Object caadr = ((Pair) cadr).car;
             if (caadr instanceof String) {
                 String description = cadr.toString();
-                if (type.equals("defmacro") || type.equals("define-syntax")) 
+                if (type.equals("defmacro") || type.equals("define-syntax"))
                     description += " [syntax]";
                 String name = (String) caadr;
                 mEntries.put(name, new SymbolEntry(name, description, SymbolEntry.VARIABLE, resource, position));
@@ -248,9 +266,6 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
     protected void completeSymbols(String prefix, List entries) {
         processPendingResources(true);
 
-        if (prefix.length() < 3) 
-            return;
-        
         Enumeration enumeration = mEntries.keys();
         while (enumeration.hasMoreElements()) {
             String symbolName = (String) enumeration.nextElement();
@@ -273,9 +288,10 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
             }
         }
         catch (Exception exception) {
+            SchemeScriptPlugin.logException("Error while updating user dictionary", exception);
         }
     }
-    
+
     private boolean isSchemeSourceFile(IFile file) {
         String extension = file.getFileExtension();
         return extension != null && mSchemeExtensions.contains(extension);
@@ -284,10 +300,11 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
     private void processResourceDelta(IResourceDelta delta) {
         IResource resource = delta.getResource();
         int kind = delta.getKind();
-        if (resource instanceof IFile 
-                && (kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED)
-                && !((delta.getFlags() & IResourceDelta.MARKERS) != 0)) {
-            processChangedResource((IFile)resource);
+        if (resource instanceof IFile
+            && (kind == IResourceDelta.ADDED 
+                || (kind == IResourceDelta.CHANGED 
+                    && ((delta.getFlags() & IResourceDelta.CONTENT) != 0)))) {
+            processChangedResource((IFile) resource);
         }
         IResourceDelta[] children = delta.getAffectedChildren();
         for (int i = 0; i < children.length; i++) {
@@ -295,7 +312,6 @@ public class UserDictionary extends AbstractSymbolDictionary implements IResourc
         }
     }
 
-    
     static {
         // TODO - should be made configurable
         mSchemeExtensions = new LinkedList();
