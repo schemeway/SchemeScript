@@ -46,12 +46,28 @@ public class SchemeScanner {
 
             switch (ch) {
                 case '[':
+                {
+                    if (SchemeScannerUtilities.bracketsAreParentheses()) {
+                        consume();
+                        return SchemeToken.createLeftParen(getTokenOffset());
+                    }
+                    else
+                        return parseDefaultToken(ch);
+                }
                 case '(':
                 {
                     consume();
                     return SchemeToken.createLeftParen(getTokenOffset());
                 }
                 case ']':
+                {
+                    if (SchemeScannerUtilities.bracketsAreParentheses()) {
+                        consume();
+                        return SchemeToken.createRightParen(getTokenOffset());
+                    }
+                    else
+                        return parseDefaultToken(ch);
+                }
                 case ')':
                 {
                     consume();
@@ -145,7 +161,8 @@ public class SchemeScanner {
                 return SchemeToken.createVectorPrefix(getTokenOffset());
             }
             default:
-                return SchemeToken.createError(getTokenOffset(), getTokenLength());
+                return parseDefaultToken(ch);
+                //return SchemeToken.createError(getTokenOffset(), getTokenLength());
         }
     }
 

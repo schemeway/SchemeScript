@@ -7,6 +7,9 @@ package org.schemeway.plugins.schemescript.parser;
 
 public final class SchemeScannerUtilities {
 
+    private static boolean mBracketsAsParenthesis = true;
+    private static boolean mDashInIdentifiers = false;
+
     public final static int NONE = 0;
     public final static int PARENTHESIS = 1;
     public final static int BRACKET = 2;
@@ -19,13 +22,29 @@ public final class SchemeScannerUtilities {
                 return PARENTHESIS;
             case '[':
             case ']':
-                return BRACKET;
-//            case '{':
-//            case '}':
-//                return BRACE;
+                if (mBracketsAsParenthesis)
+                    return BRACKET;
+                else
+                    return NONE;
             default:
                 return NONE;
         }
+    }
+
+    public static final boolean bracketsAreParentheses() {
+        return mBracketsAsParenthesis;
+    }
+    
+    public static final boolean dashInIdentifiers() {
+        return mDashInIdentifiers;
+    }
+    
+    public static final void setBracketsAreParentheses(boolean value) {
+        mBracketsAsParenthesis = value;
+    }
+
+    public static final void setDashInIdentifiers(boolean value) {
+        mDashInIdentifiers = value;
     }
 
     public final static boolean isParenthesis(char ch) {
@@ -33,38 +52,49 @@ public final class SchemeScannerUtilities {
     }
 
     public final static boolean isOpeningParenthesis(char ch) {
-        return (ch == '(' || ch == '[' || ch == '{');
+        return (ch == '(' || (mBracketsAsParenthesis && (ch == '[' || ch == '{')));
     }
 
     public final static boolean isClosingParenthesis(char ch) {
-        return (ch == ')' || ch == ']' || ch == '}');
+        return (ch == ')' || (mBracketsAsParenthesis && (ch == ']' || ch == '}')));
     }
 
     public final static boolean isPunctuationChar(char ch) {
         return (isParenthesis(ch) || ch == '\'' || ch == ',' || ch == '`');
     }
 
+    public final static boolean isIdentifierPrefixChar(char ch) {
+        return (Character.isLetter(ch) || isSpecialInitial(ch));
+    }
+
     public final static boolean isIdentifierPartChar(char ch) {
-        // TODO: optimize with a table lookup..!
-        return (Character.isLetter(ch)
-                || Character.isDigit(ch)
-                || ch == '-'
-                || ch == '_'
-                || ch == '?'
-                || ch == '!'
-                || ch == '@'
+        return (Character.isDigit(ch) || isIdentifierPrefixChar(ch) || isSpecialSubsequent(ch));
+    }
+
+    public final static boolean isSpecialInitial(char ch) {
+        return (ch == '!'
                 || ch == '$'
                 || ch == '%'
-                || ch == '^'
                 || ch == '&'
                 || ch == '*'
                 || ch == '/'
-                || ch == '+'
-                || ch == '~'
-                || ch == '='
+                || ch == ':'
                 || ch == '<'
+                || ch == '='
                 || ch == '>'
-                || ch == '.' || ch == ':');
+                || ch == '?'
+                || ch == '^'
+                || ch == '_'
+                || ch == '~' 
+                || (ch == '#' && mDashInIdentifiers));
+    }
+
+    public final static boolean isSpecialSubsequent(char ch) {
+        return ch == '-'
+               || ch == '+'
+               || ch == '.'
+               || ch == '@'
+               || (!mBracketsAsParenthesis && (ch == '[' || ch == ']'));
     }
 
     public final static boolean isWhitespaceChar(char ch) {
