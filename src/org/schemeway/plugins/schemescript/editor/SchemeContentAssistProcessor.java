@@ -71,7 +71,15 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         }
     }
 
-    
+    private static class Validator implements IContextInformationValidator {
+        private int mInstallOffset;
+        public boolean isContextInformationValid(int offset) {
+            return Math.abs(mInstallOffset - offset) < 5;
+        }
+        public void install(IContextInformation info, ITextViewer viewer, int offset) {
+            mInstallOffset = offset;
+        }
+    }
 
     public SchemeContentAssistProcessor() {
     }
@@ -103,7 +111,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
         IContextInformation[] result = null;
         try {
-            String symbol = findSymbolBeforePoint(viewer, offset);
+            String symbol = findSymbolAroundPoint(viewer, offset);
             if (symbol != null) {
                 List informations = new LinkedList();
                 SymbolEntry[] matchingEntries = SchemeScriptPlugin.getDefault().getDictionary().findSymbol(symbol);
@@ -111,7 +119,6 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
                     informations.add(makeContextInfo(matchingEntries[index]));
 
                 if (informations.size() != 0) {
-                    //Collections.sort(informations, new ProposalComparator());
                     result = (IContextInformation[]) informations.toArray(new IContextInformation[informations.size()]);
                 }
             }
@@ -136,7 +143,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     }
 
     public IContextInformationValidator getContextInformationValidator() {
-        return null;
+        return new Validator();
     }
 
     private String findSymbolBeforePoint(ITextViewer viewer, int offset) throws BadLocationException {
@@ -148,6 +155,22 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
             return null;
         else
             return document.get(start, offset - start);
+    }
+    
+    private String findSymbolAroundPoint(ITextViewer viewer, int offset) throws BadLocationException {
+        IDocument document = viewer.getDocument();
+        int length = document.getLength();
+        while (offset > 0 && Character.isWhitespace(document.getChar(offset - 1)))
+            offset--;
+        int start = offset;
+        while (start > 0 && SchemeScannerUtilities.isIdentifierPartChar(document.getChar(start - 1)))
+            start--;
+        if (start == offset)
+            return null;
+        while (offset < length && SchemeScannerUtilities.isIdentifierPartChar(document.getChar(offset)))
+            offset++;
+            
+        return document.get(start, offset - start);
     }
     
     private IContextInformation makeContextInfo(SymbolEntry entry) {
