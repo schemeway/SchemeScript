@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="0.3.0"
+   version="0.4.0"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -187,6 +187,13 @@
             category="Scheme Editing"
             categoryId="Scheme Editing"
             id="org.schemeway.plugins.schemescript.eval.definition">
+      </command>
+      <command
+            name="Load File in Interpreter"
+            description="Loads the current file in the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.load">
       </command>
       <command
             name="Fast Eval 0"
@@ -417,6 +424,12 @@
             commandId="org.schemeway.plugins.schemescript.eval.definition"
             contextId="Scheme Editing"
             keySequence="CTRL+SHIFT+CR"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.load"
+            contextId="Scheme Editing"
+            keySequence="CTRL+SHIFT+L"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
@@ -695,5 +708,12 @@
       <perspectiveExtension targetID="org.schemeway.plugins.schemescript.schemePerspective">
          <actionSet id="org.schemeway.plugins.schemescript.actionSet"/>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.consoleLineTrackers">
+      <consoleLineTracker
+            class="org.schemeway.plugins.schemescript.interpreter.SchemeErrorLineTracker"
+            id="org.schemeway.plugins.schemescript.interpreter.consoleLineTracker"
+            processType="scheme"/>
    </extension>
 </plugin>

@@ -1,3 +1,10 @@
+*** Version 0.4.0
+
+- When errors occur in the interpreter, error locations can be
+  analyzed and hyperlinks added to the console window.
+- Added an action to load the document in the interpreter (Ctrl-Shift-L),
+  as well as the associated context menu
+
 *** Version 0.3.0
 
 - Added a Scheme perspective, with menus, toolbar actions
