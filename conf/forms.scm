@@ -21,10 +21,12 @@
 (define (add-entry! dictionary name description type resource line-number)
   (UserDictionary:addEntry dictionary (SymbolEntry:new name description type resource line-number 5)))
 
+
 (define (get-line-number form default-value)
   (if (instance? form <gnu.lists.PairWithPosition>)
       (invoke (as <gnu.lists.PairWithPosition> form) 'getLine)
       default-value))
+
 
 (define (signature->formals lst)
   (map (lambda (parameter)
@@ -43,17 +45,19 @@
 ;;;;   define
 ;;;
 
-(define-form-processor
- 'define
- (lambda (dictionary form resource line-number)
-   (cond ((and (pair? (cdr form)) (symbol? (cadr form)))
-          (let* ((name        (cadr form))
-                 (description (format #f "~a - variable" name)))
-            (add-entry! dictionary name description 'variable resource line-number)))
-         ((and (pair? (cdr form)) (list? (cadr form)) (symbol? (caadr form)))
-          (let ((name        (caadr form))
-                (description (format #f "~a - procedure" (signature->formals (cadr form)))))
-            (add-entry! dictionary name description 'function resource line-number))))))
+(let ((define-processor 
+       (lambda (dictionary form resource line-number)
+         (cond ((and (pair? (cdr form)) (symbol? (cadr form)))
+                (let* ((name        (cadr form))
+                       (description (format #f "~a - variable" name)))
+                  (add-entry! dictionary name description 'variable resource line-number)))
+               ((and (pair? (cdr form)) (list? (cadr form)) (symbol? (caadr form)))
+                (let ((name        (caadr form))
+                      (description (format #f "~a - procedure" (signature->formals (cadr form)))))
+                  (add-entry! dictionary name description 'function resource line-number)))))))
+  (define-form-processor 'define          define-processor)
+  (define-form-processor 'define-private  define-processor)
+  (define-form-processor 'define-constant define-processor))
 
 
 ;;;
@@ -135,7 +139,6 @@
                                   (line        (get-line-number field-or-method line-number)))
                              (add-entry! dictionary method-name description 'class resource line)))))
                        (cdddr form)))))))
-
   (define-form-processor 'define-simple-class class-processor)
   (define-form-processor 'define-class class-processor))
 
@@ -180,5 +183,5 @@
                                 (description (format #f "(~a record value) - field setter" setter-name)))
                            (add-entry! dictionary setter-name description 'record-getter resource line))))))
                  fields)))))
-     
+
 
