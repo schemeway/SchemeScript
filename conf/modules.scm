@@ -38,15 +38,16 @@
 
 (define (symbol->module-name symbol #!optional (buffer (current-buffer)))
   (let* ((dictionary (SchemeEditor:getSymbolDictionary buffer))
-         (entries    (array->list (SymbolDictionary:findSymbol dictionary symbol))))
-    (and (pair? entries)
-         (choose-from-list
-          "Symbol multiply declared"
-          "Choose the module to require:"
-          (filter symbol? 
-                  (map (lambda (entry)
-                         (find-module-name (SymbolEntry:getFile entry)))
-                       entries))))))
+         (entries    (filter symbol?
+                             (delete-duplicates!
+                              (map (lambda (entry)
+                                     (find-module-name (SymbolEntry:getFile entry)))
+                                   (array->list (SymbolDictionary:findSymbol dictionary symbol)))))))
+    
+    (cond ((null? entries) #f)
+          ((null? (cdr entries)) (car entries))
+          (else 
+           (choose-from-list "Symbol multiply declared" "Choose the module to require:" entries)))))
 
 
 (define (add-require-clause #!optional (symbol (symbol-near-point)) (buffer (current-buffer)))
