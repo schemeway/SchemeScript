@@ -175,6 +175,39 @@ public class SchemeEditor extends TextEditor {
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
         setAction("ContentAssistTip", action); 
     }
+    
+    protected void editorContextMenuAboutToShow(IMenuManager menu) {
+        super.editorContextMenuAboutToShow(menu);
+        menu.add(new Separator("group.sexp"));
+        menu.add(new Separator("group.comments"));
+
+        MenuManager sourceMenu = new MenuManager("Source");
+        menu.add(sourceMenu);
+        
+        sourceMenu.add(new Separator("group.find"));
+        addAction(sourceMenu, "group.find", SchemeActionConstants.JUMP_DEF);
+        addAction(sourceMenu, "group.find", "ContentAssistProposal");
+        addAction(sourceMenu, "group.find", "ContentAssistTip");
+        
+        
+        sourceMenu.add(new Separator("group.comments"));
+        addAction(sourceMenu, "group.comments", SchemeActionConstants.COMMENT_HEADER);
+        addAction(sourceMenu, "group.comments", SchemeActionConstants.COMMENT_CHAPTER);
+        addAction(sourceMenu, "group.comments", SchemeActionConstants.COMMENT_SECTION);
+        addAction(sourceMenu, "group.comments", SchemeActionConstants.COMMENT_SELECTION);
+        
+        sourceMenu.add(new Separator("group.edit"));
+        addAction(sourceMenu, "group.edit", SchemeActionConstants.COMPRESS_SPACES);
+        addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_FORMAT);
+        addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_SWAP);
+        
+        MenuManager evalMenu = new MenuManager("Eval");
+        menu.add(evalMenu);
+        
+        evalMenu.add(new Separator("group.eval"));
+        addAction(evalMenu, "group.eval", SchemeActionConstants.EVAL_DEF);
+        addAction(evalMenu, "group.eval", SchemeActionConstants.EVAL_EXPR);
+    }
 
     private void startParenthesisHighlighting() {
         if (mParenPainter == null) {
