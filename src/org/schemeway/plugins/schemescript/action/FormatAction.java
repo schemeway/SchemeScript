@@ -67,7 +67,8 @@ public class FormatAction extends Action {
             int newIndentation = SchemeIndentationStrategy.findIndentation(context);
             int oldIndentation = SchemeIndentationStrategy.indentationLength(document, lineOffset);
             String indentString = SchemeIndentationStrategy.makeIndentationString(newIndentation);
-            document.replace(lineOffset, oldIndentation, indentString);
+            if (indentString.length() != oldIndentation)
+                document.replace(lineOffset, oldIndentation, indentString);
         }
     }
 
