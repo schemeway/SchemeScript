@@ -15,8 +15,8 @@ import org.schemeway.plugins.schemescript.parser.*;
 
 public class SchemeParenthesisPainter implements IPainter, PaintListener {
     private Position mBracketPosition = new Position(0, 0);
-    private SexpExplorer mExplorer;
-
+    private SchemeEditor mEditor;
+    
     private boolean mIsActive = false;
     private ISourceViewer mSourceViewer;
     private StyledText mTextWidget;
@@ -32,8 +32,8 @@ public class SchemeParenthesisPainter implements IPainter, PaintListener {
      * 
      * @param sourceViewer Source in which to paint brackets.
      */
-    public SchemeParenthesisPainter(final ISourceViewer sourceViewer) {
-        mExplorer = new SexpExplorer(sourceViewer.getDocument());
+    public SchemeParenthesisPainter(final ISourceViewer sourceViewer, SchemeEditor editor) {
+        mEditor = editor;
         mSourceViewer = sourceViewer;
         mTextWidget = sourceViewer.getTextWidget();
     }
@@ -60,8 +60,6 @@ public class SchemeParenthesisPainter implements IPainter, PaintListener {
      * @see IPainter#dispose
      */
     public void dispose() {
-        mExplorer.dispose();
-        mExplorer = null;
         mColor = null;
         mTextWidget = null;
     }
@@ -148,14 +146,19 @@ public final void paint(final int reason) {
             deactivate(true);
             return;
         }
-
+        
+        SexpExplorer explorer = mEditor.getExplorer();
+        
         boolean backward = true;
         boolean closeToParen = false;
         int offset = selection.x;
-        IDocument document = mExplorer.getDocument();
+        IDocument document = mEditor.getDocument();
         try {
-            char previousChar = document.getChar(selection.x - 1);
+            char previousChar = '\0';
             char nextChar = '\0';
+            
+            if (selection.x > 0)
+                previousChar = document.getChar(selection.x - 1);
             
             if (selection.x > 0
                 && SchemeScannerUtilities.isClosingParenthesis(previousChar)
@@ -172,14 +175,14 @@ public final void paint(final int reason) {
                 }
             }
 
-            if (closeToParen && backward && mExplorer.backwardSexpression(selection.x)) {
-                offset = mExplorer.getListStart();
+            if (closeToParen && backward && explorer.backwardSexpression(selection.x)) {
+                offset = explorer.getListStart();
                 char matchingChar = document.getChar(offset);
                 mMismatch = SchemeScannerUtilities.getParenthesisType(previousChar) != SchemeScannerUtilities.getParenthesisType(matchingChar);
             }
             else {
-                if (closeToParen && !backward && mExplorer.forwardSexpression(selection.x)) {
-                    offset = mExplorer.getSexpEnd() - 1;
+                if (closeToParen && !backward && explorer.forwardSexpression(selection.x)) {
+                    offset = explorer.getSexpEnd() - 1;
                     char matchingChar = document.getChar(offset);
                     mMismatch = SchemeScannerUtilities.getParenthesisType(nextChar) != SchemeScannerUtilities.getParenthesisType(matchingChar);
                 }
