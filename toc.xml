@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="SchemeScript User Guide" topic="html/toc.html">
+	<topic label="Overview"  href="html/overview.html"> 
+		<topic href="html/overview.html#configuration" label="Configuration"/>
+		<topic label="Editing" href="html/editing.html">
+			<topic href="html/editing.html#Sexpressions" label="S-expression-based editing"/>
+			<topic href="html/editing.html#Mousecopy" label="Mouse copy"/>
+		</topic>
+		<topic label="Code completion and content assist" href="html/contentassist.html"/>
+		<topic label="Interacting with an interpreter" href="html/interp.html"/>
+	</topic>
+	<topic label="Preferences" href="html/prefs.html"/>
+	<topic href="html/issues.html" label="Known issues"/>
+</toc>

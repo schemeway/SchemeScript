@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>SchemeScript User Guide</title>
+    <link href="schemescript.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>SchemeScript User Guide</h1>
+
+	The SchemeScript plug-in adds a powerful Scheme source 
+	code editor to the Eclipse platform. 
+
+<h2>Introduction</h2>
+
+<h3>Goal</h3>
+<p>
+	The initial goal of this plug-in was to provide a robust, industrial-strength
+	Scheme editor for the Eclipse platform. Eclipse is a state-of-the-art environment
+	for Java development and is highly extensible. Unfortunately, at the time this
+	project started, there was no good Scheme editor available. So we decided to
+	write one. The main inspiration for SchemeScript is, of course, Emacs. But 
+	also a few other proprietary Lisp editors the authors worked with.
+</p>
+<p>
+	So the question is: what makes a good Scheme editor? The answer is simple: it
+	must make Scheme programming fun, not tedious. Since Scheme source code is exclusively 
+	made of S-expressions, it must be optimized for the editing and handling of S-expressions.
+	The main ingredients are thus:
+	<ul>
+		<li>Parenthesis matching (of course) to highlight the corresponding 
+			closing/opening parenthesis;</li>
+		<li>Automatic indentation - indentation is what makes Scheme source code readable;</li>
+		<li>S-expression-based movements/selection;</li>
+		<li>Code completion;</li>
+		<li>interaction with an interpreter.</li>
+	</ul>
+</p>
+<p> 
+	SchemeScript provides all this, and more. Also, almost all features are fully
+	configurable, so one can adapt SchemeScript to its particular needs.
+</p>
+<h3>Non-goal</h3>
+<p>
+	The plug-in was not designed to provide all the features of a modern, complete development
+	environment for Scheme, like well-integrated debugging tools, for instance. But it was
+	designed to provide a basis for such tools. The plug-in can easily be integrated in 
+	other plug-ins offering those features.
+</p>
+
+<h2><a name="configuration">Configuration</a></h2>
+<p>
+	All key sequences described in this document are fully configurable. To change 
+	a key configuration:
+	<ul>
+		<li>open the Preferences page,</li>
+		<li>select the Workbench/Keys section,</li>
+		<li>select the "Scheme Editing" category in the "Command" section,</li>
+		<li>choose the command name,</li>
+		<li>add or remove key sequences.</li>
+	</ul> 
+</p>
+<hr/>
+<p>
+	Copyright (C) 2004 <b>Dominique Boucher</b>.
+</p>
+</body>
+</html>

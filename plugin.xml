@@ -391,7 +391,7 @@
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             class="org.schemeway.plugins.schemescript.editor.SchemeDocumentSetupParticipant"
-            extensions="scm"/>
+            extensions="scm,ss,sch"/>
    </extension>
 
 </plugin>
