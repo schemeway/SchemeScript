@@ -6,6 +6,8 @@
 package org.schemeway.plugins.schemescript.views;
 
 import java.io.*;
+import java.util.*;
+import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
@@ -162,15 +164,20 @@ public class KawaStackTraceView extends ViewPart {
     }
 
     private void setException(Throwable exception) {
-        mStackList.setInput(new Object[]
-        {
-            exception
-        });
+        List throwables = new ArrayList();
+        for ( ; exception != null; exception = exception.getCause())
+            throwables.add(exception);
+        
+        mStackList.setInput(throwables.toArray(new Object[throwables.size()]));
     }
 
     public static void logException(Throwable exception) {
+        logException(exception, exception.getMessage());
+    }
+    
+    public static void logException(Throwable exception, String message) {
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        if (!MessageDialog.openConfirm(shell, "Runtime Exception", exception.getMessage() + "\nDebug?"))
+        if (!MessageDialog.openConfirm(shell, "Runtime Exception", message + "\nDebug?"))
             return;
 
         showStackTrace(exception);
