@@ -138,7 +138,7 @@ public class SchemeEditor extends TextEditor {
             if (SchemePreferences.getSexpEditing()) 
                 addAutoEditStrategies();
             else
-                removeAutorEditStrategies();
+                removeAutoEditStrategies();
         }
         super.handlePreferenceStoreChanged(event);
     }
@@ -168,7 +168,7 @@ public class SchemeEditor extends TextEditor {
         viewer2.prependAutoEditStrategy(mStringDeleter, IDocument.DEFAULT_CONTENT_TYPE);
     }
     
-    private void removeAutorEditStrategies() {
+    private void removeAutoEditStrategies() {
         createEditStrategies();
         
         ITextViewerExtension2 viewer = (ITextViewerExtension2) getSourceViewer();
