@@ -109,21 +109,19 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
                                                             outerStart,
                                                             scheme);
                 }
+                else if (explorer.getSexpType() == SexpExplorer.TYPE_LIST) {
+                    indentation = findColumn(document, explorer.getSexpStart());
+                }
                 else
-                    if (explorer.getSexpType() == SexpExplorer.TYPE_LIST) {
-                        indentation = findColumn(document, explorer.getSexpStart());
-                    }
-                    else
-                        indentation = findColumn(document, previousStart);
+                    indentation = findColumn(document, previousStart);
             }
             else {
                 indentation = findColumn(document, previousStart);
             }
         }
-        else
-            if (explorer.upSexpression(context.getOffset())) {
-                indentation = findColumn(document, explorer.getSexpStart()) + 1;
-            }
+        else if (explorer.upSexpression(context.getOffset())) {
+            indentation = findColumn(document, explorer.getSexpStart()) + 1;
+        }
         return indentation;
     }
 
@@ -147,42 +145,42 @@ public class SchemeIndentationStrategy implements IAutoIndentStrategy {
             }
             indentation = findColumn(document, previousStart);
         }
-        else
-            if (type == IndentationScheme.SEQUENCE || type == IndentationScheme.DEFINITION) {
-                indentation = findColumn(document, outerStart) + 2;
-            }
-            else
-                if (type == IndentationScheme.IF) {
-                    indentation = findColumn(document, outerStart) + 4;
-                }
-                else
-                    if (type == IndentationScheme.WITH) {
-                        int previousCount = 0;
-                        int offset = insertionOffset;
+        else if (type == IndentationScheme.NONE) {
+            indentation = findColumn(document, outerStart);
+        }
+        else if (type == IndentationScheme.SEQUENCE || type == IndentationScheme.DEFINITION) {
+            indentation = findColumn(document, outerStart) + 2;
+        }
+        else if (type == IndentationScheme.IF) {
+            indentation = findColumn(document, outerStart) + 4;
+        }
+        else if (type == IndentationScheme.WITH) {
+            int previousCount = 0;
+            int offset = insertionOffset;
 
-                        while (explorer.backwardSexpression(offset)) {
-                            offset = explorer.getSexpStart();
-                            previousCount++;
-                            if (previousCount > scheme.getHint())
-                                break;
-                        }
-                        if (previousCount > scheme.getHint())
-                            indentation = findColumn(document, outerStart) + 2;
-                        else
-                            indentation = findColumn(document, outerStart) + 4;
-                    }
-                    else
-                        indentation = findColumn(document, previousStart);
+            while (explorer.backwardSexpression(offset)) {
+                offset = explorer.getSexpStart();
+                previousCount++;
+                if (previousCount > scheme.getHint())
+                    break;
+            }
+            if (previousCount > scheme.getHint())
+                indentation = findColumn(document, outerStart) + 2;
+            else
+                indentation = findColumn(document, outerStart) + 4;
+        }
+        else
+            indentation = findColumn(document, previousStart);
         return indentation;
     }
 
     private static int findColumn(IDocument document, int offset) throws BadLocationException {
         IRegion info = document.getLineInformationOfOffset(offset);
         int tabWidth = SchemePreferences.getTabWidth();
-        
+
         int indent = 0;
         int index = info.getOffset();
-        while(index < offset) {
+        while (index < offset) {
             char ch = document.getChar(index++);
             if (ch == '\t')
                 indent += tabWidth;

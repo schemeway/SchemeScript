@@ -11,9 +11,10 @@ public final class IndentationScheme {
     public final static String SEQUENCE = "sequence";
     public final static String WITH = "with";
     public final static String IF = "if";
+    public final static String NONE = "none";
 
     public final static String[] ALL_SCHEMES = new String[] {
-                DEFAULT, DEFINITION, SEQUENCE, IF, WITH
+                DEFAULT, DEFINITION, SEQUENCE, IF, WITH, NONE
     };
 
     private String mSymbol;
