@@ -40,7 +40,7 @@ public final class SchemeActionConstants {
     public final static String COMPRESS_SPACES = FORMAT_PREFIX + "compress";
     
     public final static String JUMP_DEF = SchemeScriptPlugin.PLUGIN_NS + ".jump.definition";
-    public final static String CHOOSE_SYMBOL = SchemeScriptPlugin.PLUGIN_NS + ".dictionary.choose-symbol";
+    public final static String CHOOSE_SYMBOL = SchemeScriptPlugin.PLUGIN_NS + ".dictionary.find";
     
     
 }

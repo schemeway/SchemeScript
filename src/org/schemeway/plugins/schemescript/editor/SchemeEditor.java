@@ -241,6 +241,10 @@ public class SchemeEditor extends TextEditor {
         action = new JumpToDefinitionAction(this);
         action.setActionDefinitionId(SchemeActionConstants.JUMP_DEF);
         this.setAction(SchemeActionConstants.JUMP_DEF, action);
+        
+        action = new FindSymbolAction(this);
+        action.setActionDefinitionId(SchemeActionConstants.CHOOSE_SYMBOL);
+        this.setAction(SchemeActionConstants.CHOOSE_SYMBOL, action);
 
         action = new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(),
                                          "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$

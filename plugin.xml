@@ -202,6 +202,13 @@
             categoryId="Scheme Editing"
             id="org.schemeway.plugins.schemescript.jump.definition">
       </command>
+      <command
+            name="Find Symbol"
+            description="Finds a symbol in the dictionary"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.dictionary.find">
+      </command>
       <keyBinding
             commandId="org.schemeway.plugins.schemescript.sexp.forward"
             contextId="Scheme Editing"
@@ -338,6 +345,12 @@
             commandId="org.schemeway.plugins.schemescript.jump.definition"
             contextId="Scheme Editing"
             keySequence="F12"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.dictionary.find"
+            contextId="Scheme Editing"
+            keySequence="CTRL+F12"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
