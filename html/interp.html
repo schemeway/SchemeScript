@@ -8,32 +8,22 @@
 </head>
 
 <body>
-<h1>Interacting with an interpreter</h1>
+<h1>Interacting with a Scheme interpreter</h1>
 
 <p>
-	SchemeScript provides a minimal interface to Scheme interpreters. There are plans
-	to provide better support in the next releases.
+	SchemeScript provides a minimal interface to Scheme interpreters. 
 </p>
 
 <h3>Configuring the interpreter</h3>
 <p>
-	To define an interpreter, select the Run/External Tools/External Tools... menu item.
-</p>
-<center><img src="images/run.jpg"/></center>
-<p>
-	Create a new configuration for the interpreter. Give it a meaningful name, like the
-	interpreter's name. Make sure to properly add any command-line argument that
-	rquired by the interpreter (for example, Gambit-C 4.0 requires
-	the <code>-:d-</code> option to run as a child process).
+	To configure a Scheme interpreter, open the <a href="prefs.html#interp">Interpreter preference page</a>.
 </p>
 
 <h3>Launching the interpreter</h3>
 <p>
-	To launch the interpreter, simply select the interpreter from the "Run" menu:
-</p>
-<center><img src="images/start.jpg"/></center>
-<p>
-	The interpreter will be accessible from the Console View:
+	To launch the interpreter from the Scheme perspective, select the "Scheme/Start Interpreter"
+	menu item or click on the "Start Interpreter" toolbar button. The interpreter will be accessible 
+	from the Console View:
 </p>
 <center><img src="images/console.jpg"/></center>
 <p>
@@ -46,7 +36,24 @@
 	<b>Eval Expression</b> and <b>Eval toplevel Expression</b> commands from
 	the editor (<i> &agrave; la </i> Emacs). See <a href="editing.html#eval">Editing</a>.
 </p>
+<p>
+	For example, suppose that the cursor is located after the closing parenthesis in:
+	<center><img src="images/console.jpg"/></center>
+	Pressing Ctrl-Enter will send to whole expresssion (the <code>define</code>	form)
+	to the interpreter.
+</p>
 
+<h3>Fast Eval keys</h3>
+<p>
+	<i>Fast Eval keys</i> are configurable commands that send predefined expressions
+	to the interpreter. These expressions are configured in the 
+    <a href="prefs.html#fasteval">Fast Eval preference page</a>.
+</p>
+<p>
+	For example, suppose that Fast Eval Key #0 is set to <code>(test)</code>. Every time
+	the Fast Eval 0 command is run (by pressing Alt-K 0 by default), the string
+	<code>(test)</code> is sent to the interpreter. 
+</p>
 <hr/>
 <p>
 	Copyright (C) 2004 <b>Dominique Boucher</b>.

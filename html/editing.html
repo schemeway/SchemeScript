@@ -14,7 +14,7 @@ The SchemeScript editor provides mainly useful editing commands. This section
 summarizes those commands (some of them are also available through
 the editor's context menu):
 
-<h2><a name="Sexpressions">S-expression-based editing</a></h2>
+<h2><a name="Commands">Editing commands</a></h2>
 
 <p>
 	The editor provides the following commands:
@@ -47,7 +47,7 @@ the editor's context menu):
 	</tr>
 	<tr><td class="command">Find Symbol</td>
 		<td>Pops up a dialog box that asks for a symbol prefix and displays all matching
-			symbols.</td>
+			symbols. <i>(Only available in the Scheme Perspective.)</i></td>
 		<td class="key">CTRL-F12</td>
 	</tr>
 	<!-- Selection -->
@@ -115,16 +115,36 @@ the editor's context menu):
 	</tr>
 	<!-- Evaluation -->	
 	<tr><td colspan="3" align="center" bgcolor="#dddddd"><b>Evaluation</b></td></tr>
+	
+	<tr><td class="command"><a name="eval">Start Interpreter</a></td>
+		<td>Starts the interpreter, if not already started. 
+			<i>(Only available in the Scheme Perspective.)</i></td>
+		<td class="key">F9</td>
+	<tr><td class="command"><a name="eval">Restart Interpreter</a></td>
+		<td>Restarts the interpreter unconditionally, first stopping any
+			running interpreter. <i>(Only available in the Scheme 
+				Perspective.)</i></td>
+		<td class="key">CTRL-F9</td>
 	<tr><td class="command"><a name="eval">Eval Expression</a></td>
-		<td>Sends the previous S-expression to the top-most console.</td>
+		<td>Sends the previous S-expression to the Scheme interpreter,
+			starting it if necessary.</td>
 		<td class="key">CTRL-RETURN</td>
 	<tr><td class="command">Eval Toplevel Expression</td>
-		<td>Sends the enclosing top-level S-expression to the top-most console
+		<td>Sends the enclosing top-level S-expression to the Scheme interpreter,
+			starting it if necessary
 			(useful when the cursor is inside a top-level definition and we want
 			to send to definition to the interpreter).</td>
 		<td class="key">CTRL-SHIFT-RETURN</td>
 	</tr>
-	
+	<tr><td class="command"><a name="eval">Fast Eval 0</a></td>
+		<td>Sends a predefined string to the Scheme interpreter, starting it
+			if necessary.</td>
+		<td class="key">ALT-k 0</td>
+	<tr><td></td><td>...</td><td></td></tr>
+	<tr><td class="command"><a name="eval">Fast Eval 9</a></td>
+		<td>Sends a predefined string to the Scheme interpreter, starting it
+			if necessary.</td>
+		<td class="key">ALT-k 9</td>
 </table>
 
 <h2><a name="Mousecopy">Mouse copy</a></h2>
