@@ -98,7 +98,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
         ICompletionProposal[] result = null;
         try {
-            String symbol = findSymbolBeforePoint(viewer, offset);
+            String symbol = SchemeTextUtilities.findSymbolBeforePoint(viewer, offset);
             if (symbol != null) {
                 List proposals = new LinkedList();
                 int len = symbol.length();
@@ -122,7 +122,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
         IContextInformation[] result = null;
         try {
-            String symbol = findSymbolAroundPoint(viewer, offset);
+            String symbol = SchemeTextUtilities.findSymbolAroundPoint(viewer, offset);
             if (symbol != null) {
                 List informations = new LinkedList();
                 SymbolEntry[] matchingEntries = SchemeScriptPlugin.getDefault().getDictionary().findSymbol(symbol);
@@ -157,32 +157,6 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         return new Validator();
     }
 
-    private String findSymbolBeforePoint(ITextViewer viewer, int offset) throws BadLocationException {
-        IDocument document = viewer.getDocument();
-        int start = offset;
-        while (start > 0 && SchemeScannerUtilities.isIdentifierPartChar(document.getChar(start - 1)))
-            start--;
-        if (start == offset)
-            return null;
-        else
-            return document.get(start, offset - start);
-    }
-    
-    private String findSymbolAroundPoint(ITextViewer viewer, int offset) throws BadLocationException {
-        IDocument document = viewer.getDocument();
-        int length = document.getLength();
-        while (offset > 0 && Character.isWhitespace(document.getChar(offset - 1)))
-            offset--;
-        int start = offset;
-        while (start > 0 && SchemeScannerUtilities.isIdentifierPartChar(document.getChar(start - 1)))
-            start--;
-        if (start == offset)
-            return null;
-        while (offset < length && SchemeScannerUtilities.isIdentifierPartChar(document.getChar(offset)))
-            offset++;
-            
-        return document.get(start, offset - start);
-    }
     
     private IContextInformation makeContextInfo(SymbolEntry entry) {
         String info = entry.getDescription();
