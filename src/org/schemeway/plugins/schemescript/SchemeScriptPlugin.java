@@ -9,6 +9,7 @@ import java.util.*;
 
 import kawa.standard.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.plugin.*;
 import org.osgi.framework.*;
@@ -103,6 +104,16 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
             mDictionary = UserDictionary.getInstance();
         }
         return mDictionary;
+    }
+    
+    public static void logException(String message, Throwable exception) {
+        IStatus status = new Status(IStatus.ERROR, 
+                                    getDefault().getBundle().getSymbolicName(),
+                                    IStatus.OK,
+                                    message,
+                                    exception);
+        getDefault().getLog().log(status);
+    
     }
 
     protected void initializeDefaultPreferences(IPreferenceStore store) {
