@@ -615,6 +615,56 @@
             <separator name="additions"/>
         </menu>
          <action
+         	   label="Fast Eval 0"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast0"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction0"
+               id="org.schemeway.plugins.schemescript.eval.fast0"/>
+         <action
+         	   label="Fast Eval 1"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast1"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction1"
+               id="org.schemeway.plugins.schemescript.eval.fast1"/>
+         <action
+         	   label="Fast Eval 2"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast2"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction2"
+               id="org.schemeway.plugins.schemescript.eval.fast2"/>
+         <action
+         	   label="Fast Eval 3"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast3"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction3"
+               id="org.schemeway.plugins.schemescript.eval.fast3"/>
+         <action
+         	   label="Fast Eval 4"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast4"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction4"
+               id="org.schemeway.plugins.schemescript.eval.fast4"/>
+         <action
+         	   label="Fast Eval 5"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast5"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction5"
+               id="org.schemeway.plugins.schemescript.eval.fast5"/>
+         <action
+         	   label="Fast Eval 6"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast6"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction6"
+               id="org.schemeway.plugins.schemescript.eval.fast6"/>
+         <action
+         	   label="Fast Eval 7"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast7"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction7"
+               id="org.schemeway.plugins.schemescript.eval.fast7"/>
+         <action
+         	   label="Fast Eval 8"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast8"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction8"
+               id="org.schemeway.plugins.schemescript.eval.fast8"/>
+         <action
+         	   label="Fast Eval 9"
+               definitionId="org.schemeway.plugins.schemescript.eval.fast9"
+               class="org.schemeway.plugins.schemescript.action.FastEvalAction$FastEvalAction9"
+               id="org.schemeway.plugins.schemescript.eval.fast9"/>
+         <action
                label="Find Scheme Symbol..."
                definitionId="org.schemeway.plugins.schemescript.dictionary.find"
                class="org.schemeway.plugins.schemescript.action.FindSymbolAction"
