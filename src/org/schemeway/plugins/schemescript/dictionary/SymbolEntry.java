@@ -20,20 +20,35 @@ public class SymbolEntry {
     public static final String FUNCTION = "function";
     public static final String VARIABLE = "variable";
     
+    public static final int 
+            HIGH = 0,
+            MEDIUM = 1,
+            LOW = 2;
+    
     private String mName;
     private String mDescription;
     private IMarker mMarker;
     private String mCategory;
+    private int mPriority;
     
     public SymbolEntry(String name, String description, String category) {
-        this(name, description, category, null, -1);
+        this(name, description, category, null, -1, LOW);
+    }
+    
+    public SymbolEntry(String name, String description, String category, int priority) {
+        this(name, description, category, null, -1, priority);
     }
     
     public SymbolEntry(String name, String description, String category, IResource source, int position) {
+        this(name, description, category, source, position, LOW);
+    }
+    
+    public SymbolEntry(String name, String description, String category, IResource source, int position, int priority) {
         Assert.isNotNull(name);
         mName = name;
         mDescription = description;
         mCategory = category;
+        mPriority = priority;
         try {
             if (source != null && position >= 0) {
                 mMarker = source.createMarker(IMarker.TEXT);
@@ -60,5 +75,9 @@ public class SymbolEntry {
 
     public String getCategory() {
         return mCategory;
+    }
+    
+    public int getPriority() {
+        return mPriority;
     }
 }

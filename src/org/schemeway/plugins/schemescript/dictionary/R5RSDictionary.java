@@ -16,9 +16,9 @@ public class R5RSDictionary extends AbstractSymbolDictionary {
 
     private static SymbolEntry[] mR5rsSymbols =
     {
-        new SymbolEntry("define", "(define name value)", SymbolEntry.SYNTAX),
-        new SymbolEntry("begin", "(begin body ...)", SymbolEntry.SYNTAX),
-        new SymbolEntry("lambda", "(lambda formals body)", SymbolEntry.SYNTAX),
+        new SymbolEntry("define", "(define name value)", SymbolEntry.SYNTAX, SymbolEntry.HIGH),
+        new SymbolEntry("begin", "(begin body ...)", SymbolEntry.SYNTAX, SymbolEntry.HIGH),
+        new SymbolEntry("lambda", "(lambda formals body)", SymbolEntry.SYNTAX, SymbolEntry.HIGH),
         new SymbolEntry("if", "(if test consequent [alternative])", SymbolEntry.SYNTAX),
         new SymbolEntry("boolean?", "(boolean? o)", SymbolEntry.FUNCTION),
         new SymbolEntry("not", "(not expr)", SymbolEntry.FUNCTION),

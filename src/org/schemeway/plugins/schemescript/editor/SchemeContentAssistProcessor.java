@@ -20,10 +20,12 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     private static class SchemeCompletionProposal implements ICompletionProposal, ICompletionProposalExtension3 {
         CompletionProposal mDelegate;
         String mInsertion;
+        int mPriority;
 
-        public SchemeCompletionProposal(String symbol, String insertion, int offset) {
+        public SchemeCompletionProposal(String symbol, String insertion, int offset, int priority) {
             mDelegate = new CompletionProposal(insertion, offset, 0, insertion.length(), null, symbol, null, null);
             mInsertion = insertion;
+            mPriority = priority;
         }
 
         public void apply(IDocument document) {
@@ -61,13 +63,22 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
             return mInsertion;
         }
+        
+        public int getPriority() {
+            return mPriority;
+        }
     }
 
     private static class ProposalComparator implements Comparator {
         public int compare(Object o1, Object o2) {
-            ICompletionProposal p1 = (ICompletionProposal) o1;
-            ICompletionProposal p2 = (ICompletionProposal) o2;
-            return p1.getDisplayString().compareTo(p2.getDisplayString());
+            SchemeCompletionProposal p1 = (SchemeCompletionProposal) o1;
+            SchemeCompletionProposal p2 = (SchemeCompletionProposal) o2;
+            if (p1.getPriority() == p2.getPriority())
+                return p1.getDisplayString().compareTo(p2.getDisplayString());
+            else if (p1.getPriority() < p2.getPriority())
+                return -1;
+            else
+                return 1;
         }
     }
 
@@ -95,7 +106,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
                 for (int index = 0; index < matchingEntries.length; index++) {
                     SymbolEntry entry = matchingEntries[index];
                     String insertion = entry.getName().substring(len);
-                    proposals.add(new SchemeCompletionProposal(entry.getName(), insertion, offset));
+                    proposals.add(new SchemeCompletionProposal(entry.getName(), insertion, offset, entry.getPriority()));
                 }
                 if (proposals.size() != 0) {
                     Collections.sort(proposals, new ProposalComparator());
