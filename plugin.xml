@@ -393,5 +393,17 @@
             class="org.schemeway.plugins.schemescript.editor.SchemeDocumentSetupParticipant"
             extensions="scm,ss,sch"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Scheme"
+            id="org.schemeway.plugins.schemescript.views"/>
+      <view
+            icon="icons/scheme.gif"
+            class="org.schemeway.plugins.schemescript.views.DefinitionListView"
+            category="org.schemeway.plugins.schemescript.views"
+            name="Definitions"
+            id="org.schemeway.plugins.schemescript.views.definitionList"/>
+   </extension>
 
 </plugin>
