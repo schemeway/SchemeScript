@@ -106,6 +106,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
         TabFolder folder = new TabFolder(composite, SWT.NONE);
         GridData data = new GridData(GridData.FILL_BOTH);
+        data.heightHint = 400;
         folder.setLayoutData(data);
 
         mDefineList = createListControl(folder, "Define", "Defining forms");

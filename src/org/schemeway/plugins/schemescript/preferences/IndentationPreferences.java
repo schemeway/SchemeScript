@@ -101,6 +101,8 @@ public class IndentationPreferences extends SchemePreferencePage {
         text.setLayoutData(data);
 
         Table table = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        table.setLayoutData(data);
         TableColumn column0 = new TableColumn(table, SWT.LEFT);
         TableColumn column1 = new TableColumn(table, SWT.LEFT);
         TableColumn column2 = new TableColumn(table, SWT.LEFT);
@@ -135,6 +137,7 @@ public class IndentationPreferences extends SchemePreferencePage {
         mViewer = new TableViewer(table);
         data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 3;
+        data.heightHint = 400;
         table.setLayoutData(data);
 
         mViewer.setColumnProperties(ROW_NAMES);
