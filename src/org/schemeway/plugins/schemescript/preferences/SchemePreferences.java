@@ -19,7 +19,7 @@ public class SchemePreferences extends SchemePreferencePage {
     public final static String SEXP_EDIT = PREFIX + "sexpEdits";
     
     public final static int DEFAULT_TABWIDTH = 4;
-    private final static boolean DEFAULT_EDITS = true;
+    private final static boolean DEFAULT_EDITS = false;
     private final static int MIN_TABWIDTH = 1;
     private final static int MAX_TABWIDTH = 200;
     
@@ -142,7 +142,7 @@ public class SchemePreferences extends SchemePreferencePage {
         return SchemeScriptPlugin.getDefault().getPreferenceStore().getInt(TAB_WIDTH);
     }
     
-    public static boolean getSexpEditing() {
+    public static boolean isStructuralEditingEnabled() {
         return SchemeScriptPlugin.getDefault().getPreferenceStore().getBoolean(SEXP_EDIT);
     }
 
