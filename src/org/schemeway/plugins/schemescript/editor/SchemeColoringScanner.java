@@ -39,19 +39,26 @@ public class SchemeColoringScanner implements ITokenScanner {
 
     public void updateColors() {
         IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
-        defaultToken.setData(makeAttribute(findColor(store, ColorPreferences.DEFAULT_COLOR), false, false));
-        defineToken.setData(makeAttribute(findColor(store, ColorPreferences.DEFINE_COLOR), true, false));
-        keywordToken.setData(makeAttribute(findColor(store, ColorPreferences.KEYWORD_COLOR), true, false));
-        keyToken.setData(makeAttribute(findColor(store, ColorPreferences.KEY_COLOR), true, true));
-        specialToken.setData(makeAttribute(findColor(store, ColorPreferences.SPECIAL_COLOR), true, false));
-        constantToken.setData(makeAttribute(findColor(store, ColorPreferences.CONSTANT_COLOR), false, false));
-        mutatorToken.setData(makeAttribute(findColor(store, ColorPreferences.MUTATOR_COLOR), true, false));
-        typeToken.setData(makeAttribute(findColor(store, ColorPreferences.TYPE_COLOR), false, false));
-        errorToken.setData(makeAttribute(findColor(store, ColorPreferences.ERROR_COLOR), false, false));
-        parenToken.setData(makeAttribute(findColor(store, ColorPreferences.PAREN_COLOR), false, false));
+        defaultToken.setData(makeAttribute(store, ColorPreferences.DEFAULT_COLOR));
+        defineToken.setData(makeAttribute(store, ColorPreferences.DEFINE_COLOR));
+        keywordToken.setData(makeAttribute(store, ColorPreferences.KEYWORD_COLOR));
+        keyToken.setData(makeAttribute(store, ColorPreferences.KEY_COLOR));
+        specialToken.setData(makeAttribute(store, ColorPreferences.SPECIAL_COLOR));
+        constantToken.setData(makeAttribute(store, ColorPreferences.CONSTANT_COLOR));
+        mutatorToken.setData(makeAttribute(store, ColorPreferences.MUTATOR_COLOR));
+        typeToken.setData(makeAttribute(store, ColorPreferences.TYPE_COLOR));
+        errorToken.setData(makeAttribute(store, ColorPreferences.ERROR_COLOR));
+        parenToken.setData(makeAttribute(store, ColorPreferences.PAREN_COLOR));
         PreferenceUtil.updateKeywordManager(store, mKeywordManager);
     }
 
+    private TextAttribute makeAttribute(IPreferenceStore store, String name) {
+        Color color = findColor(store, name);
+        boolean bold = store.getBoolean(name + ".bold");
+        boolean italic = store.getBoolean(name + ".italic");
+        return makeAttribute(color, bold, italic);
+    }
+    
     private TextAttribute makeAttribute(Color color, boolean bold, boolean italic) {
         int style = SWT.NORMAL;
         if (bold)

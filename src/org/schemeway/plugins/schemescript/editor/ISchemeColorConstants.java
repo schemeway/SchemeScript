@@ -8,6 +8,7 @@ package org.schemeway.plugins.schemescript.editor;
 import org.eclipse.swt.graphics.*;
 
 public interface ISchemeColorConstants {
+    RGB SCHEME_PAREN = new RGB(0, 0, 0);
     RGB SCHEME_COMMENT = new RGB(0, 128, 0);
     RGB SCHEME_CONSTANT = new RGB(92, 0, 0);
     RGB SCHEME_DEFINE = new RGB(0, 0, 0);

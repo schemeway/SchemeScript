@@ -8,6 +8,7 @@ package org.schemeway.plugins.schemescript.editor;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 
 import org.schemeway.plugins.schemescript.*;
@@ -30,7 +31,12 @@ public class SchemeDefaultScanner implements ITokenScanner {
         IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
 
         RGB rgb = PreferenceConverter.getColor(store, mColorName);
-        mToken.setData(new TextAttribute(mColorManager.getColor(rgb)));
+        boolean bold = store.getBoolean(mColorName + ".bold");
+        boolean ital = store.getBoolean(mColorName + ".italic");
+        int style = SWT.NONE;
+        if (bold) style |= SWT.BOLD;
+        if (ital) style |= SWT.ITALIC;
+        mToken.setData(new TextAttribute(mColorManager.getColor(rgb), null, style));
     }
 
     public int getTokenLength() {

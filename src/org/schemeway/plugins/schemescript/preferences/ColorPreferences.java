@@ -6,12 +6,36 @@
 package org.schemeway.plugins.schemescript.preferences;
 
 import org.eclipse.jface.preference.*;
-import org.eclipse.ui.*;
-
+import org.eclipse.jface.util.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.editor.*;
 
-public class ColorPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class ColorPreferences extends SchemePreferencePage {
+
+    static class AppearanceItem {
+        public String name;
+        public String label;
+        public RGB color;
+        public boolean bold;
+        public boolean italic;
+        public RGB defaultColor;
+        public boolean defaultBold;
+        public boolean defaultItalic;
+
+        public AppearanceItem(String itemName, String itemLabel, RGB col, boolean isBold, boolean isItalic) {
+            name = itemName;
+            label = itemLabel;
+            defaultColor = color = col;
+            defaultBold = bold = isBold;
+            defaultItalic = italic = isItalic;
+        }
+    }
+
     public final static String PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".colors.";
     public final static String BACKGROUND_COLOR = PREFIX + "background";
     public final static String MATCHER_COLOR = PREFIX + "matcher";
@@ -30,61 +54,194 @@ public class ColorPreferences extends FieldEditorPreferencePage implements IWork
     public final static String MUTATOR_COLOR = PREFIX + "mutator";
     public final static String TYPE_COLOR = PREFIX + "type";
 
-    public ColorPreferences() {
-        super("Scheme editor colors", GRID);
+    private static AppearanceItem[] mItems =
+    {
+        new AppearanceItem(DEFAULT_COLOR, "Default color", ISchemeColorConstants.SCHEME_DEFAULT, false, false),
+        new AppearanceItem(PAREN_COLOR, "Parentheses", ISchemeColorConstants.SCHEME_PAREN, false, false),
+        new AppearanceItem(COMMENT_COLOR, "Comments", ISchemeColorConstants.SCHEME_COMMENT, false, false),
+        new AppearanceItem(DEFINE_COLOR, "Defining forms", ISchemeColorConstants.SCHEME_DEFINE, true, false),
+        new AppearanceItem(KEYWORD_COLOR, "Special named constants", ISchemeColorConstants.SCHEME_KEYWORD, true, false),
+        new AppearanceItem(KEY_COLOR, "Keywords", ISchemeColorConstants.SCHEME_KEY, true, true),
+        new AppearanceItem(SPECIAL_COLOR, "Special forms", ISchemeColorConstants.SCHEME_SPECIAL, true, false),
+        new AppearanceItem(ERROR_COLOR, "Error", ISchemeColorConstants.SCHEME_ERROR, false, false),
+        new AppearanceItem(STRING_COLOR, "Strings", ISchemeColorConstants.SCHEME_STRING, false, false),
+        new AppearanceItem(CONSTANT_COLOR, "Constants", ISchemeColorConstants.SCHEME_CONSTANT, false, false),
+        new AppearanceItem(MUTATOR_COLOR, "Mutators", ISchemeColorConstants.SCHEME_MUTATOR, true, false),
+        new AppearanceItem(TYPE_COLOR, "Type names", ISchemeColorConstants.SCHEME_TYPE, false, false)
+    };
+
+    private ColorSelector mCurrentItemColor;
+    private Button mCurrentItemBold;
+    private Button mCurrentItemItalic;
+
+    private List mItemList;
+    private ColorSelector mBackgroundColorSelector;
+    private ColorSelector mMatchingColorSelector;
+    private Button mMatchingBox;
+
+    protected Control createContents(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout(1, false));
+
+        createParenMatchingBox(composite);
+        createBackgroundSection(composite);
+        createForegroundSection(composite);
+
+        initializeValues();
+        return composite;
     }
 
-    public void init(IWorkbench workbench) {
+    private void createParenMatchingBox(Composite parent) {
+        Group group = new Group(parent, SWT.NONE);
+        group.setText("Matched parenthesis");
+        group.setLayout(new GridLayout(2, false));
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        new Label(group, SWT.NONE).setText("Matched parenthesis color: ");
+        mMatchingColorSelector = new ColorSelector(group);
+        new Label(group, SWT.NONE).setText("Draw box only: ");
+        mMatchingBox = new Button(group, SWT.CHECK);
     }
 
-    protected IPreferenceStore doGetPreferenceStore() {
-        return SchemeScriptPlugin.getDefault().getPreferenceStore();
+    private void createBackgroundSection(Composite parent) {
+        Group group = new Group(parent, SWT.NONE);
+        group.setText("Background");
+        group.setLayout(new GridLayout(2, false));
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        new Label(group, SWT.NONE).setText("Background color: ");
+        mBackgroundColorSelector = new ColorSelector(group);
     }
 
-    protected void initializeDefaultPreferences(IPreferenceStore store) {
-        initializeDefaults(store);
+    private void createForegroundSection(Composite parent) {
+        Group group = new Group(parent, SWT.NONE);
+        group.setText("Foreground");
+        group.setLayout(new GridLayout(2, false));
+        group.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        mItemList = new List(group, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+        mItemList.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Composite attributes = new Composite(group, SWT.NONE);
+        attributes.setLayout(new GridLayout(2, false));
+
+        new Label(attributes, SWT.NONE).setText("Color:");
+        mCurrentItemColor = new ColorSelector(attributes);
+        new Label(attributes, SWT.NONE).setText("Bold:");
+        mCurrentItemBold = new Button(attributes, SWT.CHECK);
+        new Label(attributes, SWT.NONE).setText("Italic:");
+        mCurrentItemItalic = new Button(attributes, SWT.CHECK);
+
+        String[] itemLabels = new String[mItems.length];
+        for (int i = 0; i < itemLabels.length; i++) {
+            itemLabels[i] = mItems[i].label;
+        }
+        mItemList.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                int index = mItemList.getSelectionIndex();
+                if (index == -1)
+                    return;
+                AppearanceItem selectedItem = mItems[index];
+                mCurrentItemColor.setColorValue(selectedItem.color);
+                mCurrentItemBold.setSelection(selectedItem.bold);
+                mCurrentItemItalic.setSelection(selectedItem.italic);
+            }
+        });
+        mItemList.setItems(itemLabels);
+        mItemList.select(0);
+
+        mCurrentItemColor.setColorValue(mItems[0].color);
+        mCurrentItemColor.addListener(new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                int index = mItemList.getSelectionIndex();
+                if (index == -1)
+                    return;
+                AppearanceItem selectedItem = mItems[index];
+                selectedItem.color = mCurrentItemColor.getColorValue();
+            }
+        });
+        
+        mCurrentItemBold.setSelection(mItems[0].bold);
+        mCurrentItemBold.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                int index = mItemList.getSelectionIndex();
+                if (index == -1)
+                    return;
+                AppearanceItem selectedItem = mItems[index];
+                selectedItem.bold = mCurrentItemBold.getSelection();
+            }
+        });
+
+        mCurrentItemItalic.setSelection(mItems[0].italic);
+        mCurrentItemItalic.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                int index = mItemList.getSelectionIndex();
+                if (index == -1)
+                    return;
+                AppearanceItem selectedItem = mItems[index];
+                selectedItem.italic = mCurrentItemItalic.getSelection();
+            }
+        });
     }
 
     public static void initializeDefaults(IPreferenceStore store) {
         PreferenceConverter.setDefault(store, MATCHER_COLOR, ISchemeColorConstants.MATCHING_PARENS);
+        PreferenceConverter.setDefault(store, BACKGROUND_COLOR, ISchemeColorConstants.SCHEME_BACKGROUND);
         store.setDefault(MATCHER_BOX, false);
 
-        PreferenceConverter.setDefault(store, DEFAULT_COLOR, ISchemeColorConstants.SCHEME_DEFAULT);
-        PreferenceConverter.setDefault(store, BACKGROUND_COLOR, ISchemeColorConstants.SCHEME_BACKGROUND);
-        PreferenceConverter.setDefault(store, PAREN_COLOR, ISchemeColorConstants.SCHEME_PAREN);
-        PreferenceConverter.setDefault(store, COMMENT_COLOR, ISchemeColorConstants.SCHEME_COMMENT);
-        PreferenceConverter.setDefault(store, DEFINE_COLOR, ISchemeColorConstants.SCHEME_DEFINE);
-        PreferenceConverter.setDefault(store, KEYWORD_COLOR, ISchemeColorConstants.SCHEME_KEYWORD);
-        PreferenceConverter.setDefault(store, KEY_COLOR, ISchemeColorConstants.SCHEME_KEY);
-        PreferenceConverter.setDefault(store, SPECIAL_COLOR, ISchemeColorConstants.SCHEME_SPECIAL);
-        PreferenceConverter.setDefault(store, STRING_COLOR, ISchemeColorConstants.SCHEME_STRING);
-        PreferenceConverter.setDefault(store, CONSTANT_COLOR, ISchemeColorConstants.SCHEME_CONSTANT);
-        PreferenceConverter.setDefault(store, MUTATOR_COLOR, ISchemeColorConstants.SCHEME_MUTATOR);
-        PreferenceConverter.setDefault(store, TYPE_COLOR, ISchemeColorConstants.SCHEME_TYPE);
-        PreferenceConverter.setDefault(store, ERROR_COLOR, ISchemeColorConstants.SCHEME_ERROR);
+        for (int i = 0; i < mItems.length; i++) {
+            AppearanceItem item = mItems[i];
+            PreferenceConverter.setDefault(store, item.name, item.defaultColor);
+            store.setDefault(boldAttribute(item), item.defaultBold);
+            store.setDefault(italicAttribute(item), item.defaultItalic);
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-     */
-    protected void createFieldEditors() {
-        initializeDefaultPreferences(getPreferenceStore());
-        addField(new ColorFieldEditor(DEFAULT_COLOR, "Default color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(BACKGROUND_COLOR, "Background color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(PAREN_COLOR, "Parentheses color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(COMMENT_COLOR, "Comments color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(DEFINE_COLOR, "Defining form color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(SPECIAL_COLOR, "Special forms color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(KEY_COLOR, "Keywords color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(KEYWORD_COLOR, "Special named constants color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(STRING_COLOR, "Strings color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(CONSTANT_COLOR, "Constants color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(MUTATOR_COLOR, "Mutators color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(TYPE_COLOR, "Types color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(ERROR_COLOR, "Error color:", getFieldEditorParent()));
-        addField(new ColorFieldEditor(MATCHER_COLOR, "Matched parenthesis color:", getFieldEditorParent()));
-        addField(new BooleanFieldEditor(MATCHER_BOX, "Draw box around matching parenthesis", getFieldEditorParent()));
+    protected void doPerformDefaults() {
+        mBackgroundColorSelector.setColorValue(ISchemeColorConstants.SCHEME_BACKGROUND);
+        mMatchingColorSelector.setColorValue(ISchemeColorConstants.MATCHING_PARENS);
+        mMatchingBox.setSelection(false);
+
+        for (int i = 0; i < mItems.length; i++) {
+            AppearanceItem item = mItems[i];
+            item.color = item.defaultColor;
+            item.bold = item.defaultBold;
+            item.italic = item.defaultItalic;
+        }
+    }
+
+    protected void initializeValues() {
+        IPreferenceStore store = getPreferenceStore();
+        mBackgroundColorSelector.setColorValue(PreferenceConverter.getColor(store, BACKGROUND_COLOR));
+        mMatchingColorSelector.setColorValue(PreferenceConverter.getColor(store, MATCHER_COLOR));
+        mMatchingBox.setSelection(store.getBoolean(MATCHER_BOX));
+
+        for (int i = 0; i < mItems.length; i++) {
+            AppearanceItem item = mItems[i];
+            item.color = PreferenceConverter.getColor(store, item.name);
+            item.bold = store.getBoolean(boldAttribute(item));
+            item.italic = store.getBoolean(italicAttribute(item));
+        }
+    }
+
+    protected void storeValues() {
+        IPreferenceStore store = getPreferenceStore();
+        PreferenceConverter.setValue(store, MATCHER_COLOR, mMatchingColorSelector.getColorValue());
+        PreferenceConverter.setValue(store, BACKGROUND_COLOR, mBackgroundColorSelector.getColorValue());
+        store.setValue(MATCHER_BOX, mMatchingBox.getSelection());
+
+        for (int i = 0; i < mItems.length; i++) {
+            AppearanceItem item = mItems[i];
+            PreferenceConverter.setValue(store, item.name, item.color);
+            store.setValue(boldAttribute(item), item.bold);
+            store.setValue(italicAttribute(item), item.italic);
+        }
+    }
+
+    private static final String italicAttribute(AppearanceItem item) {
+        return item.name + ".italic";
+    }
+
+    private static final String boldAttribute(AppearanceItem item) {
+        return item.name + ".bold";
     }
 }
