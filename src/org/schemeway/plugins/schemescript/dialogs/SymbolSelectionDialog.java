@@ -38,8 +38,8 @@ public class SymbolSelectionDialog extends Window {
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        Label label = new Label(composite, SWT.SHADOW_OUT);
-        label.setText("Symbols");
+        Label label = new Label(composite, SWT.BORDER | SWT.SHADOW_IN);
+        label.setText(" Symbols");
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         label.setLayoutData(data);
         
@@ -64,10 +64,9 @@ public class SymbolSelectionDialog extends Window {
                 if (event.character == '\r') {
                     ok();
                 }
-                else
-                    if (event.character == 27) {
-                        cancel();
-                    }
+//                else if (event.character == 27) {
+//                    cancel();
+//                }
             }
         });
         list.addMouseListener(new MouseAdapter() {
@@ -79,6 +78,7 @@ public class SymbolSelectionDialog extends Window {
     }
 
     protected void ok() {
+        setReturnCode(OK);
         close();
     }
 
