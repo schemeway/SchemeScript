@@ -24,6 +24,9 @@ import org.schemeway.plugins.schemescript.preferences.*;
  */
 public class SchemeScriptPlugin extends AbstractUIPlugin {
     public final static String PLUGIN_NS = "org.schemeway.plugins.schemescript";
+
+    private static final String INTERNAL_INTERPRETER_NAME = "internal";
+    private static final String INTERNAL_INTERPRETER_PREF = PLUGIN_NS + ".interpreter.name"; 
     
     //The shared instance.
     private static SchemeScriptPlugin plugin;
@@ -123,6 +126,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     public void setInterpreter(InterpreterType type) {
         Assert.isNotNull(type);
         mCurrentInterpreter = type;
+        getPreferenceStore().setValue(INTERNAL_INTERPRETER_PREF, type.getID());
     }
     
     public InterpreterType getCurrentInterpreterType() {
@@ -134,7 +138,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     public Interpreter getInternalInterpreter() {
         InterpreterType[] types = InterpreterSupport.getTypes();
         for (int i=0; i<types.length; i++) {
-            if (types[i].getID().equals("internal")) {
+            if (types[i].getID().equals(INTERNAL_INTERPRETER_NAME)) {
                 return types[i].getInterpreter();
             }
         }
@@ -142,9 +146,17 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     }
     
     protected InterpreterType createDefaultInterpreter() {
+        String ID = getPreferenceStore().getString(INTERNAL_INTERPRETER_PREF);
+        
         InterpreterType[] types = InterpreterSupport.getTypes();
         if (types.length == 0)
             return null;
+        
+        for(int index = 0; index < types.length; index++) {
+            if (types[index].getID().equals(ID)) {
+                return types[index];
+            }
+        }
         return types[0];
     }
   
@@ -160,6 +172,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     }
 
     protected void initializeDefaultPreferences(IPreferenceStore store) {
+        store.setDefault(INTERNAL_INTERPRETER_PREF, INTERNAL_INTERPRETER_NAME);
         SchemePreferences.initializeDefaults(store);
         CommentPreferences.initializeDefaults(store);
         ColorPreferences.initializeDefaults(store);
