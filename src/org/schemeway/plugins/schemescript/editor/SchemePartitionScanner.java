@@ -109,13 +109,12 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
                     mState = STATE_DEFAULT;
                 }
             }
-            else
-                if (ch == '|') {
-                    mState = STATE_VBAR;
-                }
-                else {
-                    mState = STATE_DEFAULT;
-                }
+            else if (ch == '|') {
+                mState = STATE_VBAR;
+            }
+            else {
+                mState = STATE_DEFAULT;
+            }
             consume();
 
             if (mState == STATE_DONE)
@@ -147,15 +146,17 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
                     mState = STATE_DONE;
                 }
             }
-            else
-                if (ch == '\\') {
-                    if (mState == STATE_DEFAULT) {
-                        mState = STATE_ESCAPE;
-                    }
-                    else {
-                        mState = STATE_DEFAULT;
-                    }
+            else if (ch == '\\') {
+                if (mState == STATE_DEFAULT) {
+                    mState = STATE_ESCAPE;
                 }
+                else {
+                    mState = STATE_DEFAULT;
+                }
+            }
+            else {
+                mState = STATE_DEFAULT;
+            }
             consume();
             if (mState == STATE_DONE)
                 break;
