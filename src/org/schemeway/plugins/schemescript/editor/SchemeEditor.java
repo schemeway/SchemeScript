@@ -24,6 +24,7 @@ import org.eclipse.ui.views.contentoutline.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.action.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
+import org.schemeway.plugins.schemescript.editor.autoedits.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
@@ -35,6 +36,11 @@ public class SchemeEditor extends TextEditor {
     private PaintManager mPaintManager;
     private SchemeParenthesisPainter mParenPainter;
     private ISchemeOutlinePage mOutlinePage;
+
+    private IAutoEditStrategy mQuoteInserter;
+    private IAutoEditStrategy mMatchinDelimiterInserter;
+    private IAutoEditStrategy mSexpDeleter;
+    private IAutoEditStrategy mStringDeleter;
 
     public SchemeEditor() {
         super();
@@ -76,7 +82,7 @@ public class SchemeEditor extends TextEditor {
         super.doSetInput(input);
         mNavigator = null;
     }
-    
+
     public void doSave(IProgressMonitor monitor) {
         super.doSave(monitor);
         if (mOutlinePage != null) {
@@ -120,13 +126,19 @@ public class SchemeEditor extends TextEditor {
                                                       PreferenceConverter.getColor(store,
                                                                                    ColorPreferences.MATCHER_COLOR)));
             mParenPainter.setParenthesisColor(new Color(null,
-                                                      PreferenceConverter.getColor(store,
-                                                                                   ColorPreferences.PAREN_COLOR)));
+                                                        PreferenceConverter.getColor(store,
+                                                                                     ColorPreferences.PAREN_COLOR)));
             mParenPainter.setHighlightStyle(store.getBoolean(ColorPreferences.MATCHER_BOX));
         }
         else if (property.startsWith(IndentationPreferences.PREFIX)) {
             SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
             textTools.updateIndentationSchemes();
+        }
+        else if (property.equals(SchemePreferences.SEXP_EDIT)) {
+            if (SchemePreferences.getSexpEditing()) 
+                addAutoEditStrategies();
+            else
+                removeAutorEditStrategies();
         }
         super.handlePreferenceStoreChanged(event);
     }
@@ -138,6 +150,45 @@ public class SchemeEditor extends TextEditor {
         Color color = new Color(null, PreferenceConverter.getColor(store, ColorPreferences.BACKGROUND_COLOR));
         getSourceViewer().getTextWidget().setBackground(color);
         startParenthesisHighlighting();
+
+        if (SchemePreferences.getSexpEditing())
+            addAutoEditStrategies();
+    }
+
+    private void addAutoEditStrategies() {
+        createEditStrategies();
+
+        final ISourceViewer viewer = getSourceViewer();
+        final ITextViewerExtension2 viewer2 = (ITextViewerExtension2) viewer;
+
+        viewer2.prependAutoEditStrategy(mMatchinDelimiterInserter, IDocument.DEFAULT_CONTENT_TYPE);
+        viewer2.prependAutoEditStrategy(mQuoteInserter, SchemePartitionScanner.SCHEME_STRING);
+        viewer2.prependAutoEditStrategy(mSexpDeleter, IDocument.DEFAULT_CONTENT_TYPE);
+        viewer2.prependAutoEditStrategy(mStringDeleter, SchemePartitionScanner.SCHEME_STRING);
+        viewer2.prependAutoEditStrategy(mStringDeleter, IDocument.DEFAULT_CONTENT_TYPE);
+    }
+    
+    private void removeAutorEditStrategies() {
+        createEditStrategies();
+        
+        ITextViewerExtension2 viewer = (ITextViewerExtension2) getSourceViewer();
+        viewer.removeAutoEditStrategy(mMatchinDelimiterInserter, IDocument.DEFAULT_CONTENT_TYPE);
+        viewer.removeAutoEditStrategy(mQuoteInserter, SchemePartitionScanner.SCHEME_STRING);
+        viewer.removeAutoEditStrategy(mSexpDeleter, IDocument.DEFAULT_CONTENT_TYPE);
+        viewer.removeAutoEditStrategy(mStringDeleter, SchemePartitionScanner.SCHEME_STRING);
+        viewer.removeAutoEditStrategy(mStringDeleter, IDocument.DEFAULT_CONTENT_TYPE);
+    }
+
+    private void createEditStrategies() {
+        if (mMatchinDelimiterInserter == null || mQuoteInserter == null || mSexpDeleter == null) {
+            final ISourceViewer viewer = getSourceViewer();
+            final ITextViewerExtension2 viewer2 = (ITextViewerExtension2) viewer;
+
+            mMatchinDelimiterInserter = new MatchingDelimitersInserter(viewer);
+            mQuoteInserter = new DoubleQuoteInserter();
+            mSexpDeleter = new SexpDeleter();
+            mStringDeleter = new StringDeleter();
+        }
     }
 
     //
@@ -147,7 +198,7 @@ public class SchemeEditor extends TextEditor {
     public ISymbolDictionary getSymbolDictionary() {
         return getSchemeSymbolDictionary();
     }
-    
+
     public static ISymbolDictionary getSchemeSymbolDictionary() {
         if (mDictionary == null) {
             URL url = SchemeScriptPlugin.getDefault().find(new Path("conf/forms.scm"));
@@ -155,7 +206,6 @@ public class SchemeEditor extends TextEditor {
         }
         return mDictionary;
     }
-    
 
     protected void initializeKeyBindingScopes() {
         setKeyBindingScopes(new String[]
@@ -236,7 +286,7 @@ public class SchemeEditor extends TextEditor {
         action = new EvalExpressionAction(this, true);
         action.setActionDefinitionId(SchemeActionConstants.EVAL_DEF);
         this.setAction(SchemeActionConstants.EVAL_DEF, action);
-        
+
         action = new LoadFileAction(this);
         action.setActionDefinitionId(SchemeActionConstants.EVAL_LOAD);
         this.setAction(SchemeActionConstants.EVAL_LOAD, action);
@@ -244,6 +294,14 @@ public class SchemeEditor extends TextEditor {
         action = new CompressSpacesAction(this);
         action.setActionDefinitionId(SchemeActionConstants.COMPRESS_SPACES);
         this.setAction(SchemeActionConstants.COMPRESS_SPACES, action);
+        
+        action = new MoveRightParenForwardOneExpression(this);
+        action.setActionDefinitionId(SchemeActionConstants.MOVE_RPAREN_FORWARD);
+        this.setAction(SchemeActionConstants.MOVE_RPAREN_FORWARD, action);
+
+        action = new MoveLeftParenBackwardOneExpression(this);
+        action.setActionDefinitionId(SchemeActionConstants.MOVE_LPAREN_BACKWARD);
+        this.setAction(SchemeActionConstants.MOVE_LPAREN_BACKWARD, action);
 
         MouseCopyAction mouseAction = new MouseCopyAction(this, getSourceViewer().getTextWidget(), false);
         mouseAction.setActionDefinitionId(SchemeActionConstants.SEXP_MOUSECOPY);
@@ -256,7 +314,7 @@ public class SchemeEditor extends TextEditor {
         action = new JumpToDefinitionAction(this);
         action.setActionDefinitionId(SchemeActionConstants.JUMP_DEF);
         this.setAction(SchemeActionConstants.JUMP_DEF, action);
-        
+
         action = new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(),
                                          "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
@@ -291,7 +349,7 @@ public class SchemeEditor extends TextEditor {
         addAction(sourceMenu, "group.edit", SchemeActionConstants.COMPRESS_SPACES);
         addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_FORMAT);
         addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_SWAP);
-        
+
         MenuManager evalMenu = new MenuManager("Eval");
         menu.add(evalMenu);
 
@@ -321,7 +379,7 @@ public class SchemeEditor extends TextEditor {
             mPaintManager.addPainter(mParenPainter);
         }
     }
-    
+
     //
     //// Text editing helper methods
     //
@@ -332,7 +390,7 @@ public class SchemeEditor extends TextEditor {
         }
         return mNavigator;
     }
-    
+
     public SchemeIndentationManager getIndentationManager() {
         return ((SchemeConfiguration) getSourceViewerConfiguration()).getTextTools().getIndentationManager();
     }
@@ -400,13 +458,13 @@ public class SchemeEditor extends TextEditor {
         endCompoundChange();
     }
 
-    private void startCompoundChange() {
+    public void startCompoundChange() {
         ITextViewerExtension textViewer = (ITextViewerExtension) getSourceViewer();
         textViewer.setRedraw(false);
         getSourceViewerConfiguration().getUndoManager(getSourceViewer()).beginCompoundChange();
     }
 
-    private void endCompoundChange() {
+    public void endCompoundChange() {
         ITextViewerExtension textViewer = (ITextViewerExtension) getSourceViewer();
         textViewer.setRedraw(true);
         getSourceViewerConfiguration().getUndoManager(getSourceViewer()).endCompoundChange();

@@ -42,6 +42,8 @@ public final class SchemeActionConstants {
     
     private final static String FORMAT_PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".format.";
     public final static String COMPRESS_SPACES = FORMAT_PREFIX + "compress";
+    public final static String MOVE_RPAREN_FORWARD = FORMAT_PREFIX + "moveRparen";
+    public final static String MOVE_LPAREN_BACKWARD = FORMAT_PREFIX + "moveLparen";
     
     public final static String JUMP_DEF = SchemeScriptPlugin.PLUGIN_NS + ".jump.definition";
     public final static String CHOOSE_SYMBOL = SchemeScriptPlugin.PLUGIN_NS + ".dictionary.find";
