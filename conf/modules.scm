@@ -16,7 +16,7 @@
 ;;;
 
 
-(define *module-registry* (WeakHashMap:new))
+(define *module-registry* :: <java.util.WeakHashMap> (WeakHashMap:new))
 
 
 ;;;
@@ -66,7 +66,7 @@
 
 (define (skip-module-headers buffer start)
   (let loop ((start start))
-    (let-values (((sexp-start sexp-end) (forward-sexp start buffer)))
+    (let-values (((sexp-start sexp-end) (%forward-sexp start buffer)))
       (if (or (looking-at "(module-name " sexp-start buffer)
               (looking-at "(module-static " sexp-start buffer)
               (looking-at "(module-extends " sexp-start buffer)
@@ -77,9 +77,9 @@
 
 (define (skip-require-clauses buffer start name)
   (let loop ((start start) (needs-newline #t))
-    (let-values (((sexp-start sexp-end) (forward-sexp start buffer)))
+    (let-values (((sexp-start sexp-end) (%forward-sexp start buffer)))
       (if (looking-at "(require " sexp-start buffer)
-          (let-values (((name-start name-end) (forward-sexp (+ sexp-start 9) buffer)))
+          (let-values (((name-start name-end) (%forward-sexp (+ sexp-start 9) buffer)))
             (let ((text (buffer-text name-start name-end buffer)))
               (cond ((string=? name text)
                      (values #f #f))

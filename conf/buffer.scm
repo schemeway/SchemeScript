@@ -8,15 +8,6 @@
 ;;
 
 
-(define-namespace SchemeEditor     "class:org.schemeway.plugins.schemescript.editor.SchemeEditor")
-(define-namespace SexpNavigator    "class:org.schemeway.plugins.schemescript.parser.SexpNavigator")
-(define-namespace SymbolDictionary "class:org.schemeway.plugins.schemescript.dictionary.ISymbolDictionary")
-(define-namespace ScmTextUtil      "class:org.schemeway.plugins.schemescript.editor.SchemeTextUtilities")
-(define-namespace Region           "class:org.eclipse.jface.text.Region")
-(define-namespace Document         "class:org.eclipse.jface.text.IDocument")
-(define-namespace MessageDialog    "class:org.eclipse.jface.dialogs.MessageDialog")
-
-
 (define (current-buffer)
   (let ((page (org.eclipse.ui.IWorkbenchWindow:getActivePage
                (org.eclipse.ui.IWorkbench:getActiveWorkbenchWindow
@@ -44,18 +35,28 @@
 
 
 
-(define (forward-sexp #!optional (offset (point)) (buffer (current-buffer)))
+(define (%forward-sexp #!optional (offset (point)) (buffer (current-buffer)))
   (let ((navigator (SchemeEditor:getExplorer buffer)))
     (if (SexpNavigator:forwardSexpression navigator offset)
         (values (SexpNavigator:getSexpStart navigator) (SexpNavigator:getSexpEnd navigator))
         (values #f #f))))
 
 
-(define (backward-sexp #!optional (offset (point)) (buffer (current-buffer)))
+(define (%backward-sexp #!optional (offset (point)) (buffer (current-buffer)))
   (let ((navigator (SchemeEditor:getExplorer buffer)))
     (if (SexpNavigator:backwardSexpression navigator offset)
         (values (SexpNavigator:getSexpStart navigator) (SexpNavigator:getSexpEnd navigator))
         (values #f #f))))
+
+
+(define (sexp-type #!optional (offset (point)) (buffer (current-buffer)))
+  (let-values (((start end) (%forward-sexp offset buffer)))
+    (and start end
+         (let* ((navigator (SchemeEditor:getExplorer buffer))
+                (type      (SexpNavigator:getSexpType navigator)))
+           (if (<= type 5)
+               (vector-ref '#(error: symbol: list: string: constant: other:) type)
+               none:)))))
 
 
 (define (buffer-size #!optional (buffer (current-buffer)))
@@ -73,6 +74,7 @@
 
 (define (buffer-text start end #!optional (buffer (current-buffer)))
   (with-buffer-text start end (lambda (text) text) buffer))
+
 
 (define (looking-at text #!optional (offset (point)) (buffer (current-buffer)))
   (with-buffer-text offset (+ offset (string-length text)) 
@@ -104,15 +106,34 @@
   (Document:getLineOfOffset (SchemeEditor:getDocument buffer) offset))
 
 
-(define (sexp-type #!optional (buffer (current-buffer)))
-  (and (forward-sexp buffer)
-       (let* ((navigator (SchemeEditor:getExplorer buffer))
-              (type      (SexpNavigator:getSexpType navigator)))
-         (if (<= type 5)
-             (vector-ref '#(error: symbol: list: string: constant: other:) type)
-             none:))))
+(define (forward-char #!optional (n 1) (buffer (current-buffer)))
+  (set-point (+ (point) n)))
+
+(define (backward-char #!optional (n 1) (buffer (current-buffer)))
+  (set-point (- (point) n)))
 
 
-(define (message-box title message)
-  (MessageDialog:openInformation #!null title message))
+(define (forward-line #!optional (n 1) (buffer (current-buffer)))
+  (when (not (= n 0))
+    (let* ((current-line (offset-line (point) buffer))
+           (new-line     (+ current-line n))
+           (new-point    (line-offset new-line buffer)))
+      (set-point new-point buffer))))
+
+
+(define (backward-line #!optional (n 1) (buffer (current-buffer)))
+  (forward-line (- n) buffer))
+
+
+(define (forward-sexp #!optional (offset (point)) (buffer (current-buffer)))
+  (let-values (((_ end) (%forward-sexp offset buffer)))
+    (when end
+      (set-point end buffer))))
+
+
+(define (backward-sexp #!optional (offset (point)) (buffer (current-buffer)))
+  (let-values (((start _) (%backward-sexp offset buffer)))
+    (when start
+      (set-point start buffer))))
+
 

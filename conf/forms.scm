@@ -10,6 +10,7 @@
 (require 'srfi-1)
 
 (load-relative "macros.scm")
+(load-relative "foreign.scm")
 (load-relative "namespaces.scm")
 (load-relative "util.scm")
 (load-relative "buffer.scm")
@@ -210,12 +211,14 @@
                   (string=? "class:" (substring qualified-classname 0 6)))
          (let* ((classname  (substring qualified-classname 6 (string-length qualified-classname)))
                 (signatures (find-class-methods classname)))
-           (when signatures 
+           (when signatures
              (for-each (lambda (name/signature)
                          (let ((description (string->symbol (format #f "(~a:~a)" namespace-string (cadr name/signature))))
                                (entry-name  (string->symbol (format #f "~a:~a" namespace-string (car name/signature)))))
                            (add-entry! dictionary entry-name description 'function resource line-number)))
-                       signatures))))))))
+                       signatures))
+           (let ((namespace-description (string->symbol (format #f "~a - namespace" namespace-symbol))))
+             (add-entry! dictionary namespace-symbol namespace-description 'namespace resource line-number))))))))
 
 
 (define (namespace-form? form)
@@ -230,7 +233,8 @@
       (find-internal-class-methods class-name)))
 
 
-(define *workspace-root* (IWorkspace:getRoot (RsrcPlugin:getWorkspace)))
+(define *workspace*      (RsrcPlugin:getWorkspace))
+(define *workspace-root* (IWorkspace:getRoot *workspace*))
 (define *java-model*     (JavaCore:create *workspace-root*))
 
 

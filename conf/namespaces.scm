@@ -1,38 +1,89 @@
 ;;;
-;;;; Namespaces
+;;;; Namespaces and types expansion
 ;;;
 ;;
 ;; @created   "Mon Mar 07 09:18:01 EST 2005"
 ;; @author    "Dominique Boucher"
 ;; @copyright "NuEcho Inc."
 ;;
+;; 
 
 
-(define-namespace Method           "class:java.lang.reflect.Method")
-(define-namespace Modifier         "class:java.lang.reflect.Modifier")
-(define-namespace Constructor      "class:java.lang.reflect.Constructor")
-(define-namespace Class            "class:java.lang.Class")
-(define-namespace String           "class:java.lang.String")
-
-(define-namespace SymbolEntry    "class:org.schemeway.plugins.schemescript.dictionary.SymbolEntry")
-(define-namespace UserDictionary "class:org.schemeway.plugins.schemescript.dictionary.IUserDictionary")
-(define-namespace SchemePlugin   "class:org.schemeway.plugins.schemescript.SchemeScriptPlugin")
-
-(define-namespace JavaCore         "class:org.eclipse.jdt.core.JavaCore")
-(define-namespace IJavaModel       "class:org.eclipse.jdt.core.IJavaModel")
-(define-namespace IJavaProject     "class:org.eclipse.jdt.core.IJavaProject")
-(define-namespace IJavaElement     "class:org.eclipse.jdt.core.IJavaElement")
-(define-namespace ICompilationUnit "class:org.eclipse.jdt.core.ICompilationUnit")
-(define-namespace IType            "class:org.eclipse.jdt.core.IType")
-(define-namespace IMember          "class:org.eclipse.jdt.core.IMember")
-(define-namespace IMethod          "class:org.eclipse.jdt.core.IMethod")
-(define-namespace IParent          "class:org.eclipse.jdt.core.IParent")
-(define-namespace Flags            "class:org.eclipse.jdt.core.Flags")
-(define-namespace RsrcPlugin       "class:org.eclipse.core.resources.ResourcesPlugin")
-(define-namespace IWorkspace       "class:org.eclipse.core.resources.IWorkspace")
-(define-namespace IProject         "class:org.eclipse.core.resources.IProject")
-(define-namespace Path             "class:org.eclipse.core.runtime.Path")
+(require 'srfi-1)
 
 
-(define-namespace PairWithPosition "class:gnu.lists.PairWithPosition")
+(define-simple-class <SimpleSearchCollector> (<Object> <org.eclipse.jdt.core.search.IJavaSearchResultCollector>)
+  (elements)
+  
+  ((aboutToStart) :: <void>
+   (set! elements '()))
+  
+  ((done) :: <void>
+   (set! elements (reverse! elements)))
+  
+  ((accept (resource :: <org.eclipse.core.resources.IResource>)
+           (start :: <int>)
+           (end :: <int>)
+           (element :: <org.eclipse.jdt.core.IJavaElement>)
+           (accurracy :: <int>)) :: <void>
+   (set! elements (cons element elements)))
+  
+  ((getProgressMonitor) :: <org.eclipse.core.runtime.IProgressMonitor>
+   #!null))
 
+
+(define (find-symbol-types symbol)
+  (let ((engine  (SearchEngine:new))
+        (pattern (SearchEngine:createSearchPattern symbol 0 0 #t))
+        (scope   (SearchEngine:createWorkspaceScope))
+        (collector :: <SimpleSearchCollector> (make <SimpleSearchCollector>)))
+    (SearchEngine:search engine (RsrcPlugin:getWorkspace) pattern scope collector)
+    (field collector 'elements)))
+
+
+
+(define (namespace-expander symbol)
+  (let ((types (find-symbol-types symbol)))
+    (if (pair? types)
+        (let ((choosen-type-name (choose-type types)))
+          (and choosen-type-name
+               (format #f "(define-namespace ~a \"class:~a\")~%" symbol choosen-type-name)))
+        #f)))
+
+
+(define (typename-expander symbol)
+  (let ((types (find-symbol-types symbol)))
+    (if (pair? types)
+        (let ((choosen-type-name (choose-type types)))
+          (and choosen-type-name
+               (format #f "<~a>" choosen-type-name)))
+        #f)))
+
+
+(define (choose-type types)
+  (cond ((null? types)       #f)
+        ((null? (cdr types)) (IType:getFullyQualifiedName (car types)))
+        (else
+         (choose-from-list "Type is ambiguous"
+                           "Choose the right type:"
+                           (delete-duplicates!
+                            (map (lambda (type) (IType:getFullyQualifiedName type)) types))))))
+
+
+(define (make-symbol-expander expander)
+  (lambda ()
+    (let-values (((start end) (%backward-sexp)))
+      (when (and start end (eq? (sexp-type start) symbol:))
+        (with-buffer-text 
+         start end 
+         (lambda (text)
+           (let ((clause (expander text)))
+             (when clause
+               (set-point start)
+               (delete-text (- end start))
+               (insert-text clause)
+               (forward-char (string-length clause))))))))))
+
+
+(define expand-namespace (make-symbol-expander namespace-expander))
+(define expand-typename  (make-symbol-expander typename-expander))
