@@ -29,11 +29,14 @@
 
 
 (define (signature->formals lst)
-  (map (lambda (parameter)
-         (if (and (pair? parameter) (symbol? (car parameter)))
-             (car parameter)
-             parameter))
-       lst))
+  (let loop ((lst lst))
+    (if (pair? lst)
+        (let ((parameter (car lst)))
+          (if (and (pair? parameter) (symbol? (car parameter)))
+              (cons (car parameter) (loop (cdr lst)))
+              (cons parameter (loop (cdr lst))))
+          lst))))
+
 
 ;;;
 ;;;; --
@@ -51,7 +54,7 @@
                 (let* ((name        (cadr form))
                        (description (format #f "~a - variable" name)))
                   (add-entry! dictionary name description 'variable resource line-number)))
-               ((and (pair? (cdr form)) (list? (cadr form)) (symbol? (caadr form)))
+               ((and (pair? (cdr form)) (pair? (cadr form)) (symbol? (caadr form)))
                 (let ((name        (caadr form))
                       (description (format #f "~a - procedure" (signature->formals (cadr form)))))
                   (add-entry! dictionary name description 'function resource line-number)))))))
