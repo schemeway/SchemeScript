@@ -31,7 +31,7 @@ import org.schemeway.plugins.schemescript.preferences.*;
 public class SchemeEditor extends TextEditor {
     private static ISymbolDictionary mDictionary;
 
-    private SexpExplorer mExplorer;
+    private SexpNavigator mNavigator;
     private PaintManager mPaintManager;
     private SchemeParenthesisPainter mParenPainter;
     private ISchemeOutlinePage mOutlinePage;
@@ -74,7 +74,7 @@ public class SchemeEditor extends TextEditor {
 
     protected void doSetInput(IEditorInput input) throws CoreException {
         super.doSetInput(input);
-        mExplorer = null;
+        mNavigator = null;
     }
     
     public void doSave(IProgressMonitor monitor) {
@@ -237,6 +237,10 @@ public class SchemeEditor extends TextEditor {
         action.setActionDefinitionId(SchemeActionConstants.EVAL_DEF);
         this.setAction(SchemeActionConstants.EVAL_DEF, action);
         
+        action = new LoadFileAction(this);
+        action.setActionDefinitionId(SchemeActionConstants.EVAL_LOAD);
+        this.setAction(SchemeActionConstants.EVAL_LOAD, action);
+
         action = new CompressSpacesAction(this);
         action.setActionDefinitionId(SchemeActionConstants.COMPRESS_SPACES);
         this.setAction(SchemeActionConstants.COMPRESS_SPACES, action);
@@ -287,13 +291,15 @@ public class SchemeEditor extends TextEditor {
         addAction(sourceMenu, "group.edit", SchemeActionConstants.COMPRESS_SPACES);
         addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_FORMAT);
         addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_SWAP);
-
+        
         MenuManager evalMenu = new MenuManager("Eval");
         menu.add(evalMenu);
 
         evalMenu.add(new Separator("group.eval"));
         addAction(evalMenu, "group.eval", SchemeActionConstants.EVAL_DEF);
         addAction(evalMenu, "group.eval", SchemeActionConstants.EVAL_EXPR);
+        evalMenu.add(new Separator("group.load"));
+        addAction(evalMenu, "group.load", SchemeActionConstants.EVAL_LOAD);
     }
 
     //
@@ -320,11 +326,11 @@ public class SchemeEditor extends TextEditor {
     //// Text editing helper methods
     //
 
-    public SexpExplorer getExplorer() {
-        if (mExplorer == null) {
-            mExplorer = new SexpExplorer(getDocument());
+    public SexpNavigator getExplorer() {
+        if (mNavigator == null) {
+            mNavigator = new SexpNavigator(getDocument());
         }
-        return mExplorer;
+        return mNavigator;
     }
     
     public SchemeIndentationManager getIndentationManager() {
