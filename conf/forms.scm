@@ -8,11 +8,12 @@
 
 
 (require 'srfi-1)
-(define-namespace SymbolEntry    "class:org.schemeway.plugins.schemescript.dictionary.SymbolEntry")
-(define-namespace UserDictionary "class:org.schemeway.plugins.schemescript.dictionary.IUserDictionary")
 
-(load-relative "namespaces.scm")
-(load-relative "util.scm")
+;;(load-relative "macros.scm")
+;;(load-relative "namespaces.scm")
+;;(load-relative "util.scm")
+;;(load-relative "buffer.scm")
+;;(load-relative "modules.scm")
 
 
 ;;;
@@ -27,7 +28,7 @@
 
 (define (get-line-number form default-value)
   (if (instance? form <gnu.lists.PairWithPosition>)
-      (invoke (as <gnu.lists.PairWithPosition> form) 'getLine)
+      (PairWithPosition:getLine form)
       default-value))
 
 
@@ -50,6 +51,7 @@
 ;;;
 ;;;;   define
 ;;;
+
 
 (let ((define-processor 
        (lambda (dictionary form resource line-number)
@@ -106,6 +108,7 @@
               (symbol? (cadr form)))
      (let* ((name        (cadr form))
             (description (format #f "~a - Kawa module" name)))
+       (add-to-module-registry! resource name)
        (add-entry! dictionary name description 'module resource line-number)))))
 
 
@@ -205,13 +208,14 @@
             (qualified-classname (caddr form)))
        (when (and (>= (string-length qualified-classname) 6)
                   (string=? "class:" (substring qualified-classname 0 6)))
-         (let* ((classname    (substring qualified-classname 6 (string-length qualified-classname)))
-                (method-names (find-class-methods  classname)))
-           (when method-names 
-             (for-each (lambda (method-name)
-                         (let ((entry-name (string->symbol (string-append namespace-string ":" method-name))))
-                           (add-entry! dictionary entry-name entry-name 'function resource line-number)))
-                       method-names))))))))
+         (let* ((classname  (substring qualified-classname 6 (string-length qualified-classname)))
+                (signatures (find-class-methods classname)))
+           (when signatures 
+             (for-each (lambda (name/signature)
+                         (let ((description (string->symbol (format #f "(~a:~a)" namespace-string (cadr name/signature))))
+                               (entry-name  (string->symbol (format #f "~a:~a" namespace-string (car name/signature)))))
+                           (add-entry! dictionary entry-name description 'function resource line-number)))
+                       signatures))))))))
 
 
 (define (namespace-form? form)
@@ -242,35 +246,49 @@
                                 (instance? unit <org.eclipse.jdt.core.ICompilationUnit>)
                                 (ICompilationUnit:findPrimaryType unit))))                
                 (if type
-                    (let ((names (map (lambda (method)
-                                        (make <string> (IMethod:getElementName method)))
-                                      (filter (lambda (method)
-                                                (not (IMethod:isConstructor method)))
-                                              (array->list (IType:getMethods type))))))
-                      (if (IType:isClass type)
-                          (cons "new" names)
-                          name))
+                    (map (lambda (method)
+                           (imethod-signature method))
+                         (filter (lambda (method)
+                                   (Flags:isPublic (IMember:getFlags method)))
+                                 (array->list (IType:getMethods type))))
                     (loop (cdr projects))))
               (loop (cdr projects)))))))
 
 
+(define (imethod-signature method)
+  (list (if (IMethod:isConstructor method) 'new (IMethod:getElementName method))
+        (call-with-output-string 
+         (lambda (port)
+           (format port "~a" (if (IMethod:isConstructor method) "new" (IMethod:getElementName method)))
+           (when (not (or (IMethod:isConstructor method) 
+                          (Flags:isStatic (IMember:getFlags method))))
+             (format port " self"))
+           (for-each (lambda (name)
+                       (format port " ~a" name))
+                     (array->list (IMethod:getParameterNames method)))))))
+
+
 (define (find-internal-class-methods class-name)
-  (try-catch
-      (let* ((class   (java.lang.Class:forName class-name))
+  (let* ((class   (java.lang.Class:forName class-name))
              (methods (filter (lambda (method)
                                 (Modifier:isPublic (Method:getModifiers method)))
                               (array->list (Class:getDeclaredMethods class))))
-             (names   (map symbol->string
-                           (map (lambda (method) (Method:getName method))
-                                methods))))
-        (if (or (Class:isArray class)
-                (Class:isInterface class)
-                (Class:isPrimitive class))
-            names
-            (cons "new" names)))
-    (exception <java.lang.Throwable>
-               (format #t "Exception: ~S~%" (invoke exception 'getMessage))
-               #f)))
+             (ctors   (filter (lambda (constructor)
+                                (Modifier:isPublic (Constructor:getModifiers constructor)))
+                              (array->list (Class:getConstructors class))))
+             (names   (append (map (lambda (constructor)
+                                     (method-signature 'new
+                                                       (Constructor:getModifiers constructor)
+                                                       (Constructor:getParameterTypes constructor)
+                                                       #t))
+                                   ctors)
+                              (map (lambda (method) 
+                                     (method-signature (Method:getName method)
+                                                       (Method:getModifiers method)
+                                                       (Method:getParameterTypes method)
+                                                       #f))
+                                   methods))))
+        names))
 
 
 (define (find-project-element project name)
@@ -278,4 +296,30 @@
     (if (eq? element #!null)
         #f
         element)))
+
+
+(define (method-signature name modifiers parameter-types constructor?)
+  (list name 
+        (call-with-output-string
+         (lambda (port)
+           (format port "~a" name)
+           (when (not (or (Modifier:isStatic modifiers) constructor?))
+             (format port " self"))
+           (for-each (lambda (param-type)
+                       (format port " ~a" (string-downcase 
+                                           (symbol->string 
+                                            (type->signature param-type)))))
+                     (array->list parameter-types))))))
+
+
+(define (type->signature cls)
+  (if (Class:isArray cls)
+      (string-append (type->signature (Class:getComponentType cls)) "[]")
+      (let* ((clsname   :: <String> (Class:getName cls))
+             (dot-index :: <int>    (String:lastIndexOf clsname (char->integer #\.))))
+        (make <string>
+          (as <String>
+              (if (>= dot-index 0)
+                  (String:substring clsname (+ dot-index 1))
+                  clsname))))))
 
