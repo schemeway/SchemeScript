@@ -1,3 +1,15 @@
+	Version 0.1.5
+
+- Initial support for code completion, content assist, and text hovers:
+  mainly supports the Kawa special forms (module-name, define[-private|-constant],
+  defmacro, define-syntax, define[-simple]-class, define-record-type).
+  All Scheme files (currently only .scm files, but will be made configurable
+  in the next release) are scanned.
+- JumpToDefinition action - simply put your cursor on a symbol
+  defined globally and press F12 (or use the contextual menu - right click).
+- Keywords are colored differently (and they are displayed in bol italic).
+- Added some context menu items.
+
 	Version 0.1.3
 
 - tab width can be configured in Preferences

@@ -1,0 +1,7 @@
+Version 0.1.5
+
+- Sometimes, there are multiple occurrences of the same symbol 
+  in the code completion list.
+- In the preferences, the Syntax or the Indentation subsection 
+  sometimes doesn't refresh properly. Resizing the Preferences
+  window solves the problem.
