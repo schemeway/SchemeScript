@@ -1,4 +1,23 @@
-	Version 0.1.5
+*** Version 0.1.7
+   
+- Extended mouse copy
+- Can now open external files (bug reported by Matthew Morgan)
+- Added a new indentation category/scheme: 'none'. Ideal for PLT-style modules.
+- Added a new preference page - Lexical extensions
+  (determines whether square brackets are considered as parentheses or not,
+  and if dash characters can be part of identifiers)
+- Major modifications to the Color preferences (now Appearance page)
+  Each token type can have its bold/italic attribute set 
+- Fixed the bug with the syntax/indentation preferences pages
+
+
+*** Version 0.1.6
+  
+- Enhancements to code completion, content assist, text hovers
+- Internal refactorings
+- Outline view showing chapter-style comments
+
+*** Version 0.1.5
 
 - Initial support for code completion, content assist, and text hovers:
   mainly supports the Kawa special forms (module-name, define[-private|-constant],
@@ -10,7 +29,7 @@
 - Keywords are colored differently (and they are displayed in bol italic).
 - Added some context menu items.
 
-	Version 0.1.3
+*** Version 0.1.3
 
 - tab width can be configured in Preferences
 - Indentation takes tab width into account

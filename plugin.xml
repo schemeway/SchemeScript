@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="0.1.6"
+   version="0.1.7"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -357,7 +357,7 @@
             id="org.schemeway.plugins.schemescript.preferences.comments">
       </page>
       <page
-            name="Colors"
+            name="Appearance"
             category="org.schemeway.plugins.schemescript.preferences.scheme"
             class="org.schemeway.plugins.schemescript.preferences.ColorPreferences"
             id="org.schemeway.plugins.schemescript.preferences.colors">
