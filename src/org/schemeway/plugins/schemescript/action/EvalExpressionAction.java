@@ -37,7 +37,7 @@ public class EvalExpressionAction extends SchemeAction {
         if (selection.getLength() > 0) {
             textToEval = editor.getText(selection.getOffset(), selection.getLength());
         }
-        if (mMoveToTop) {
+        else if (mMoveToTop) {
             int start = editor.getPoint();
             int end = start;
             while (explorer.upSexpression(start)) {
