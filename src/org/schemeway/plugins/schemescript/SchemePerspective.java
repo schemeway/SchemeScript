@@ -26,7 +26,7 @@ public class SchemePerspective implements IPerspectiveFactory {
         topLeft.addView(IPageLayout.ID_RES_NAV);
         
         IFolderLayout bottomLeft = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.50f, "topLeft");
-        bottomLeft.addPlaceholder(IPageLayout.ID_OUTLINE);
+        bottomLeft.addView(IPageLayout.ID_OUTLINE);
         
         layout.addFastView(DefinitionListView.DEFINITION_LIST_ID);
         layout.addFastView("org.eclipse.ui.console.ConsoleView");
