@@ -15,10 +15,11 @@ import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
 public class SchemeErrorLineTracker implements IConsoleLineTracker, IPropertyChangeListener {
+    private static final int NO_GROUP = -1;
     private Pattern mErrorPattern = null;
-    private int     mFilenameGroup = -1;
-    private int     mLineNoGroup = -1;
-    private int     mLinkGroup = -1;
+    private int     mFilenameGroup = NO_GROUP;
+    private int     mLineNoGroup = NO_GROUP;
+    private int     mLinkGroup = NO_GROUP;
     
     IConsole mConsole;
 
@@ -43,10 +44,16 @@ public class SchemeErrorLineTracker implements IConsoleLineTracker, IPropertyCha
             mLineNoGroup   = InterpreterPreferences.getLineNumberGroup();
             mLinkGroup     = InterpreterPreferences.getLinkGroup();
         }
+        else {
+            mErrorPattern  = null;
+            mFilenameGroup = NO_GROUP;
+            mLineNoGroup   = NO_GROUP;
+            mLinkGroup     = NO_GROUP;
+        }
     }
     
     private boolean isPatternSetup() {
-        if (mErrorPattern == null || mLineNoGroup == -1 || mLinkGroup == -1 || mFilenameGroup == -1)
+        if (mErrorPattern == null || mLineNoGroup == NO_GROUP || mLinkGroup == NO_GROUP || mFilenameGroup == NO_GROUP)
             return false;
         else
             return true;
