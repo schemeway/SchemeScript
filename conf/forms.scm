@@ -251,12 +251,13 @@
                                (find-project-element project (string-append class-name ".java"))))
                      (type (and unit
                                 (instance? unit <org.eclipse.jdt.core.ICompilationUnit>)
-                                (ICompilationUnit:findPrimaryType unit))))                
+                                (ICompilationUnit:findPrimaryType unit))))
                 (if type
                     (map (lambda (method)
                            (imethod-signature method))
                          (filter (lambda (method)
-                                   (Flags:isPublic (IMember:getFlags method)))
+                                   (or (IType:isInterface type)
+                                       (Flags:isPublic (IMember:getFlags method))))
                                  (array->list (IType:getMethods type))))
                     (loop (cdr projects))))
               (loop (cdr projects)))))))
