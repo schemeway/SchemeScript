@@ -41,7 +41,7 @@ public final class SchemeScannerUtilities {
     }
 
     public final static boolean isPunctuationChar(char ch) {
-        return (isParenthesis(ch) || ch == '\'' || ch == ',');
+        return (isParenthesis(ch) || ch == '\'' || ch == ',' || ch == '`');
     }
 
     public final static boolean isIdentifierPartChar(char ch) {
