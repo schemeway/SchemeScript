@@ -46,7 +46,7 @@ public class SchemeLexicalExtensionsPreferences extends FieldEditorPreferencePag
     
     protected void createFieldEditors() {
         initializeDefaultPreferences(getPreferenceStore());
-        addField(new BooleanFieldEditor(SQUARE_BRACKETS, "Consider brackets as parentheses", getFieldEditorParent()));
+        addField(new BooleanFieldEditor(SQUARE_BRACKETS, "Treat brackets as parentheses", getFieldEditorParent()));
         addField(new BooleanFieldEditor(DASH_IN_IDS, "Accept dash (#) as identifier part", getFieldEditorParent()));
     }
 }
