@@ -101,13 +101,15 @@ public class SyntaxPreferences extends PreferencePage implements IWorkbenchPrefe
     }
 
     protected Control createContents(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NULL);
+        Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         composite.setLayout(layout);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
 
         new Label(composite, SWT.NONE).setText("Configure the symbol categories for syntax coloring.");
 
-        TabFolder folder = new TabFolder(composite, SWT.NULL);
+        TabFolder folder = new TabFolder(composite, SWT.NONE);
         GridData data = new GridData(GridData.FILL_BOTH);
         folder.setLayoutData(data);
 

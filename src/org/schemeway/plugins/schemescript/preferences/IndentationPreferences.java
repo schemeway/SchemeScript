@@ -71,9 +71,11 @@ public class IndentationPreferences extends PreferencePage implements IWorkbench
     }
 
     protected Control createContents(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NULL);
+        Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.numColumns = 3;
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
         composite.setLayout(layout);
 
         createAllControls(composite);
@@ -83,8 +85,6 @@ public class IndentationPreferences extends PreferencePage implements IWorkbench
     }
 
     private void createAllControls(Composite composite) {
-//        createTabWidthControl(composite);
-        
         Label label = new Label(composite, SWT.NONE);
         label.setText("Configure the symbol categories for proper Scheme indentation.");
         GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -134,46 +134,6 @@ public class IndentationPreferences extends PreferencePage implements IWorkbench
         addListeners(table, addButton, deleteButton, text);
     }
     
-//    private void createTabWidthControl(Composite composite) {
-//        Composite newComposite = new Composite(composite, SWT.NONE);
-//        GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-//        data.horizontalSpan = 3;
-//        newComposite.setLayoutData(data);
-//        
-//        GridLayout newLayout = new GridLayout();
-//        newLayout.numColumns = 2;
-//        newLayout.marginWidth = 0;
-//        newComposite.setLayout(newLayout);
-//        
-//        
-//        Label label = new Label(newComposite, SWT.NONE);
-//        label.setText("Displayed tab width:");
-//        
-//        final Text textTW = new Text(newComposite, SWT.SINGLE | SWT.BORDER);
-//        data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-//        data.widthHint = 60;
-//        textTW.setText("4");
-//        textTW.setLayoutData(data);
-//        textTW.addModifyListener(new ModifyListener() {
-//           public void  modifyText(ModifyEvent event) {
-//               if (textTW.getText().equals("")
-//                       || (new Integer(textTW.getText())).intValue() == 0) {
-//                   setErrorMessage("Empty or zero tab width");
-//                   setValid(false);
-//               }
-//               else {
-//                   setValid(true);
-//                   setErrorMessage(null);
-//               }
-//           }
-//        });
-//        textTW.addVerifyListener(new VerifyListener() {
-//           public void verifyText(VerifyEvent event) {
-//               event.doit = event.text.length() == 0
-//               || Character.isDigit(event.text.charAt(0));
-//           }
-//        });
-//    }
 
     private void createTableViewer(Table table) {
         GridData data;
