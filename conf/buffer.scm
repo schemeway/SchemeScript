@@ -34,7 +34,6 @@
     (proc start end)))
 
 
-
 (define (%forward-sexp #!optional (offset (point)) (buffer (current-buffer)))
   (let ((navigator (SchemeEditor:getExplorer buffer)))
     (if (SexpNavigator:forwardSexpression navigator offset)
@@ -72,6 +71,15 @@
     (proc text)))
 
 
+(define (run-compound-change proc #!optional (buffer (current-buffer)))
+  (try-finally 
+      (begin
+        (SchemeEditor:startCompoundChange buffer)
+        (proc))
+    (SchemeEditor:endCompoundChange buffer)
+    #f))
+
+
 (define (buffer-text start end #!optional (buffer (current-buffer)))
   (with-buffer-text start end (lambda (text) text) buffer))
 
@@ -106,6 +114,10 @@
   (Document:getLineOfOffset (SchemeEditor:getDocument buffer) offset))
 
 
+(define (beginning-of-line #!optional (offset (point)) (buffer (current-buffer)))
+  (set-point (line-offset (offset-line offset buffer) buffer) buffer))
+
+
 (define (forward-char #!optional (n 1) (buffer (current-buffer)))
   (set-point (+ (point) n)))
 
@@ -135,5 +147,4 @@
   (let-values (((start _) (%backward-sexp offset buffer)))
     (when start
       (set-point start buffer))))
-
 

@@ -88,7 +88,8 @@
          (choose-from-list "Type is ambiguous"
                            "Choose the right type:"
                            (delete-duplicates!
-                            (map (lambda (type) (IType:getFullyQualifiedName type)) types))))))
+                            (map (lambda (type) (IType:getFullyQualifiedName type))
+                                 types))))))
 
 
 (define (make-symbol-expander expander)
@@ -101,9 +102,10 @@
            (let ((clause (expander text)))
              (when clause
                (set-point start)
-               (delete-text (- end start))
-               (insert-text clause)
-               (forward-char (string-length clause))))))))))
+               (run-compound-change
+                (lambda ()
+                  (delete-text (- end start))
+                  (insert-text clause)))))))))))
 
 
 (define expand-namespace (make-symbol-expander namespace-expander))
