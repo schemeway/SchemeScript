@@ -81,7 +81,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
     }
 
     private void loadFormProcessors(URL userFile) {
-        Interpreter interp = Interpreter.getInterpreter();
+        Language interp = Language.getDefaultLanguage();
         interp.defineFunction("define-form-processor", new FormProcessorDefiner(this));
         try {
             load.load.apply1(userFile.toString());

@@ -189,7 +189,7 @@ public class KawaProcess implements IProcess {
             ctx.consumer = out;
         }
         try {
-            int opts = gnu.expr.Interpreter.PARSE_IMMEDIATE;
+            int opts = gnu.expr.Language.PARSE_IMMEDIATE;
             try {
                 Compilation comp = interp.parse(lexer, opts);
                 boolean sawError = messages.checkErrors(perr, 20);

@@ -5,7 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import gnu.lists.*;
+import gnu.mapping.*;
 import gnu.math.*;
 
 import java.io.*;
@@ -148,7 +148,7 @@ public class ExternalInterpreter implements Interpreter {
     private String getPID() {
         try {
             String filename = InterpreterPreferences.getWorkingDirectory().getPath() + "/" + getPIDFilename();
-            Object value =(new with_input_from_file()).apply2(new FString(filename), new read());
+            Object value = readPID(filename);
             if (value instanceof IntNum) {
                 return ((IntNum)value).toString();
             }
@@ -157,6 +157,23 @@ public class ExternalInterpreter implements Interpreter {
         catch (Throwable exception) {
             return null;
         }
+    }
+    
+    private Object readPID(String filename) throws Throwable {
+        try {
+            final InPort inport = InPort.openFile(filename);
+            try  {
+                return new read().apply1(inport);
+            }
+            finally {
+                inport.close();
+            }
+        }
+        catch (UnsupportedEncodingException e) {
+        }
+        catch (FileNotFoundException e) {
+        }
+        return null;
     }
     
     public static String getPIDFilename() {
