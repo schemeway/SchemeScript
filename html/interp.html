@@ -42,6 +42,10 @@
 	Pressing Ctrl-Enter will send to whole expresssion (the <code>define</code>	form)
 	to the interpreter.
 </p>
+<p>
+	The whole editor content can be sent to the interpreter using the <b>Load File in Interpreter</b>
+	command, which is bound to the Ctrl-Shift-L key sequence by default.
+</p>
 
 <h3>Fast Eval keys</h3>
 <p>
@@ -53,6 +57,16 @@
 	For example, suppose that Fast Eval Key #0 is set to <code>(test)</code>. Every time
 	the Fast Eval 0 command is run (by pressing Alt-K 0 by default), the string
 	<code>(test)</code> is sent to the interpreter. 
+</p>
+
+<h3>Extracting error locations</h3>
+<p>
+	When an error occurs in the interpreter, SchemeScript can turn the location
+	of the error into an hyperlink (given that it is appropriately <a href="prefs.html#interp">configured</a>). Here is the
+	result of an interaction with the MzScheme interpreter:
+	<center><img src="images/errorlink.jpg"/></center>
+	Clicking on the hyperlink will open the file containing the error and select
+	the line containing the error.
 </p>
 <hr/>
 <p>

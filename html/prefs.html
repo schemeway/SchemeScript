@@ -95,13 +95,40 @@ the Scheme editor and it's integration with a Scheme interpreter.
 </p>
 <center><img src="images/interpreter.JPG"/></center>
 <p>
-	To set up a Scheme interpreter, you must provide:
+	To set up a Scheme interpreter, you must minimally provide:
 	<ul>
 		<li>the interpreter's name,</li>
 		<li>the command line to start the interpreter, and</li>
 		<li>the directory where the interpreter is started.</li>
 	</ul>
 </p>
+<p>
+	Also, you can specify a regular expression that will be matched 
+	against all lines in the console window to detect error messages
+	with their corresponding file name and line number (the location 
+	of the error). Simply enter a valid (Java) regular expression in 
+	the field named <b>Error Regexp</b>, taking care to have a group 
+	that matches the filename, another group that matches the
+	line number, and a third group that matches the part of the line
+	that should be highlighted as an hyperlink. 
+</p>
+ <p>
+	Here are a few configurations for some Scheme interpreters:
+	<table>
+		<tr><th>Interpreter</th><th width="60%">Error Regexp</th><th>Filename</th><th>Line</th><th>Link</th></tr>
+		<tr><td>MzScheme (with errortrace)</td>
+			<td><code>((([a-z]:)?[^:]+):([0-9]+):[0-9]+): .*</code></td>
+			<td align=center>2</td>
+			<td align=center>4</td>
+			<td align=center>1</td></tr>
+		<tr><td>Kawa </td>
+			<td><code>[\t ]+at [^(]+\(((.+):([0-9]+))\)</code></td>
+			<td align=center>2</td>
+			<td align=center>3</td>
+			<td align=center>1</td></tr>
+	</table>
+	Note that with Kawa, files must be loaded by giving their full path name.
+ </p>
 <h3><a name="fasteval">Fast Eval Keys</a></h3>
 <p>
 	You can configure the Fast Eval keys using the Fast Eval preference page:
