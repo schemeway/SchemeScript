@@ -6,7 +6,6 @@
 package org.schemeway.plugins.schemescript.editor.autoedits;
 
 import org.eclipse.jface.text.*;
-import org.schemeway.plugins.schemescript.parser.*;
 
 public class SexpDeleter implements IAutoEditStrategy {
 

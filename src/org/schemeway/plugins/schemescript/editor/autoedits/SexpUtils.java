@@ -23,7 +23,7 @@ public final class SexpUtils {
         return true;
     }
     
-    public static void deleteSelection(IDocument document, DocumentCommand command) {
+    public static void deleteSelection(IDocument document, DocumentCommand command) throws BadLocationException {
         SexpNavigator navigator = new SexpNavigator(document);
         int start = command.offset;
         int end   = start + command.length;
@@ -36,16 +36,26 @@ public final class SexpUtils {
             }
             index = navigator.getSexpEnd();
         }
-        if (end == index && navigator.forwardSexpression(end) && navigator.getSexpStart() <= end) { 
+        if (end == index && navigator.forwardSexpression(end) && navigator.getSexpStart() < end) { 
             end = index = navigator.getSexpEnd();
         }
         end = index;
 
-        while (index > start && navigator.backwardSexpression(index)) {
-            index = navigator.getSexpStart();
+        while (index > start) {
+            if (navigator.backwardSexpression(index) && navigator.getSexpEnd() > start)
+                index = navigator.getSexpStart();
+            else
+                break;
         }
         start = index;
         
+        // strip whitespaces, before and after...
+        if (command.offset < start && whitespacesOnly(document, command.offset, start - command.offset))
+            start = command.offset;
+        
+        if (end < command.offset + command.length && whitespacesOnly(document, end, (command.offset + command.length) - end))
+            end = command.offset + command.length;
+
         command.offset = start;
         command.length = end - start;
     }
