@@ -226,6 +226,14 @@ public class SchemeEditor extends TextEditor {
         action.setActionDefinitionId(SchemeActionConstants.EVAL_DEF);
         this.setAction(SchemeActionConstants.EVAL_DEF, action);
 
+        action = new StartInterpreterAction();
+        action.setActionDefinitionId(SchemeActionConstants.EVAL_START);
+        this.setAction(SchemeActionConstants.EVAL_START, action);
+
+        action = new RestartInterpreterAction();
+        action.setActionDefinitionId(SchemeActionConstants.EVAL_RESTART);
+        this.setAction(SchemeActionConstants.EVAL_RESTART, action);
+
         action = new CompressSpacesAction(this);
         action.setActionDefinitionId(SchemeActionConstants.COMPRESS_SPACES);
         this.setAction(SchemeActionConstants.COMPRESS_SPACES, action);

@@ -35,6 +35,8 @@ public final class SchemeActionConstants {
     private final static String EVAL_PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".eval.";
     public final static String EVAL_EXPR = EVAL_PREFIX + "expression";
     public final static String EVAL_DEF = EVAL_PREFIX + "definition";
+    public final static String EVAL_START = EVAL_PREFIX + "start";
+    public final static String EVAL_RESTART = EVAL_PREFIX + "restart";
     
     private final static String FORMAT_PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".format.";
     public final static String COMPRESS_SPACES = FORMAT_PREFIX + "compress";

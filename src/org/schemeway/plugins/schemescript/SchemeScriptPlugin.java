@@ -14,13 +14,10 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.plugin.*;
 import org.osgi.framework.*;
-
-import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.*;
+import org.schemeway.plugins.schemescript.interpreter.*;
 import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
-
-import sun.dc.pr.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -34,6 +31,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     private ResourceBundle resourceBundle;
 
     private SchemeTextTools textTools;
+    private Interpreter     interpreter;
     
     IPropertyChangeListener propertyChangedListener = null;
     
@@ -114,6 +112,19 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     public SchemeTextTools getTextTools() {
         return textTools;
     }
+    
+    
+    public Interpreter getInterpreter() {
+        if (interpreter == null) {
+            interpreter = createInterpreter();
+        }
+        return interpreter;
+    }
+    
+    protected Interpreter createInterpreter() {
+        return new BaseInterpreter();
+    }
+  
     
     public static void logException(String message, Throwable exception) {
         IStatus status = new Status(IStatus.ERROR, 

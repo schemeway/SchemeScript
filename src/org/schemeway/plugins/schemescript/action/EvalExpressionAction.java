@@ -5,16 +5,11 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import java.io.*;
-
-import org.eclipse.debug.core.model.*;
-import org.eclipse.debug.ui.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.ui.console.*;
-
+import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.editor.*;
+import org.schemeway.plugins.schemescript.interpreter.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
 public class EvalExpressionAction extends Action
@@ -36,9 +31,9 @@ public class EvalExpressionAction extends Action
 
     public void run()
     {
-        IProcess process = DebugUITools.getCurrentProcess();
-        if (process != null)
-        {
+//        IProcess process = DebugUITools.getCurrentProcess();
+//        if (process != null)
+//        {
             String textToEval = null;
             SexpExplorer explorer = mEditor.getExplorer();
 
@@ -68,23 +63,26 @@ public class EvalExpressionAction extends Action
             }
             if (textToEval != null)
             {
-                evalText(process, textToEval);
+                evalText(textToEval);
             }
-        }
+//        }
     }
 
-    private void evalText(IProcess process, String textToEval)
+//    private void evalText(IProcess process, String textToEval)
+    private void evalText(String textToEval)
     {
-        try
-        {
-            process.getStreamsProxy().write(textToEval + "\n");
-        }
-        catch (IOException exception)
-        {
-            MessageDialog.openError(null, "Evaluation error!", exception.getMessage());
-        }
-        // show the console
-        IConsole console = DebugUITools.getConsole(process);
-        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
+        Interpreter interp = SchemeScriptPlugin.getDefault().getInterpreter();
+        interp.eval(textToEval);
+//        try
+//        {
+//            process.getStreamsProxy().write(textToEval + "\n");
+//        }
+//        catch (IOException exception)
+//        {
+//            MessageDialog.openError(null, "Evaluation error!", exception.getMessage());
+//        }
+//        // show the console
+//        IConsole console = DebugUITools.getConsole(process);
+//        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
     }
 }
