@@ -11,13 +11,11 @@ import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
-public class BackwardSExpAction extends Action
-{
+public class BackwardSExpAction extends Action {
     private SchemeEditor mEditor;
     private boolean mSelectExpression;
     
-    public BackwardSExpAction(SchemeEditor editor, boolean selectExpression)
-    {
+    public BackwardSExpAction(SchemeEditor editor, boolean selectExpression) {
         Assert.isNotNull(editor);
         setText("Select Backward Sexp");
         setToolTipText("Selects the previous S-expression");
@@ -25,24 +23,16 @@ public class BackwardSExpAction extends Action
         mSelectExpression = selectExpression;
     }
     
-    public void run()
-    {
+    public void run() {
         Region selection = mEditor.getSelection();
+        int selectionEnd = selection.getOffset() + selection.getLength();
         SexpExplorer explorer = mEditor.getExplorer();
-        if (explorer.backwardSexpression(selection.getOffset()))
-        {
+        if (explorer.backwardSexpression(selection.getOffset())) {
             int start = explorer.getSexpStart();
-            if (mSelectExpression) 
-            {
-                int end = explorer.getSexpEnd(); 
-                if (selection.getLength() > 0)
-                {
-                    end =  selection.getOffset() + selection.getLength();
-                }
-                mEditor.setSelection(start, end);
+            if (mSelectExpression) {
+                mEditor.setSelection(start, selectionEnd);
             }
-            else
-            {
+            else {
                 mEditor.setPoint(start);
             }
         }
