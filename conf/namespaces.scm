@@ -41,6 +41,15 @@
     (field collector 'elements)))
 
 
+(define (find-package-types symbol)
+  (let ((engine (SearchEngine:new))
+        (pattern (SearchEngine:createSearchPattern (string-append symbol ".*") 0 0 #t))
+        (scope (SearchEngine:createWorkspaceScope))
+        (collector :: <SimpleSearchCollector> (make <SimpleSearchCollector>)))
+    (SearchEngine:search engine (RsrcPlugin:getWorkspace) pattern scope collector)
+    (field collector 'elements))))
+
+
 
 (define (namespace-expander symbol)
   (let ((types (find-symbol-types symbol)))
@@ -58,6 +67,18 @@
           (and choosen-type-name
                (format #f "<~a>" choosen-type-name)))
         #f)))
+
+
+(define (package-expander symbol)
+  (let ((types (find-package-types symbol)))
+    (and (pair? types)
+         (call-with-output-string
+          (lambda (port)
+            (for-each (lambda (type)
+                        (format port "(define-namespace ~a \"class:~a\")~%" 
+                                (IType:getElementName type)
+                                (IType:getFullyQualifiedName type)))
+                      types))))))
 
 
 (define (choose-type types)
@@ -87,3 +108,5 @@
 
 (define expand-namespace (make-symbol-expander namespace-expander))
 (define expand-typename  (make-symbol-expander typename-expander))
+(define expand-package   (make-symbol-expander package-expander))
+
