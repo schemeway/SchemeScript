@@ -86,6 +86,9 @@ public class SchemeErrorLineTracker implements IConsoleLineTracker, IPropertyCha
         }
         catch (BadLocationException exception) {
         }
+        catch (IndexOutOfBoundsException exception) {
+            SchemeScriptPlugin.logException("Invalid regex group for interpreter error messages", exception);
+        }
     }
     
     private IFile findFile(String filename) {
