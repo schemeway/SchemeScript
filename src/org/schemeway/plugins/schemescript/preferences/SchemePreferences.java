@@ -16,12 +16,15 @@ public class SchemePreferences extends SchemePreferencePage {
 
     private final static String PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".editor.";
     public final static String TAB_WIDTH = PREFIX + "tabWidth";
+    public final static String SEXP_EDIT = PREFIX + "sexpEdits";
     
     public final static int DEFAULT_TABWIDTH = 4;
+    private final static boolean DEFAULT_EDITS = true;
     private final static int MIN_TABWIDTH = 1;
     private final static int MAX_TABWIDTH = 200;
     
     private int mTabWidth; 
+    private boolean mSexpEdits; 
     
     protected Control createContents(Composite parent) {
         initializeValues();
@@ -102,28 +105,45 @@ public class SchemePreferences extends SchemePreferencePage {
                 }
             }
         });
+    
+        final Button button = new Button(container, SWT.CHECK);
+        button.setText("Enable structural editing");
+        button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent event) {
+                mSexpEdits = button.getSelection();
+            }
+        });
+        button.setSelection(mSexpEdits);
     }
     
     protected void doPerformDefaults() {
         mTabWidth = DEFAULT_TABWIDTH;
+        mSexpEdits = DEFAULT_EDITS;
     }
     
     public static void initializeDefaults(IPreferenceStore store) {
         store.setDefault(TAB_WIDTH, DEFAULT_TABWIDTH);
+        store.setDefault(SEXP_EDIT, DEFAULT_EDITS);
     }
     
     protected void initializeValues() {
         IPreferenceStore store = getPreferenceStore();
         mTabWidth = store.getInt(TAB_WIDTH);
+        mSexpEdits = store.getBoolean(SEXP_EDIT);
     }
     
     protected void storeValues() {
         IPreferenceStore store = getPreferenceStore();
         store.setValue(TAB_WIDTH, mTabWidth);
+        store.setValue(SEXP_EDIT, mSexpEdits);
     }
     
     public static int getTabWidth() {
         return SchemeScriptPlugin.getDefault().getPreferenceStore().getInt(TAB_WIDTH);
+    }
+    
+    public static boolean getSexpEditing() {
+        return SchemeScriptPlugin.getDefault().getPreferenceStore().getBoolean(SEXP_EDIT);
     }
 
 }
