@@ -34,8 +34,7 @@
         (let ((parameter (car lst)))
           (if (and (pair? parameter) (symbol? (car parameter)))
               (cons (car parameter) (loop (cdr lst)))
-              (cons parameter (loop (cdr lst))))
-          lst)
+              (cons parameter (loop (cdr lst)))))
         lst)))
 
 
