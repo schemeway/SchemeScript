@@ -225,6 +225,12 @@ public class SchemeEditor extends TextEditor {
         action = new EvalExpressionAction(this, true);
         action.setActionDefinitionId(SchemeActionConstants.EVAL_DEF);
         this.setAction(SchemeActionConstants.EVAL_DEF, action);
+        
+        for (int i=0; i<10; i++) {
+            action = new FastEvalAction(i);
+            action.setActionDefinitionId(SchemeActionConstants.EVAL_FAST + i);
+            this.setAction(SchemeActionConstants.EVAL_FAST + i, action);
+        }
 
         action = new StartInterpreterAction();
         action.setActionDefinitionId(SchemeActionConstants.EVAL_START);

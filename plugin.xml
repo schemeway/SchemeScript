@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="0.2.1"
+   version="0.2.2"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -189,6 +189,90 @@
             id="org.schemeway.plugins.schemescript.eval.definition">
       </command>
       <command
+            name="Fast Eval 0"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast0">
+      </command>
+      <command
+            name="Fast Eval 1"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast1">
+      </command>
+      <command
+            name="Fast Eval 2"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast2">
+      </command>
+      <command
+            name="Fast Eval 3"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast3">
+      </command>
+      <command
+            name="Fast Eval 4"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast4">
+      </command>
+      <command
+            name="Fast Eval 5"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast5">
+      </command>
+      <command
+            name="Fast Eval 6"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast6">
+      </command>
+      <command
+            name="Fast Eval 7"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast7">
+      </command>
+      <command
+            name="Fast Eval 8"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast8">
+      </command>
+      <command
+            name="Fast Eval 9"
+            description="Sends predefined code to the interpreter"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.fast9">
+      </command>
+      <command
+            name="Start Interpreter"
+            description="Starts the Scheme interpreter and show the console"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.start">
+      </command>
+      <command
+            name="Restart Interpreter"
+            description="Restarts the Scheme interpreter and show the console"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.eval.restart">
+      </command>
+      <command
             name="Compress Spaces"
             description="Replaces all surrounding whitespaces by a single space"
             category="Scheme Editing"
@@ -336,6 +420,78 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast0"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 0"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast1"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 1"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast2"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 2"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast3"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 3"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast4"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 4"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast5"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 5"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast6"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 6"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast7"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 7"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast8"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 8"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.fast9"
+            contextId="Scheme Editing"
+            keySequence="ALT+K 9"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.start"
+            contextId="Scheme Editing"
+            keySequence="F9"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.schemeway.plugins.schemescript.eval.restart"
+            contextId="Scheme Editing"
+            keySequence="CTRL+F9"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.schemeway.plugins.schemescript.format.compress"
             contextId="Scheme Editing"
             keySequence="ALT+CTRL+SPACE"
@@ -388,6 +544,18 @@
             id="org.schemeway.plugins.schemescript.preferences.indentation">
       </page>
       <page
+            name="Interpreter"
+            category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.InterpreterPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.interpreter">
+      </page>
+      <page
+            name="Fast Eval"
+            category="org.schemeway.plugins.schemescript.preferences.interpreter"
+            class="org.schemeway.plugins.schemescript.preferences.FastEvalPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.fasteval">
+      </page>
+      <page
             name="Lexical extensions"
             category="org.schemeway.plugins.schemescript.preferences.scheme"
             class="org.schemeway.plugins.schemescript.preferences.SchemeLexicalExtensionsPreferences"
@@ -417,6 +585,22 @@
             category="org.schemeway.plugins.schemescript.views"
             name="Definitions"
             id="org.schemeway.plugins.schemescript.views.definitionList"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            icon="icons/schemeway.gif"
+            class="org.schemeway.plugins.schemescript.SchemePerspective"
+            name="Scheme"
+            id="org.schemeway.plugins.schemescript.schemePerspective"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.schemeway.plugins.schemescript.interpreter.SchemeInterpreterDelegate"
+            name="Scheme Interpreter"
+            modes="run"
+            id="org.schemeway.plugins.schemescript.interpreter"/>
    </extension>
 
 </plugin>
