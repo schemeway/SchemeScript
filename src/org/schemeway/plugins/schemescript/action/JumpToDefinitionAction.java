@@ -8,8 +8,11 @@ package org.schemeway.plugins.schemescript.action;
 import java.util.*;
 import java.util.List;
 
+import javax.swing.text.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -67,14 +70,14 @@ public class JumpToDefinitionAction extends Action {
                         entry = dialog.getSelectedEntry();
                 }
                 
-                if (entry != null && entry.getMarker() == null)
+                if (entry != null && entry.getFile() == null)
                     entry = null;
 
                 if (entry != null) {
-                    IMarker marker = entry.getMarker();
+                    IFile file = entry.getFile();
+                    int linenumber = entry.getLineNumber();
                     try {
-                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        IDE.openEditor(page, marker);
+                        openEditorAtLine(file, linenumber - 1);
                     }
                     catch (PartInitException exception) {
                         SchemeScriptPlugin.logException("Exception in jump definition", exception);
@@ -87,6 +90,23 @@ public class JumpToDefinitionAction extends Action {
         }
     }
     
+    private void openEditorAtLine(IFile file, int linenumber) throws PartInitException
+    {
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IDE.openEditor(page, file, true);
+        IEditorPart editor = page.getActiveEditor();
+        if (editor instanceof SchemeEditor) {
+            SchemeEditor schemeEditor = (SchemeEditor)editor;
+            try {
+                int lineStart = schemeEditor.getDocument().getLineOffset(linenumber);
+                int lineEnd   = lineStart + schemeEditor.getDocument().getLineLength(linenumber);
+                schemeEditor.setSelection(lineStart, lineEnd);
+            }
+            catch (BadLocationException exception) {
+            }
+        }
+    }
+
     private SymbolEntry[] boostPriorities(SymbolEntry[] entries) {
         List list = Arrays.asList(entries);
         
@@ -96,9 +116,9 @@ public class JumpToDefinitionAction extends Action {
                 SymbolEntry e2 = (SymbolEntry)o2;
                 int p1 = e1.getPriority();
                 int p2 = e2.getPriority();
-                if (e1.getMarker() != null && e1.getMarker().getResource().equals(getResource()))
+                if (e1.getFile() != null && e1.getFile().equals(getResource()))
                     p1 += 10;
-                if (e2.getMarker() != null && e2.getMarker().getResource().equals(getResource()))
+                if (e2.getFile() != null && e2.getFile().equals(getResource()))
                     p2 += 10;
                 if (p1 < p2) return 1;
                 if (p1 == p2) return 0;

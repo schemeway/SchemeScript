@@ -27,10 +27,11 @@ public class SymbolEntry {
     
     private String mName;
     private String mDescription;
-    private IMarker mMarker;
+    //private IMarker mMarker;
     private String mCategory;
     private int mPriority;
-    private IResource mResource;
+    private int mLineNumber;
+    private IFile mFile;
     
     public SymbolEntry(String name, String description, String category) {
         this(name, description, category, null, -1, LOW);
@@ -40,27 +41,18 @@ public class SymbolEntry {
         this(name, description, category, null, -1, priority);
     }
     
-    public SymbolEntry(String name, String description, String category, IResource source, int position) {
+    public SymbolEntry(String name, String description, String category, IFile source, int position) {
         this(name, description, category, source, position, LOW);
     }
     
-    public SymbolEntry(String name, String description, String category, IResource source, int position, int priority) {
+    public SymbolEntry(String name, String description, String category, IFile source, int linenumber, int priority) {
         Assert.isNotNull(name);
         mName = name;
         mDescription = description;
         mCategory = category;
         mPriority = priority;
-        mResource = source;
-        try {
-            if (source != null && position >= 0) {
-                mMarker = source.createMarker(IMarker.TEXT);
-                mMarker.setAttribute(IMarker.LINE_NUMBER, position);
-            }
-        }
-        catch (CoreException exception) {
-            exception.printStackTrace();
-            mMarker = null;
-        }
+        mFile = source;
+        mLineNumber = linenumber;
     }
     
     public String getName() {
@@ -71,10 +63,6 @@ public class SymbolEntry {
         return mDescription;
     }
 
-    public IMarker getMarker() {
-        return mMarker;
-    }
-
     public String getCategory() {
         return mCategory;
     }
@@ -83,9 +71,17 @@ public class SymbolEntry {
         return mPriority;
     }
     
+    public IFile getFile() {
+        return mFile;
+    }
+    
+    public int getLineNumber() {
+        return mLineNumber;
+    }
+    
     public String getContext() {
-        if (mResource != null) {
-            return mResource.getName() + ", " + formatPath(mResource);
+        if (mFile != null) {
+            return mFile.getName() + ", " + formatPath(mFile);
         }
         else if (mCategory != null)
             return mCategory;

@@ -140,7 +140,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
                     SymbolEntry entry = matchingEntries[index];
                     String insertion = entry.getName().substring(len);
                     int priority = entry.getPriority();
-                    if (entry.getMarker() != null && entry.getMarker().getResource() == getResource()) {
+                    if (entry.getFile() != null && entry.getFile() == getResource()) {
                         priority += 10;
                     }
                     proposals.add(new SchemeCompletionProposal(entry.getName(), insertion, offset, priority));
@@ -189,8 +189,9 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
             if (symbol != null) {
                 List informations = new LinkedList();
                 SymbolEntry[] matchingEntries = getEditor().getSymbolDictionary().findSymbol(symbol);
-                for (int index = 0; index < matchingEntries.length; index++)
+                for (int index = 0; index < matchingEntries.length; index++) {
                     informations.add(makeContextInfo(matchingEntries[index]));
+                }
 
                 if (informations.size() != 0) {
                     result = (IContextInformation[]) informations.toArray(new IContextInformation[informations.size()]);

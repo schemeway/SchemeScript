@@ -197,7 +197,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
             for (Iterator entries = entriesForName.iterator(); entries.hasNext();) {
                 SymbolEntry entry = (SymbolEntry) entries.next();
                 for (int i = 0; i < files.length; i++) {
-                    if (entry.getMarker().getResource().equals(files[i])) {
+                    if (entry.getFile() != null && entry.getFile().equals(files[i])) {
                         removedEntries.add(entry);
                         break;
                     }
