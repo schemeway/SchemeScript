@@ -19,6 +19,7 @@ import org.eclipse.ui.console.*;
 import org.schemeway.plugins.schemescript.*;
 
 public class BaseInterpreter implements Interpreter {
+    
     private static final String ADVICE = "Consult the Error Log view for more information. ";
     
     public static final String CONFIG_TYPE = SchemeScriptPlugin.PLUGIN_NS + ".interpreter";
@@ -36,8 +37,9 @@ public class BaseInterpreter implements Interpreter {
                 mLaunch = copy.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
                 IProcess[] processes = mLaunch.getProcesses();
                 
-                if (processes.length > 0)
+                if (processes.length > 0) {
                     mProcess = mLaunch.getProcesses()[0];
+                }
                 else {
                     Shell sh = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                     MessageDialog.openError(sh, "Unable to start interpreter!", ADVICE);
@@ -77,7 +79,7 @@ public class BaseInterpreter implements Interpreter {
           ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
         }
     }
-
+    
     public boolean isRunning() {
         boolean result = false;
         try {
@@ -111,6 +113,7 @@ public class BaseInterpreter implements Interpreter {
     }
 
     public void load(IFile file) {
-
+        String filename = file.getRawLocation().toString();
+        eval("(load \"" + filename + "\")");
     }
 }
