@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.text.templates.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.*;
 import org.schemeway.plugins.schemescript.*;
 
 /**
@@ -140,8 +139,9 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
     private void processPendingResources(boolean displayProgress) {
         if (!mPendingResources.isEmpty()) {
             try {
-                final IFile[] files = new IFile[mPendingResources.size()];
+                final IFile[] files;
                 synchronized (mPendingResources) {
+                    files = new IFile[mPendingResources.size()];
                     mPendingResources.toArray(files);
                     mPendingResources.clear();
                 }
@@ -176,12 +176,6 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
         removeEntriesForFiles(files);
         for (int i = 0; i < files.length; i++) {
             IFile file = (IFile) files[i];
-            try {
-                file.deleteMarkers(IMarker.TEXT, false, 0);
-            }
-            catch (CoreException exception) {
-                exception.printStackTrace();
-            }
             scanSchemeFile(file, monitor);
             if (monitor != null)
                 monitor.worked(1);
