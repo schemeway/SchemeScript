@@ -16,8 +16,6 @@ public class StringDeleter implements IAutoEditStrategy {
 
     public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
         try {
-            // TODO - what about deleting a selection that spans inside
-            // a string?
             if (command.length == 1 && command.text.length() == 0) {
                 ITypedRegion partition = document.getPartition(command.offset);
 
@@ -39,6 +37,21 @@ public class StringDeleter implements IAutoEditStrategy {
                         }
                     }
                 }
+            }
+            else if (command.length > 1 && command.text.length() == 0) {
+                int start = command.offset;
+                int end = start + command.length;
+                
+                ITypedRegion startPartition = document.getPartition(start);
+                ITypedRegion endPartition   = document.getPartition(end);
+                
+                if (startPartition.getType() == SchemePartitionScanner.SCHEME_STRING)
+                    start = startPartition.getOffset();
+                if (endPartition.getType() == SchemePartitionScanner.SCHEME_STRING) 
+                    end = endPartition.getOffset() + endPartition.getLength();
+                
+                command.offset = start;
+                command.length = end - start;
             }
         }
         catch (BadLocationException exception) {
