@@ -80,6 +80,7 @@ public class ForwardTokenIterator implements ISchemeTokenIterator {
                     }
             }
             else {
+                mPosition = mEnd = position;
                 mCurrentPartition = null;
             }
         }
