@@ -17,6 +17,7 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.*;
@@ -71,6 +72,11 @@ public class SchemeEditor extends TextEditor {
         }
     }
 
+    protected void doSetInput(IEditorInput input) throws CoreException {
+        super.doSetInput(input);
+        mExplorer = null;
+    }
+    
     public void doSave(IProgressMonitor monitor) {
         super.doSave(monitor);
         if (mOutlinePage != null) {
@@ -139,12 +145,17 @@ public class SchemeEditor extends TextEditor {
     //
 
     public ISymbolDictionary getSymbolDictionary() {
+        return getSchemeSymbolDictionary();
+    }
+    
+    public static ISymbolDictionary getSchemeSymbolDictionary() {
         if (mDictionary == null) {
             URL url = SchemeScriptPlugin.getDefault().find(new Path("conf/forms.scm"));
             mDictionary = UserDictionary.createInstance(KawaDictionary.getInstance(), "scm", url);
         }
         return mDictionary;
     }
+    
 
     protected void initializeKeyBindingScopes() {
         setKeyBindingScopes(new String[]
@@ -226,20 +237,6 @@ public class SchemeEditor extends TextEditor {
         action.setActionDefinitionId(SchemeActionConstants.EVAL_DEF);
         this.setAction(SchemeActionConstants.EVAL_DEF, action);
         
-        for (int i=0; i<10; i++) {
-            action = new FastEvalAction(i);
-            action.setActionDefinitionId(SchemeActionConstants.EVAL_FAST + i);
-            this.setAction(SchemeActionConstants.EVAL_FAST + i, action);
-        }
-
-        action = new StartInterpreterAction();
-        action.setActionDefinitionId(SchemeActionConstants.EVAL_START);
-        this.setAction(SchemeActionConstants.EVAL_START, action);
-
-        action = new RestartInterpreterAction();
-        action.setActionDefinitionId(SchemeActionConstants.EVAL_RESTART);
-        this.setAction(SchemeActionConstants.EVAL_RESTART, action);
-
         action = new CompressSpacesAction(this);
         action.setActionDefinitionId(SchemeActionConstants.COMPRESS_SPACES);
         this.setAction(SchemeActionConstants.COMPRESS_SPACES, action);
@@ -256,10 +253,6 @@ public class SchemeEditor extends TextEditor {
         action.setActionDefinitionId(SchemeActionConstants.JUMP_DEF);
         this.setAction(SchemeActionConstants.JUMP_DEF, action);
         
-        action = new FindSymbolAction(this);
-        action.setActionDefinitionId(SchemeActionConstants.CHOOSE_SYMBOL);
-        this.setAction(SchemeActionConstants.CHOOSE_SYMBOL, action);
-
         action = new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(),
                                          "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
@@ -311,7 +304,7 @@ public class SchemeEditor extends TextEditor {
         if (mParenPainter == null) {
             ISourceViewer sourceViewer = getSourceViewer();
             IPreferenceStore store = getPreferenceStore();
-            mParenPainter = new SchemeParenthesisPainter(sourceViewer);
+            mParenPainter = new SchemeParenthesisPainter(sourceViewer, this);
             mParenPainter.setHighlightStyle(store.getBoolean(ColorPreferences.MATCHER_BOX));
             mParenPainter.setHighlightColor(new Color(null,
                                                       PreferenceConverter.getColor(store,
@@ -321,9 +314,8 @@ public class SchemeEditor extends TextEditor {
                                                                                      ColorPreferences.PAREN_COLOR)));
             mPaintManager.addPainter(mParenPainter);
         }
-
     }
-
+    
     //
     //// Text editing helper methods
     //
@@ -334,7 +326,7 @@ public class SchemeEditor extends TextEditor {
         }
         return mExplorer;
     }
-
+    
     public SchemeIndentationManager getIndentationManager() {
         return ((SchemeConfiguration) getSourceViewerConfiguration()).getTextTools().getIndentationManager();
     }
