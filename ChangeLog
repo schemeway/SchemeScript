@@ -1,0 +1,6 @@
+	Version 0.1.3
+
+- tab width can be configured in Preferences
+- Indentation takes tab width into account
+- Types (symbols of the form <...>) are colored differently
+
