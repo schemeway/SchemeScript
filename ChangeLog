@@ -1,3 +1,20 @@
+*** Version 0.5.0
+
+- The evaluation can be interrupted if it is supported by the interpreter
+  (see the documentation for more details)
+- Added an "interpreters" extension point, and a menu item to 
+  select the current interpreter
+- Added an interpreter: Embedded Kawa. It is the Kawa interpreter
+  running inside the plug-in context/classpath. It comes with a 
+  stack trace viewer.
+- Added a 'Kawa scratchpad' view (see the documentation for more
+  details)
+- Structural editing commands (configurable and highly experimental/unstable)
+- new actions (add-require, expand-namespace expand-typename)
+- 'define-namespace' clauses are processed for content assist
+- Bug fixes.
+
+
 *** Version 0.4.0
 
 - When errors occur in the interpreter, error locations can be
