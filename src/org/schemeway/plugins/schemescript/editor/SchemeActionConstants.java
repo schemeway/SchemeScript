@@ -38,6 +38,7 @@ public final class SchemeActionConstants {
     public final static String EVAL_START = EVAL_PREFIX + "start";
     public final static String EVAL_RESTART = EVAL_PREFIX + "restart";
     public final static String EVAL_FAST = EVAL_PREFIX + "fast";
+    public final static String EVAL_LOAD = EVAL_PREFIX + "load";
     
     private final static String FORMAT_PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".format.";
     public final static String COMPRESS_SPACES = FORMAT_PREFIX + "compress";
