@@ -30,7 +30,7 @@ public class KawaInterpreter implements Interpreter {
     }
 
     public boolean isRunning() {
-        return true;
+        return KawaProcess.getInstance().getLaunch() != null;
     }
 
     public void start() {
@@ -63,6 +63,8 @@ public class KawaInterpreter implements Interpreter {
     }
 
     public void eval(String code) {
+        if (!isRunning())
+            start(); // Ensure that the process is running...
         KawaProcess.sendToInterpreter(code);
     }
 
