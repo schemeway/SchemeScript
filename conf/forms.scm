@@ -11,6 +11,9 @@
 (define-namespace SymbolEntry    "class:org.schemeway.plugins.schemescript.dictionary.SymbolEntry")
 (define-namespace UserDictionary "class:org.schemeway.plugins.schemescript.dictionary.IUserDictionary")
 
+(load-relative "namespaces.scm")
+(load-relative "util.scm")
+
 
 ;;;
 ;;;; --
@@ -187,4 +190,92 @@
                            (add-entry! dictionary setter-name description 'record-getter resource line))))))
                  fields)))))
 
+
+;;;
+;;;;   define-namespace
+;;;
+
+
+(define-form-processor
+ 'define-namespace
+ (lambda (dictionary form resource line-number)
+   (when (namespace-form? form)
+     (let* ((namespace-symbol    (cadr form))
+            (namespace-string    (symbol->string namespace-symbol))
+            (qualified-classname (caddr form)))
+       (when (and (>= (string-length qualified-classname) 6)
+                  (string=? "class:" (substring qualified-classname 0 6)))
+         (let* ((classname    (substring qualified-classname 6 (string-length qualified-classname)))
+                (method-names (find-class-methods  classname)))
+           (when method-names 
+             (for-each (lambda (method-name)
+                         (let ((entry-name (string->symbol (string-append namespace-string ":" method-name))))
+                           (add-entry! dictionary entry-name entry-name 'function resource line-number)))
+                       method-names))))))))
+
+
+(define (namespace-form? form)
+  (and (list? form)
+       (= (length form) 3)
+       (symbol? (cadr form))
+       (string? (caddr form))))
+
+
+(define (find-class-methods class-name)
+  (or (find-project-class-methods (classname->pathname class-name))
+      (find-internal-class-methods class-name)))
+
+
+(define *workspace-root* (IWorkspace:getRoot (RsrcPlugin:getWorkspace)))
+(define *java-model*     (JavaCore:create *workspace-root*))
+
+
+(define (find-project-class-methods class-name)
+  (let loop ((projects (array->list (IJavaModel:getJavaProjects *java-model*))))
+    (if (null? projects)
+        #f
+        (let ((project (car projects)))
+          (if (instance? project <org.eclipse.jdt.core.IJavaProject>)
+              (let* ((unit (or (find-project-element project (string-append class-name ".class"))
+                               (find-project-element project (string-append class-name ".java"))))
+                     (type (and unit
+                                (instance? unit <org.eclipse.jdt.core.ICompilationUnit>)
+                                (ICompilationUnit:findPrimaryType unit))))                
+                (if type
+                    (let ((names (map (lambda (method)
+                                        (make <string> (IMethod:getElementName method)))
+                                      (filter (lambda (method)
+                                                (not (IMethod:isConstructor method)))
+                                              (array->list (IType:getMethods type))))))
+                      (if (IType:isClass type)
+                          (cons "new" names)
+                          name))
+                    (loop (cdr projects))))
+              (loop (cdr projects)))))))
+
+
+(define (find-internal-class-methods class-name)
+  (try-catch
+      (let* ((class   (java.lang.Class:forName class-name))
+             (methods (filter (lambda (method)
+                                (Modifier:isPublic (Method:getModifiers method)))
+                              (array->list (Class:getDeclaredMethods class))))
+             (names   (map symbol->string
+                           (map (lambda (method) (Method:getName method))
+                                methods))))
+        (if (or (Class:isArray class)
+                (Class:isInterface class)
+                (Class:isPrimitive class))
+            names
+            (cons "new" names)))
+    (exception <java.lang.Throwable>
+               (format #t "Exception: ~S~%" (invoke exception 'getMessage))
+               #f)))
+
+
+(define (find-project-element project name)
+  (let ((element (IJavaProject:findElement project (Path:new name))))
+    (if (eq? element #!null)
+        #f
+        element)))
 
