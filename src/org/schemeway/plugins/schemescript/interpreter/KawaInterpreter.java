@@ -7,6 +7,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.console.*;
 import org.schemeway.plugins.schemescript.*;
 
@@ -26,6 +27,10 @@ public class KawaInterpreter implements Interpreter
     {
         IConsole console = DebugUITools.getConsole(KawaProcess.getInstance());
         ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IViewPart view = page.findView("org.eclipse.ui.console.ConsoleView");
+        if (view != null) 
+            view.setFocus();
     }
 
     public boolean isRunning()

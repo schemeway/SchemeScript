@@ -85,6 +85,10 @@ public class ExternalInterpreter implements Interpreter {
         if (mProcess != null) {
           IConsole console = DebugUITools.getConsole(mProcess);
           ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
+          IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+          IViewPart view = page.findView("org.eclipse.ui.console.ConsoleView");
+          if (view != null) 
+              view.setFocus();
         }
     }
     
