@@ -105,6 +105,8 @@ public class DefinitionListView extends ViewPart {
 
         try {
             IFile file = entry.getFile();
+            if (file == null) return;
+            
             int linenumber = entry.getLineNumber() - 1;
 
             IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -128,4 +130,20 @@ public class DefinitionListView extends ViewPart {
             SchemeScriptPlugin.logException("Unable to open resource", exception);
         }
     }
+    
+    public static void showInView(SymbolEntry[] entries) {
+        try {
+        DefinitionListView view = (DefinitionListView) PlatformUI.getWorkbench()
+                                                                 .getActiveWorkbenchWindow()
+                                                                 .getActivePage()
+                                                                 .showView(DefinitionListView.DEFINITION_LIST_ID);
+        view.setEntries(entries);
+        view.setFocus();
+        }
+        catch (PartInitException exception) {
+            SchemeScriptPlugin.logException("Unable to open view", exception);
+        }
+    }
+
+
 }

@@ -56,7 +56,7 @@ public class JumpToDefinitionAction extends Action {
                 }
                 else {
                     entries = boostPriorities(entries);
-                    showInView(entries);
+                    DefinitionListView.showInView(entries);
                 }
 
                 if (entry != null && entry.getFile() == null)
@@ -70,15 +70,6 @@ public class JumpToDefinitionAction extends Action {
         catch (Throwable exception) {
             SchemeScriptPlugin.logException("Exception in jump definition", exception);
         }
-    }
-
-    private void showInView(SymbolEntry[] entries) throws PartInitException {
-        DefinitionListView view = (DefinitionListView) PlatformUI.getWorkbench()
-                                                                 .getActiveWorkbenchWindow()
-                                                                 .getActivePage()
-                                                                 .showView(DefinitionListView.DEFINITION_LIST_ID);
-        view.setEntries(entries);
-        view.setFocus();
     }
 
     private SymbolEntry[] boostPriorities(SymbolEntry[] entries) {
