@@ -61,8 +61,8 @@ public class SchemeConfiguration extends SourceViewerConfiguration {
         assistant.setAutoActivationDelay(200);
         assistant.enableAutoInsert(true);
         assistant.enablePrefixCompletion(true);
-        //assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
-        //assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+        assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+        assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
         
         return assistant;
     }
