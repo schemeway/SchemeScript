@@ -35,6 +35,9 @@ public class ForwardSExpAction extends Action {
                 if (selection.getLength() > 0) {
                     start = selection.getOffset();
                 }
+                else if (start > selection.getOffset()) {
+                    start = selection.getOffset();
+                }
                 mEditor.setSelection(start, end);
             }
             else {
