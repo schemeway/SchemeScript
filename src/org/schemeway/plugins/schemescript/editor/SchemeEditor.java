@@ -5,6 +5,8 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
+import java.net.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.*;
@@ -60,7 +62,7 @@ public class SchemeEditor extends TextEditor {
         return super.getAdapter(adapter);
     }
     
-    private SchemeOutlinePage createOutlinePage()
+    protected ISchemeOutlinePage createOutlinePage()
     {
         return new SchemeOutlinePage(this);
     }
@@ -138,7 +140,8 @@ public class SchemeEditor extends TextEditor {
     
     public ISymbolDictionary getSymbolDictionary() {
         if (mDictionary == null) {
-            mDictionary = UserDictionary.getInstance();
+            URL url = SchemeScriptPlugin.getDefault().find(new Path("conf/forms.scm"));
+            mDictionary = UserDictionary.createInstance(KawaDictionary.getInstance(), "scm", url);
         }
         return mDictionary;
     }

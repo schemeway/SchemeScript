@@ -5,6 +5,8 @@
  */
 package org.schemeway.plugins.schemescript.dictionary;
 
+import org.eclipse.jface.text.templates.*;
+
 /**
  * A symbol dictionary is a catalog of symbols that should be known
  * to the code completion and "jump to definition" facilities.
@@ -28,4 +30,10 @@ public interface ISymbolDictionary {
      * @return 
      */
     SymbolEntry[] completeSymbol(String prefix);
+    
+    /**
+     * Finds all templates beginning with the given prefix 
+     */
+    Template[] completeTemplates(String prefix);
+    TemplateContextType getTemplateContextType();
 }

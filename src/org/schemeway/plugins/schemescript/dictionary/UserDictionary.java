@@ -13,6 +13,7 @@ import gnu.text.*;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 
 import kawa.standard.*;
@@ -20,7 +21,9 @@ import kawa.standard.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
+import org.eclipse.jface.text.templates.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.*;
 import org.schemeway.plugins.schemescript.*;
 
 /**
@@ -31,9 +34,7 @@ import org.schemeway.plugins.schemescript.*;
  * TODO Use a better technique to disable dictionaries...
  */
 public class UserDictionary extends AbstractSymbolDictionary implements IUserDictionary, IResourceChangeListener {
-    private static UserDictionary mInstance;
-    private static List mSchemeExtensions;
-    private static String mUserFile;
+    private List mSchemeExtensions;
 
     private List mPendingResources = Collections.synchronizedList(new LinkedList());
     private Hashtable mEntries = new Hashtable();
@@ -53,33 +54,38 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
         }
     }
 
-    private UserDictionary() {
-        super(KawaDictionary.getInstance());
-        loadFormProcessors();
-        initialize();
-        ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+    private UserDictionary(AbstractSymbolDictionary parent, String extensions) {
+        super(parent);
+        initializeExtensions(extensions);
     }
 
     public void dispose() {
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-        mInstance = null;
         mEntries = null;
         mPendingResources = null;
     }
 
-    public static UserDictionary getInstance() {
-        if (mInstance == null) {
-            mInstance = new UserDictionary();
+    public static UserDictionary createInstance(AbstractSymbolDictionary parent, String extensions, URL userFile) {
+        UserDictionary instance = new UserDictionary(parent, extensions);
+        instance.loadFormProcessors(userFile);
+        instance.initialize();
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(instance, IResourceChangeEvent.POST_CHANGE);
+        return instance;
+}
+    
+    private void initializeExtensions(String extensions) {
+        StringTokenizer tokenizer = new StringTokenizer(extensions, ",");
+        mSchemeExtensions = new LinkedList();
+        while (tokenizer.hasMoreElements()) {
+            mSchemeExtensions.add(tokenizer.nextToken());
         }
-        return mInstance;
     }
 
-    private void loadFormProcessors() {
+    private void loadFormProcessors(URL userFile) {
         Interpreter interp = Interpreter.getInterpreter();
         interp.defineFunction("define-form-processor", new FormProcessorDefiner(this));
-        IPath kawaConfigPath = new Path(mUserFile);
         try {
-            load.load.apply1(SchemeScriptPlugin.getDefault().find(kawaConfigPath).toString());
+            load.load.apply1(userFile.toString());
         }
         catch (Throwable exception) {
             SchemeScriptPlugin.logException("unable to load config file", exception);
@@ -274,7 +280,22 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
             existingEntries.remove(entry);
         }
     }
-
+    
+    public Template[] completeTemplates(String prefix) {
+        if (getParent() != null) 
+            return getParent().completeTemplates(prefix);
+        else
+            return new Template[0];
+    }
+    
+    public TemplateContextType getTemplateContextType()
+    {
+        if (getParent() != null) 
+            return getParent().getTemplateContextType();
+        else
+            return null;
+    }
+    
     protected void findSymbols(String name, List entries) {
         processPendingResources(true);
         List existingEntries = (List) mEntries.get(name);
@@ -337,12 +358,5 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
         for (int i = 0; i < children.length; i++) {
             processResourceDelta(children[i]);
         }
-    }
-
-    static {
-        // TODO - should be made configurable
-        mSchemeExtensions = new LinkedList();
-        mSchemeExtensions.add("scm");
-        mUserFile = "conf/forms.scm";
     }
 }

@@ -7,6 +7,8 @@ package org.schemeway.plugins.schemescript.dictionary;
 
 import java.util.*;
 
+import org.eclipse.jface.text.templates.*;
+
 public abstract class AbstractSymbolDictionary implements ISymbolDictionary {
     private AbstractSymbolDictionary mParent;
     
@@ -45,6 +47,14 @@ public abstract class AbstractSymbolDictionary implements ISymbolDictionary {
         }
         completeSymbols(prefix, entries);
         return (SymbolEntry[]) entries.toArray(new SymbolEntry[entries.size()]);
+    }
+    
+    public Template[] completeTemplates(String prefix) {
+        return new Template[0];
+    }
+    
+    public TemplateContextType getTemplateContextType() {
+        return null;
     }
 
     protected abstract void findSymbols(String name, List entries);
