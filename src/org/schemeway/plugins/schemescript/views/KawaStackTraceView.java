@@ -9,6 +9,7 @@ import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -141,7 +142,7 @@ public class KawaStackTraceView extends ViewPart {
     }
 
     public void createPartControl(Composite parent) {
-        mStackList = new TreeViewer(parent, SWT.BORDER | SWT.V_SCROLL);
+        mStackList = new TreeViewer(parent, SWT.V_SCROLL);
         mStackList.setContentProvider(new StackTraceContentProvider());
         mStackList.setLabelProvider(new StackTraceLabelProvider());
 
@@ -167,6 +168,14 @@ public class KawaStackTraceView extends ViewPart {
         });
     }
 
+    public static void logException(Throwable exception) {
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        if (!MessageDialog.openConfirm(shell, "Runtime Exception", exception.getMessage() + "\nDebug?"))
+            return;
+
+        showStackTrace(exception);
+    }
+    
     public static void showStackTrace(Throwable exception) {
         try {
             KawaStackTraceView view = (KawaStackTraceView) (PlatformUI.getWorkbench()
