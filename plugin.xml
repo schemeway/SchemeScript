@@ -93,6 +93,12 @@
             name="Select Up S-expression"
             id="org.schemeway.plugins.schemescript.sexp.select-up"/>
       <command
+            description="Restores the previous selection"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            name="Restore the previous selection"
+            id="org.schemeway.plugins.schemescript.sexp.restore-selection"/>
+      <command
             description="Enters the next S-expression"
             category="Scheme Editing"
             categoryId="Scheme Editing"
@@ -193,6 +199,16 @@
             contextId="Scheme Editing"
             commandId="org.schemeway.plugins.schemescript.sexp.select-up"
             keySequence="ALT+CTRL+SHIFT+U"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <keyBinding
+            contextId="Scheme Editing"
+            commandId="org.schemeway.plugins.schemescript.sexp.select-up"
+            keySequence="CTRL+SHIFT+ARROW_UP"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <keyBinding
+            contextId="Scheme Editing"
+            commandId="org.schemeway.plugins.schemescript.sexp.restore-selection"
+            keySequence="CTRL+SHIFT+ARROW_DOWN"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <keyBinding
             contextId="Scheme Editing"

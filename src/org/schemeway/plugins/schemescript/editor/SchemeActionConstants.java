@@ -23,6 +23,7 @@ public final class SchemeActionConstants {
     public final static String SEXP_SWAP = SEXP_PREFIX + "swap";
     public final static String SEXP_FORMAT = SEXP_PREFIX + "format";
     public final static String SEXP_MOUSECOPY = SEXP_PREFIX + "mousecopy";
+    public final static String SEXP_RESTORE_SELECTION = SEXP_PREFIX + "restore-selection";
     
     private final static String COMMENT_PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".comment.";
     public final static String COMMENT_CHAPTER = COMMENT_PREFIX + "chapter";

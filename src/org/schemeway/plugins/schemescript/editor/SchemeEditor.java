@@ -116,13 +116,19 @@ public class SchemeEditor extends TextEditor {
         action.setActionDefinitionId(SchemeActionConstants.SEXP_SELECT_BACKWARD);
         this.setAction(SchemeActionConstants.SEXP_SELECT_BACKWARD, action);
 
-        action = new UpSExpAction(this, false);
+        action = new UpSExpAction(this, false, null);
         action.setActionDefinitionId(SchemeActionConstants.SEXP_UP);
         this.setAction(SchemeActionConstants.SEXP_UP, action);
 
-        action = new UpSExpAction(this, true);
+        SelectionStack stack = new SelectionStack();
+        
+        action = new UpSExpAction(this, true, stack);
         action.setActionDefinitionId(SchemeActionConstants.SEXP_SELECT_UP);
         this.setAction(SchemeActionConstants.SEXP_SELECT_UP, action);
+        
+        action = new RestoreSelectionAction(this, stack);
+        action.setActionDefinitionId(SchemeActionConstants.SEXP_RESTORE_SELECTION);
+        this.setAction(SchemeActionConstants.SEXP_RESTORE_SELECTION, action);
 
         action = new DownSExpAction(this);
         action.setActionDefinitionId(SchemeActionConstants.SEXP_DOWN);
