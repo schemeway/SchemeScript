@@ -39,20 +39,7 @@ public class StringDeleter implements IAutoEditStrategy {
                 }
             }
             else if (command.length > 1 && command.text.length() == 0) {
-                int start = command.offset;
-                int end = start + command.length;
-                
-                ITypedRegion startPartition = document.getPartition(start);
-                ITypedRegion endPartition   = document.getPartition(end);
-                
-                if (startPartition.getType() == SchemePartitionScanner.SCHEME_STRING)
-                    start = startPartition.getOffset();
-                if (endPartition.getType() == SchemePartitionScanner.SCHEME_STRING
-                        && end > endPartition.getOffset()) 
-                    end = endPartition.getOffset() + endPartition.getLength();
-                
-                command.offset = start;
-                command.length = end - start;
+                SexpUtils.deleteSelection(document, command);
             }
         }
         catch (BadLocationException exception) {

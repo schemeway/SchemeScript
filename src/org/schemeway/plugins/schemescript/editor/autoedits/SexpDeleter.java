@@ -20,33 +20,20 @@ public class SexpDeleter implements IAutoEditStrategy {
                 char currentChar;
                 currentChar = document.getChar(command.offset);
                 if (currentChar == '(' || currentChar == '[') {
-                    deleteForwardSexp(document, command);
+                    SexpUtils.deleteForwardSexp(document, command);
                 }
                 else if (currentChar == ')' || currentChar == ']') {
-                    deleteBackwardSexp(document, command);
+                    SexpUtils.deleteBackwardSexp(document, command);
                 }
+            }
+            else if (command.text.length() == 0 && command.length > 0) {
+                if (SexpUtils.whitespacesOnly(document, command.offset, command.length))
+                    return;
+                SexpUtils.deleteSelection(document, command);
             }
         }
         catch (BadLocationException e) {
         }
     }
 
-    private void deleteForwardSexp(IDocument document, DocumentCommand command) throws BadLocationException {
-        SexpNavigator navigator = new SexpNavigator(document);
-        if (navigator.forwardSexpression(command.offset)) {
-            int start = navigator.getSexpStart();
-            int end   = navigator.getSexpEnd();
-            command.length = end - start;
-        }
-    }
-
-    private void deleteBackwardSexp(IDocument document, DocumentCommand command) throws BadLocationException {
-        SexpNavigator navigator = new SexpNavigator(document);
-        if (navigator.backwardSexpression(command.offset + 1)) {
-            int start = navigator.getSexpStart();
-            int end   = navigator.getSexpEnd();
-            command.offset = start;
-            command.length = end - start;
-        }
-    }
 }

@@ -58,6 +58,8 @@ public class MatchingDelimitersInserter implements IAutoEditStrategy {
                         command.length = 1;
                         command.caretOffset = command.offset + 1;
                     }
+                    else
+                        command.doit = false;
                     break;
             }
         }
