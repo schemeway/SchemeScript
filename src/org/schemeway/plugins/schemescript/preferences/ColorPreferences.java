@@ -18,6 +18,7 @@ public class ColorPreferences extends FieldEditorPreferencePage implements IWork
     public final static String MATCHER_BOX = PREFIX + "matcherbox";
 
     public final static String DEFAULT_COLOR = PREFIX + "default";
+    public final static String PAREN_COLOR = PREFIX + "parenthesis";
     public final static String COMMENT_COLOR = PREFIX + "comment";
     public final static String DEFINE_COLOR = PREFIX + "define";
     public final static String KEYWORD_COLOR = PREFIX + "keyword";
@@ -50,6 +51,7 @@ public class ColorPreferences extends FieldEditorPreferencePage implements IWork
 
         PreferenceConverter.setDefault(store, DEFAULT_COLOR, ISchemeColorConstants.SCHEME_DEFAULT);
         PreferenceConverter.setDefault(store, BACKGROUND_COLOR, ISchemeColorConstants.SCHEME_BACKGROUND);
+        PreferenceConverter.setDefault(store, PAREN_COLOR, ISchemeColorConstants.SCHEME_PAREN);
         PreferenceConverter.setDefault(store, COMMENT_COLOR, ISchemeColorConstants.SCHEME_COMMENT);
         PreferenceConverter.setDefault(store, DEFINE_COLOR, ISchemeColorConstants.SCHEME_DEFINE);
         PreferenceConverter.setDefault(store, KEYWORD_COLOR, ISchemeColorConstants.SCHEME_KEYWORD);
@@ -71,6 +73,7 @@ public class ColorPreferences extends FieldEditorPreferencePage implements IWork
         initializeDefaultPreferences(getPreferenceStore());
         addField(new ColorFieldEditor(DEFAULT_COLOR, "Default color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(BACKGROUND_COLOR, "Background color:", getFieldEditorParent()));
+        addField(new ColorFieldEditor(PAREN_COLOR, "Parentheses color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(COMMENT_COLOR, "Comments color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(DEFINE_COLOR, "Defining form color:", getFieldEditorParent()));
         addField(new ColorFieldEditor(SPECIAL_COLOR, "Special forms color:", getFieldEditorParent()));

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2004 Nu Echo Inc.
  * 
- * This is free software. For terms and warranty disclaimer, see ./COPYING 
+ * This is free software. For terms and warranty disclaimer, see ./COPYING
  */
 package org.schemeway.plugins.schemescript.editor;
 
@@ -49,9 +49,8 @@ public class SchemeEditor extends TextEditor {
     //
     //// ContentOutlinePage support
     //
-    
-    public Object getAdapter(Class adapter)
-    {
+
+    public Object getAdapter(Class adapter) {
         if (IContentOutlinePage.class.equals(adapter)) {
             if (mOutlinePage == null) {
                 mOutlinePage = createOutlinePage();
@@ -60,9 +59,8 @@ public class SchemeEditor extends TextEditor {
         }
         return super.getAdapter(adapter);
     }
-    
-    protected ISchemeOutlinePage createOutlinePage()
-    {
+
+    protected ISchemeOutlinePage createOutlinePage() {
         return new SchemeOutlinePage(this);
     }
 
@@ -72,29 +70,31 @@ public class SchemeEditor extends TextEditor {
             mOutlinePage.update();
         }
     }
-    
+
     public void doSave(IProgressMonitor monitor) {
         super.doSave(monitor);
         if (mOutlinePage != null) {
             mOutlinePage.update();
         }
     }
-    
+
     public void doRevertToSaved() {
         super.doRevertToSaved();
         if (mOutlinePage != null) {
             mOutlinePage.update();
         }
     }
-    
+
     //
     //// Preference changes support
     //
-    
+
     protected final boolean affectsTextPresentation(final PropertyChangeEvent event) {
         String property = event.getProperty();
 
-        return property.startsWith(ColorPreferences.PREFIX) || property.startsWith(SyntaxPreferences.PREFIX);
+        return property.startsWith(ColorPreferences.PREFIX)
+               || property.startsWith(SyntaxPreferences.PREFIX)
+               || property.startsWith(SchemeLexicalExtensionsPreferences.PREFIX);
     }
 
     protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
@@ -105,22 +105,23 @@ public class SchemeEditor extends TextEditor {
         else if (property.equals(SchemePreferences.TAB_WIDTH)) {
             getSourceViewer().getTextWidget().setTabs(SchemePreferences.getTabWidth());
         }
-        else
-            if (affectsTextPresentation(event)) {
-                SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
-                textTools.updateColors(event);
+        else if (affectsTextPresentation(event)) {
+            SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
+            textTools.updateColors(event);
 
-                IPreferenceStore store = getPreferenceStore();
-                mParenPainter.setHighlightColor(new Color(null,
-                                                          PreferenceConverter.getColor(store,
-                                                                                       ColorPreferences.MATCHER_COLOR)));
-                mParenPainter.setHighlightStyle(store.getBoolean(ColorPreferences.MATCHER_BOX));
-            }
-            else
-                if (property.startsWith(IndentationPreferences.PREFIX)) {
-                    SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
-                    textTools.updateIndentationSchemes();
-                }
+            IPreferenceStore store = getPreferenceStore();
+            mParenPainter.setHighlightColor(new Color(null,
+                                                      PreferenceConverter.getColor(store,
+                                                                                   ColorPreferences.MATCHER_COLOR)));
+            mParenPainter.setParenthesisColor(new Color(null,
+                                                      PreferenceConverter.getColor(store,
+                                                                                   ColorPreferences.PAREN_COLOR)));
+            mParenPainter.setHighlightStyle(store.getBoolean(ColorPreferences.MATCHER_BOX));
+        }
+        else if (property.startsWith(IndentationPreferences.PREFIX)) {
+            SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
+            textTools.updateIndentationSchemes();
+        }
         super.handlePreferenceStoreChanged(event);
     }
 
@@ -132,11 +133,11 @@ public class SchemeEditor extends TextEditor {
         getSourceViewer().getTextWidget().setBackground(color);
         startParenthesisHighlighting();
     }
-    
+
     //
     //// SymbolDictionary support
     //
-    
+
     public ISymbolDictionary getSymbolDictionary() {
         if (mDictionary == null) {
             URL url = SchemeScriptPlugin.getDefault().find(new Path("conf/forms.scm"));
@@ -146,7 +147,8 @@ public class SchemeEditor extends TextEditor {
     }
 
     protected void initializeKeyBindingScopes() {
-        setKeyBindingScopes(new String[] {
+        setKeyBindingScopes(new String[]
+        {
             "Scheme Editing", "Edit"
         });
     }
@@ -154,7 +156,7 @@ public class SchemeEditor extends TextEditor {
     //
     //// Actions, menus
     //
-    
+
     protected void createActions() {
         super.createActions();
 
@@ -179,11 +181,11 @@ public class SchemeEditor extends TextEditor {
         this.setAction(SchemeActionConstants.SEXP_UP, action);
 
         SelectionStack stack = new SelectionStack();
-        
+
         action = new UpSExpAction(this, true, stack);
         action.setActionDefinitionId(SchemeActionConstants.SEXP_SELECT_UP);
         this.setAction(SchemeActionConstants.SEXP_SELECT_UP, action);
-        
+
         action = new RestoreSelectionAction(this, stack);
         action.setActionDefinitionId(SchemeActionConstants.SEXP_RESTORE_SELECTION);
         this.setAction(SchemeActionConstants.SEXP_RESTORE_SELECTION, action);
@@ -219,11 +221,11 @@ public class SchemeEditor extends TextEditor {
         action = new EvalExpressionAction(this, false);
         action.setActionDefinitionId(SchemeActionConstants.EVAL_EXPR);
         this.setAction(SchemeActionConstants.EVAL_EXPR, action);
-        
+
         action = new EvalExpressionAction(this, true);
         action.setActionDefinitionId(SchemeActionConstants.EVAL_DEF);
         this.setAction(SchemeActionConstants.EVAL_DEF, action);
-        
+
         action = new CompressSpacesAction(this);
         action.setActionDefinitionId(SchemeActionConstants.COMPRESS_SPACES);
         this.setAction(SchemeActionConstants.COMPRESS_SPACES, action);
@@ -231,24 +233,26 @@ public class SchemeEditor extends TextEditor {
         MouseCopyAction mouseAction = new MouseCopyAction(this, getSourceViewer().getTextWidget(), false);
         mouseAction.setActionDefinitionId(SchemeActionConstants.SEXP_MOUSECOPY);
         this.setAction(SchemeActionConstants.SEXP_MOUSECOPY, mouseAction);
-        
+
         mouseAction = new MouseCopyAction(this, getSourceViewer().getTextWidget(), true);
         mouseAction.setActionDefinitionId(SchemeActionConstants.SEXP_EXTENDED_MOUSECOPY);
         this.setAction(SchemeActionConstants.SEXP_EXTENDED_MOUSECOPY, mouseAction);
-        
+
         action = new JumpToDefinitionAction(this);
         action.setActionDefinitionId(SchemeActionConstants.JUMP_DEF);
         this.setAction(SchemeActionConstants.JUMP_DEF, action);
-        
-        action= new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
+
+        action = new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(),
+                                         "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-        setAction("ContentAssistProposal", action); 
-            
-        action = new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);  //$NON-NLS-1$
+        setAction("ContentAssistProposal", action);
+
+        action = new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(),
+                                         "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
-        setAction("ContentAssistTip", action); 
+        setAction("ContentAssistTip", action);
     }
-    
+
     protected void editorContextMenuAboutToShow(IMenuManager menu) {
         super.editorContextMenuAboutToShow(menu);
         menu.add(new Separator("group.sexp"));
@@ -256,27 +260,26 @@ public class SchemeEditor extends TextEditor {
 
         MenuManager sourceMenu = new MenuManager("Source");
         menu.add(sourceMenu);
-        
+
         sourceMenu.add(new Separator("group.find"));
         addAction(sourceMenu, "group.find", SchemeActionConstants.JUMP_DEF);
         addAction(sourceMenu, "group.find", "ContentAssistProposal");
         addAction(sourceMenu, "group.find", "ContentAssistTip");
-        
-        
+
         sourceMenu.add(new Separator("group.comments"));
         addAction(sourceMenu, "group.comments", SchemeActionConstants.COMMENT_HEADER);
         addAction(sourceMenu, "group.comments", SchemeActionConstants.COMMENT_CHAPTER);
         addAction(sourceMenu, "group.comments", SchemeActionConstants.COMMENT_SECTION);
         addAction(sourceMenu, "group.comments", SchemeActionConstants.COMMENT_SELECTION);
-        
+
         sourceMenu.add(new Separator("group.edit"));
         addAction(sourceMenu, "group.edit", SchemeActionConstants.COMPRESS_SPACES);
         addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_FORMAT);
         addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_SWAP);
-        
+
         MenuManager evalMenu = new MenuManager("Eval");
         menu.add(evalMenu);
-        
+
         evalMenu.add(new Separator("group.eval"));
         addAction(evalMenu, "group.eval", SchemeActionConstants.EVAL_DEF);
         addAction(evalMenu, "group.eval", SchemeActionConstants.EVAL_EXPR);
@@ -285,7 +288,7 @@ public class SchemeEditor extends TextEditor {
     //
     //// Parenthesis highlighting
     //
-    
+
     private void startParenthesisHighlighting() {
         if (mParenPainter == null) {
             ISourceViewer sourceViewer = getSourceViewer();
@@ -295,6 +298,9 @@ public class SchemeEditor extends TextEditor {
             mParenPainter.setHighlightColor(new Color(null,
                                                       PreferenceConverter.getColor(store,
                                                                                    ColorPreferences.MATCHER_COLOR)));
+            mParenPainter.setParenthesisColor(new Color(null,
+                                                        PreferenceConverter.getColor(store,
+                                                                                     ColorPreferences.PAREN_COLOR)));
             mPaintManager.addPainter(mParenPainter);
         }
 
@@ -303,7 +309,7 @@ public class SchemeEditor extends TextEditor {
     //
     //// Text editing helper methods
     //
-    
+
     public SexpExplorer getExplorer() {
         if (mExplorer == null) {
             mExplorer = new SexpExplorer(getDocument());
@@ -352,7 +358,7 @@ public class SchemeEditor extends TextEditor {
             return 0;
         }
     }
-    
+
     public void insertText(int offset, String text) {
         replaceText(offset, 0, text);
     }

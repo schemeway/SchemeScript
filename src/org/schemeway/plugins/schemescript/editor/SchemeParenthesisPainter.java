@@ -44,6 +44,10 @@ public class SchemeParenthesisPainter implements IPainter, PaintListener {
     public final void setHighlightColor(final Color color) {
         mColor = color;
     }
+    
+    public final void setParenthesisColor(Color color) {
+        mDefaultColor = color;
+    }
 
     /**
      * @see IPainter#setHighlightStyle
