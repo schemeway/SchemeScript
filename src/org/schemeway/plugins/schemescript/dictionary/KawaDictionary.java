@@ -83,9 +83,6 @@ public class KawaDictionary extends AbstractSymbolDictionary
 
     protected void completeSymbols(String prefix, List entries)
     {
-        if (prefix.length() < 3)
-            return;
-        
         Enumeration enumeration = mEntries.keys();
         while (enumeration.hasMoreElements()) {
             String symbolName = (String) enumeration.nextElement();
