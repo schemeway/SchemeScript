@@ -64,9 +64,6 @@ public class SymbolSelectionDialog extends Window {
                 if (event.character == '\r') {
                     ok();
                 }
-//                else if (event.character == 27) {
-//                    cancel();
-//                }
             }
         });
         list.addMouseListener(new MouseAdapter() {
