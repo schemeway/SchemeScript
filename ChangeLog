@@ -1,7 +1,22 @@
+*** Version 0.3.0
+
+- Added a Scheme perspective, with menus, toolbar actions
+- Added integrated Scheme interpreter support
+- Added fast eval keys
+- Bug fixes:
+   * parenthesis highlighting works even when the first
+     character of the file is an opening parenthesis
+   * renaming a file no longer breaks parenthesis highlighting
+     (there may be some minor issues regarding the user
+     dictionary, though)
+   * pressing TAB on an already indented line no longer marks
+     the file as modified
+
+
 *** Version 0.2.1
 
 - The "Find Definition" action now opens the "Definitions" view
-- Added a "Find Symbol" action that pops up a dialog box for 
+- Added a "Find Symbol" action that pops up a dialog box for 	
   querying a symbol definition.
 
 
@@ -15,10 +30,10 @@
 *** Version 0.1.7
    
 - Extended mouse copy
-- Can now open external files (bug reported by Matthew Morgan)
+- Can now open external fi	les (bug reported by Matthew Morgan)
 - Added a new indentation category/scheme: 'none'. Ideal for PLT-style modules.
 - Added a new preference page - Lexical extensions
-  (determines whether square brackets are treater as parentheses or not,
+  (determines whether square brackets are treated as parentheses or not,
   and if dash characters (#) can be part of identifiers)
 - Major modifications to the Color preferences (now Appearance page)
   Each token type can have its bold/italic attribute set 
@@ -40,7 +55,7 @@
   in the next release) are scanned.
 - JumpToDefinition action - simply put your cursor on a symbol
   defined globally and press F12 (or use the contextual menu - right click).
-- Keywords are colored differently (and they are displayed in bol italic).
+- Keywords are colored differently (and they are displayed in bold italic).
 - Added some context menu items.
 
 *** Version 0.1.3
