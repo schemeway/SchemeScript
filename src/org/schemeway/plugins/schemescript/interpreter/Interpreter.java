@@ -12,6 +12,9 @@ public interface Interpreter {
     void start();
     void stop();
     void restart();
+    
+    boolean supportInterruption();
+    void interrupt();
     void eval(String code);
     void load(IFile file);
     
