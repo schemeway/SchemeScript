@@ -31,7 +31,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     private ResourceBundle resourceBundle;
 
     private SchemeTextTools textTools;
-    private Interpreter     interpreter;
+    private InterpreterType mCurrentInterpreter;
     
     IPropertyChangeListener propertyChangedListener = null;
     
@@ -115,14 +115,37 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     
     
     public Interpreter getInterpreter() {
-        if (interpreter == null) {
-            interpreter = createInterpreter();
-        }
-        return interpreter;
+        if (mCurrentInterpreter == null) 
+            mCurrentInterpreter = createDefaultInterpreter();
+        return mCurrentInterpreter.getInterpreter();
     }
     
-    protected Interpreter createInterpreter() {
-        return new BaseInterpreter();
+    public void setInterpreter(InterpreterType type) {
+        Assert.isNotNull(type);
+        mCurrentInterpreter = type;
+    }
+    
+    public InterpreterType getCurrentInterpreterType() {
+        if (mCurrentInterpreter == null)
+            mCurrentInterpreter = createDefaultInterpreter();
+        return mCurrentInterpreter;
+    }
+    
+    public Interpreter getInternalInterpreter() {
+        InterpreterType[] types = InterpreterSupport.getTypes();
+        for (int i=0; i<types.length; i++) {
+            if (types[i].getID().equals("internal")) {
+                return types[i].getInterpreter();
+            }
+        }
+        return null;
+    }
+    
+    protected InterpreterType createDefaultInterpreter() {
+        InterpreterType[] types = InterpreterSupport.getTypes();
+        if (types.length == 0)
+            return null;
+        return types[0];
     }
   
     
