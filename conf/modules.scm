@@ -40,7 +40,13 @@
   (let* ((dictionary (SchemeEditor:getSymbolDictionary buffer))
          (entries    (array->list (SymbolDictionary:findSymbol dictionary symbol))))
     (and (pair? entries)
-         (find-module-name (SymbolEntry:getFile (first entries))))))
+         (choose-from-list
+          "Symbol multiply declared"
+          "Choose the module to require:"
+          (filter symbol? 
+                  (map (lambda (entry)
+                         (find-module-name (SymbolEntry:getFile entry)))
+                       entries))))))
 
 
 (define (add-require-clause #!optional (symbol (symbol-near-point)) (buffer (current-buffer)))
