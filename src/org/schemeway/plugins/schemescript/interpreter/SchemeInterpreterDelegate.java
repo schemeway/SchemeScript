@@ -19,10 +19,6 @@ import org.schemeway.plugins.schemescript.preferences.*;
  */
 public class SchemeInterpreterDelegate implements ILaunchConfigurationDelegate {
 
-    public SchemeInterpreterDelegate() {
-        super();
-    }
-
     public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
             throws CoreException {
 

@@ -26,10 +26,6 @@ public class BaseInterpreter implements Interpreter {
     private IProcess mProcess;
     private ILaunch mLaunch;
 
-    public BaseInterpreter() {
-        super();
-    }
-
     public void start() {
         try {
             if (!isRunning()) {
