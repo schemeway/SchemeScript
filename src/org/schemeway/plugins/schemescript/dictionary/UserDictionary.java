@@ -326,7 +326,8 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
     private void processChangedResource(IFile file) {
         try {
             if (isSchemeSourceFile(file)) {
-                mPendingResources.add(file);
+                if (!mPendingResources.contains(file))
+                    mPendingResources.add(file);
             }
         }
         catch (Exception exception) {
