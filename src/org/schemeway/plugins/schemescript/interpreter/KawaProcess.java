@@ -113,7 +113,6 @@ public class KawaProcess implements IProcess {
 
     private KawaProcess() {
         super();
-        setAttribute(IProcess.ATTR_PROCESS_TYPE, "scheme");
     }
 
     public String getLabel() {
