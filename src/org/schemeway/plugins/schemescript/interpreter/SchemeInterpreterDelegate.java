@@ -36,7 +36,9 @@ public class SchemeInterpreterDelegate implements ILaunchConfigurationDelegate {
                                                    null));
 
             Process inferiorProcess = DebugPlugin.exec(getCommandLine(), getWorkingDirectory());
-            DebugPlugin.newProcess(launch, inferiorProcess, getInterpreterName());
+            Map attributes = new HashMap();
+            attributes.put(IProcess.ATTR_PROCESS_TYPE, "scheme");
+            DebugPlugin.newProcess(launch, inferiorProcess, getInterpreterName(), attributes);
         }
         catch (CoreException exception) {
             SchemeScriptPlugin.logException("Unable to start interpreter", exception);
