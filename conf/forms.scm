@@ -269,7 +269,8 @@
 
 
 (define (find-internal-class-methods class-name)
-  (let* ((class   (java.lang.Class:forName class-name))
+  (try-catch 
+      (let* ((class   (java.lang.Class:forName class-name))
              (methods (filter (lambda (method)
                                 (Modifier:isPublic (Method:getModifiers method)))
                               (array->list (Class:getDeclaredMethods class))))
@@ -288,7 +289,12 @@
                                                        (Method:getParameterTypes method)
                                                        #f))
                                    methods))))
-        names))
+        names)
+    (exception <java.lang.ClassNotFoundException> 
+               #f)
+    (exception <java.lang.Throwable>
+               (SchemePlugin:logException "Internal error!" exception)
+               #f)))
 
 
 (define (find-project-element project name)

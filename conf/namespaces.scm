@@ -16,6 +16,7 @@
 
 (define-namespace SymbolEntry    "class:org.schemeway.plugins.schemescript.dictionary.SymbolEntry")
 (define-namespace UserDictionary "class:org.schemeway.plugins.schemescript.dictionary.IUserDictionary")
+(define-namespace SchemePlugin   "class:org.schemeway.plugins.schemescript.SchemeScriptPlugin")
 
 (define-namespace JavaCore         "class:org.eclipse.jdt.core.JavaCore")
 (define-namespace IJavaModel       "class:org.eclipse.jdt.core.IJavaModel")
