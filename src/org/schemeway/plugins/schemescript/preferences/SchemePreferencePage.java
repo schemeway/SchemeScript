@@ -11,6 +11,10 @@ import org.schemeway.plugins.schemescript.*;
 
 public abstract class SchemePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+    public SchemePreferencePage() {
+        super();
+    }
+    
     public void init(IWorkbench workbench) {
     }
 
@@ -27,7 +31,6 @@ public abstract class SchemePreferencePage extends PreferencePage implements IWo
         super.performDefaults();
 
         doPerformDefaults();
-        storeValues();
     }
     
     protected abstract void storeValues();
