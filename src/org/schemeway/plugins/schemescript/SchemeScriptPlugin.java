@@ -11,12 +11,16 @@ import kawa.standard.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.ui.plugin.*;
 import org.osgi.framework.*;
 
 import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.*;
+import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
+
+import sun.dc.pr.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -30,6 +34,8 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     private ResourceBundle resourceBundle;
 
     private SchemeTextTools textTools;
+    
+    IPropertyChangeListener propertyChangedListener = null;
     
     /**
      * The constructor.
@@ -53,6 +59,18 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 
         Scheme.registerEnvironment();
         textTools = new SchemeTextTools(new ColorManager());
+        
+        if (propertyChangedListener == null) {
+            propertyChangedListener = new IPropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent event) {
+                    IPreferenceStore store = getPreferenceStore();
+                    if (event.getProperty().startsWith(SchemeLexicalExtensionsPreferences.PREFIX)) {
+                        initializeScanner(store);
+                    }
+                }
+            };
+            getPreferenceStore().addPropertyChangeListener(propertyChangedListener);
+        }
     }
 
     /**
@@ -60,6 +78,9 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
+        if (propertyChangedListener != null) {
+            getPreferenceStore().removePropertyChangeListener(propertyChangedListener);
+        }
     }
 
     /**
@@ -110,5 +131,12 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
         ColorPreferences.initializeDefaults(store);
         SyntaxPreferences.initializeDefaults(store);
         IndentationPreferences.initializeDefaults(store);
+        SchemeLexicalExtensionsPreferences.initializeDefaults(store);
+        initializeScanner(store);
+    }
+    
+    private void initializeScanner(IPreferenceStore store) {
+        SchemeScannerUtilities.setBracketsAreParentheses(store.getBoolean(SchemeLexicalExtensionsPreferences.SQUARE_BRACKETS));
+        SchemeScannerUtilities.setDashInIdentifiers(store.getBoolean(SchemeLexicalExtensionsPreferences.DASH_IN_IDS));
     }
 }

@@ -374,6 +374,12 @@
             class="org.schemeway.plugins.schemescript.preferences.IndentationPreferences"
             id="org.schemeway.plugins.schemescript.preferences.indentation">
       </page>
+      <page
+            name="Lexical extensions"
+            category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.SchemeLexicalExtensionsPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.syntax-extensions">
+      </page>
    </extension>
    <extension
          point="org.eclipse.help.toc">
