@@ -6,7 +6,6 @@
 package org.schemeway.plugins.schemescript.action;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.widgets.*;
@@ -33,7 +32,7 @@ public class FindSymbolAction extends Action implements IWorkbenchWindowActionDe
         else
             shell = mWindow.getShell();
         
-        FindSymbolDialog dialog = new FindSymbolDialog(shell, SchemeEditor.getSymbolDictionary());
+        FindSymbolDialog dialog = new FindSymbolDialog(shell, SchemeEditor.getSchemeSymbolDictionary());
         if (dialog.open() == Window.OK) {
             SymbolEntry[] entries = dialog.getSelectedEntries();
             if (entries != null) {
