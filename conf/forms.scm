@@ -9,16 +9,6 @@
 
 (require 'srfi-1)
 
-(load-relative "macros.scm")
-(load-relative "util.scm")
-(load-relative "foreign.scm")
-(load-relative "constants.scm")
-(load-relative "buffer.scm")
-(load-relative "widgets.scm")
-(load-relative "dialogs.scm")
-(load-relative "namespaces.scm")
-(load-relative "modules.scm")
-
 
 ;;;
 ;;;; --

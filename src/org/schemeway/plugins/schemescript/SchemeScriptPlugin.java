@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript;
 
+import java.net.*;
 import java.util.*;
 
 import kawa.standard.*;
@@ -23,6 +24,7 @@ import org.schemeway.plugins.schemescript.preferences.*;
  * The main plugin class to be used in the desktop.
  */
 public class SchemeScriptPlugin extends AbstractUIPlugin {
+    private static final String CONF_USER_SCM = "conf/user.scm";
     public final static String PLUGIN_NS = "org.schemeway.plugins.schemescript";
 
     private static final String INTERNAL_INTERPRETER_NAME = "internal";
@@ -59,6 +61,9 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
         super.start(context);
 
         Scheme.registerEnvironment();
+        
+        loadUserFile(CONF_USER_SCM);
+        
         textTools = new SchemeTextTools(new ColorManager());
         
         if (propertyChangedListener == null) {
@@ -71,6 +76,16 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
                 }
             };
             getPreferenceStore().addPropertyChangeListener(propertyChangedListener);
+        }
+    }
+    
+    private void loadUserFile(String filename) {
+        URL filenameUrl = find(new Path(filename));
+        try {
+            load.load.apply1(filenameUrl);
+        }
+        catch (Throwable e) {
+            logException("Unable to load initialization files", e);
         }
     }
 
