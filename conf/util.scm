@@ -30,4 +30,9 @@
 
 
 (define (classname->pathname classname)
-  (symbol->string (invoke (string->symbol classname) 'replace #\. #\/)))
+  (string-replace classname #\. #\/))
+
+
+(define (string-replace str (ch-src :: <char>) (ch-dst :: <char>))
+  (symbol->string (invoke (string->symbol classname) 'replace ch-src ch-dst)))
+

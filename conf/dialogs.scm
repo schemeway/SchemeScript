@@ -32,7 +32,7 @@
 
 
 (define (dialog text control-builder #!optional (width 320) (height 250))
-  (let* ((parent-shell  (default-shell))
+  (let* ((parent-shell  :: <org.eclipse.swt.widgets.Shell> (default-shell))
          (shell         (Shell:new parent-shell *DIALOG-STYLE*))
          (result        'cancel)
          (ok            (lambda () (set! result 'ok)     (Shell:close shell)))

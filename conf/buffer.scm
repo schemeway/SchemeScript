@@ -76,8 +76,9 @@
       (begin
         (SchemeEditor:startCompoundChange buffer)
         (proc))
-    (SchemeEditor:endCompoundChange buffer)
-    #f))
+    (begin
+      (SchemeEditor:endCompoundChange buffer)
+      #f)))
 
 
 (define (buffer-text start end #!optional (buffer (current-buffer)))

@@ -226,9 +226,12 @@
       (find-internal-class-methods class-name)))
 
 
-(define *workspace*      (RsrcPlugin:getWorkspace))
-(define *workspace-root* (IWorkspace:getRoot *workspace*))
-(define *java-model*     (JavaCore:create *workspace-root*))
+(define *workspace*      :: <org.eclipse.core.resources.IWorkspace>
+  (RsrcPlugin:getWorkspace))
+(define *workspace-root* :: <org.eclipse.core.resources.IWorkspaceRoot>
+  (IWorkspace:getRoot *workspace*))
+(define *java-model*     :: <org.eclipse.jdt.core.IJavaModel>
+  (JavaCore:create *workspace-root*))
 
 
 (define (find-project-class-methods class-name)
