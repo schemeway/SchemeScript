@@ -64,12 +64,12 @@ the editor's context menu):
 		<td>Selects the enclosing S-expression.</td>
 		<td class="key">CTRL-SHIFT-UP_ARROW</td>
 	</tr>
-	<tr><td class="command">Restore the previous selection</td>
-		<td>Used in combination with the previous command. Restores the
-			selection that was in effect before selecting the enclosing
-			S-expression.</td>
-		<td class="key">CTRL-SHIFT-DOWN_ARROW</td>
-	</tr>
+		<tr><td class="command">Restore the previous selection</td>
+			<td>Used in combination with the previous command. Restores the
+				selection that was in effect before selecting the enclosing
+				S-expression.</td>
+			<td class="key">CTRL-SHIFT-DOWN_ARROW</td>
+		</tr>
 	<!-- Editing-->	
 	<tr><td colspan="3" align="center" bgcolor="#dddddd"><b>Edition</b></td></tr>
 	<tr><td class="command">Swap S-expressions</td>
@@ -135,6 +135,10 @@ the editor's context menu):
 			(useful when the cursor is inside a top-level definition and we want
 			to send to definition to the interpreter).</td>
 		<td class="key">CTRL-SHIFT-RETURN</td>
+	<tr><td class="command"><a name="eval">Load File in Interpreter</a></td>
+		<td>Loads the current file in the Scheme interpreter,
+			starting it if necessary.</td>
+		<td class="key">CTRL-SHIFT-L</td>
 	</tr>
 	<tr><td class="command"><a name="eval">Fast Eval 0</a></td>
 		<td>Sends a predefined string to the Scheme interpreter, starting it
