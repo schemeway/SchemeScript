@@ -66,5 +66,10 @@ public class SchemeConfiguration extends SourceViewerConfiguration {
         
         return assistant;
     }
+    
+    
+    public ITextHover getTextHover(ISourceViewer viewer, String contentType) {
+        return new SchemeTextHover();
+    }
 
 }
