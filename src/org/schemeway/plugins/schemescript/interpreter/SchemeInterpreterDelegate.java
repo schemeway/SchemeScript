@@ -18,6 +18,8 @@ import org.schemeway.plugins.schemescript.preferences.*;
  * @author Nu Echo Inc.
  */
 public class SchemeInterpreterDelegate implements ILaunchConfigurationDelegate {
+    
+    private static String[] mEnvironment;
 
     public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
             throws CoreException {
@@ -35,7 +37,7 @@ public class SchemeInterpreterDelegate implements ILaunchConfigurationDelegate {
                                                    "Scheme interpreter not set in the preferences",
                                                    null));
 
-            Process inferiorProcess = DebugPlugin.exec(getCommandLine(), getWorkingDirectory());
+            Process inferiorProcess = DebugPlugin.exec(getCommandLine(), getWorkingDirectory(), getEnvironment());
             Map attributes = new HashMap();
             attributes.put(IProcess.ATTR_PROCESS_TYPE, "scheme");
             DebugPlugin.newProcess(launch, inferiorProcess, getInterpreterName(), attributes);
@@ -54,6 +56,22 @@ public class SchemeInterpreterDelegate implements ILaunchConfigurationDelegate {
             cmdline[i] = tokenizer.nextToken();
 
         return cmdline;
+    }
+    
+    private synchronized String[] getEnvironment() {
+        if (mEnvironment == null) {
+            Map systemEnvironment = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
+            mEnvironment = new String[systemEnvironment.size() + 1];
+            int index = 0;
+            Iterator iterator = systemEnvironment.keySet().iterator();
+            while (iterator.hasNext()) {
+                String name = (String)iterator.next();
+                String value = (String)systemEnvironment.get(name);
+                mEnvironment[index++] = name + "=" + value;
+            }
+            mEnvironment[index] = "ECLIPSE=true";
+        }
+        return mEnvironment;
     }
 
     private String getInterpreterName() {
