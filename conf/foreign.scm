@@ -37,6 +37,8 @@
 (define-namespace IParent          "class:org.eclipse.jdt.core.IParent")
 (define-namespace Flags            "class:org.eclipse.jdt.core.Flags")
 (define-namespace SearchEngine     "class:org.eclipse.jdt.core.search.SearchEngine")
+(define-namespace Signature        "class:org.eclipse.jdt.core.Signature")
+
 
 (define-namespace RsrcPlugin       "class:org.eclipse.core.resources.ResourcesPlugin")
 (define-namespace IWorkspace       "class:org.eclipse.core.resources.IWorkspace")

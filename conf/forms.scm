@@ -271,9 +271,15 @@
            (when (not (or (IMethod:isConstructor method) 
                           (Flags:isStatic (IMember:getFlags method))))
              (format port " self"))
-           (for-each (lambda (name)
-                       (format port " ~a" name))
-                     (array->list (IMethod:getParameterNames method)))))))
+           (for-each (lambda (name typename)
+                       (format port " ~a :: <~a>" name typename))
+                    (array->list (IMethod:getParameterNames method))
+                    (map signature->string
+                         (array->list (IMethod:getParameterTypes method))))))))
+
+
+(define (signature->string signature)
+  (Signature:toString (make <string> (as <String> signature))))
 
 
 (define (find-internal-class-methods class-name)
@@ -320,9 +326,7 @@
            (when (not (or (Modifier:isStatic modifiers) constructor?))
              (format port " self"))
            (for-each (lambda (param-type)
-                       (format port " ~a" (string-downcase 
-                                           (symbol->string 
-                                            (type->signature param-type)))))
+                       (format port " <~a>" (type->signature param-type)))
                      (array->list parameter-types))))))
 
 
