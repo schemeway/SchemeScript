@@ -6,10 +6,12 @@
 package org.schemeway.plugins.schemescript.action;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.interpreter.*;
 
-public class RestartInterpreterAction extends Action
+public class RestartInterpreterAction extends Action implements IWorkbenchWindowActionDelegate
 {
     public RestartInterpreterAction()
     {
@@ -25,5 +27,19 @@ public class RestartInterpreterAction extends Action
     
         interp.restart();
         interp.showConsole();
+    }
+    
+    
+    public void dispose() {
+    }
+
+    public void init(IWorkbenchWindow window) {
+    }
+
+    public void run(IAction action) {
+        run();
+    }
+    
+    public void selectionChanged(IAction action, ISelection selection) {
     }
 }

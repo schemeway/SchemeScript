@@ -7,6 +7,7 @@ package org.schemeway.plugins.schemescript.action;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -15,20 +16,24 @@ import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.views.*;
 
-public class FindSymbolAction extends Action {
+public class FindSymbolAction extends Action implements IWorkbenchWindowActionDelegate {
+    
+    IWorkbenchWindow mWindow = null;
 
-    private SchemeEditor mEditor;
-
-    public FindSymbolAction(SchemeEditor editor) {
-        Assert.isNotNull(editor);
+    public FindSymbolAction() {
         setText("Choose symbol");
         setToolTipText("Choose symbol");
-        mEditor = editor;
     }
     
     public void run() {
-        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        FindSymbolDialog dialog = new FindSymbolDialog(shell, mEditor.getSymbolDictionary());
+        Shell shell = null;
+        
+        if (mWindow == null)
+            shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        else
+            shell = mWindow.getShell();
+        
+        FindSymbolDialog dialog = new FindSymbolDialog(shell, SchemeEditor.getSymbolDictionary());
         if (dialog.open() == Window.OK) {
             SymbolEntry[] entries = dialog.getSelectedEntries();
             if (entries != null) {
@@ -38,5 +43,20 @@ public class FindSymbolAction extends Action {
                     DefinitionListView.showInView(entries);
             }
         }
+    }
+    
+    
+    public void dispose() {
+    }
+
+    public void init(IWorkbenchWindow window) {
+        mWindow = window;
+    }
+
+    public void run(IAction action) {
+        run();
+    }
+
+    public void selectionChanged(IAction action, ISelection selection) {
     }
 }
