@@ -1,3 +1,10 @@
+*** Version 0.2.1
+
+- The "Find Definition" action now opens the "Definitions" view
+- Added a "Find Symbol" action that pops up a dialog box for 
+  querying a symbol definition.
+
+
 *** Version 0.2.0
 
 - Added a first version of the documentation
