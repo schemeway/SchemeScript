@@ -39,7 +39,6 @@ public class SchemeEditor extends TextEditor {
         super();
         SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
         setSourceViewerConfiguration(new SchemeConfiguration(textTools, this));
-        setDocumentProvider(new SchemeDocumentProvider());
         setPreferenceStore(SchemeScriptPlugin.getDefault().getPreferenceStore());
     }
 
@@ -229,9 +228,13 @@ public class SchemeEditor extends TextEditor {
         action.setActionDefinitionId(SchemeActionConstants.COMPRESS_SPACES);
         this.setAction(SchemeActionConstants.COMPRESS_SPACES, action);
 
-        MouseCopyAction mouseAction = new MouseCopyAction(this, getSourceViewer().getTextWidget());
+        MouseCopyAction mouseAction = new MouseCopyAction(this, getSourceViewer().getTextWidget(), false);
         mouseAction.setActionDefinitionId(SchemeActionConstants.SEXP_MOUSECOPY);
         this.setAction(SchemeActionConstants.SEXP_MOUSECOPY, mouseAction);
+        
+        mouseAction = new MouseCopyAction(this, getSourceViewer().getTextWidget(), true);
+        mouseAction.setActionDefinitionId(SchemeActionConstants.SEXP_EXTENDED_MOUSECOPY);
+        this.setAction(SchemeActionConstants.SEXP_EXTENDED_MOUSECOPY, mouseAction);
         
         action = new JumpToDefinitionAction(this);
         action.setActionDefinitionId(SchemeActionConstants.JUMP_DEF);
