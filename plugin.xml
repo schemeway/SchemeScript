@@ -28,6 +28,7 @@
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.help"/>
    </requires>
 
    <extension
@@ -167,6 +168,13 @@
             id="org.schemeway.plugins.schemescript.sexp.mousecopy">
       </command>
       <command
+            name="Extended Mouse Copy"
+            description="Copies the S-expression nears the mouse and the leading punctuation character, if any"
+            category="Scheme Editing"
+            categoryId="Scheme Editing"
+            id="org.schemeway.plugins.schemescript.sexp.extended-mousecopy">
+      </command>
+      <command
             name="Eval Expression"
             description="Sends the previous S-expression to the interpreter"
             category="Scheme Editing"
@@ -303,6 +311,12 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.schemeway.plugins.schemescript.sexp.extended-mousecopy"
+            contextId="Scheme Editing"
+            keySequence="ALT+CTRL+SHIFT+C"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.schemeway.plugins.schemescript.eval.expression"
             contextId="Scheme Editing"
             keySequence="CTRL+CR"
@@ -360,6 +374,18 @@
             class="org.schemeway.plugins.schemescript.preferences.IndentationPreferences"
             id="org.schemeway.plugins.schemescript.preferences.indentation">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            primary="true"
+            file="toc.xml"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.schemeway.plugins.schemescript.editor.SchemeDocumentSetupParticipant"
+            extensions="scm"/>
    </extension>
 
 </plugin>
