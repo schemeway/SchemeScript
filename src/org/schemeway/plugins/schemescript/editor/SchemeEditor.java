@@ -182,7 +182,6 @@ public class SchemeEditor extends TextEditor {
     private void createEditStrategies() {
         if (mMatchinDelimiterInserter == null || mQuoteInserter == null || mSexpDeleter == null) {
             final ISourceViewer viewer = getSourceViewer();
-            final ITextViewerExtension2 viewer2 = (ITextViewerExtension2) viewer;
 
             mMatchinDelimiterInserter = new MatchingDelimitersInserter(viewer);
             mQuoteInserter = new DoubleQuoteInserter();
