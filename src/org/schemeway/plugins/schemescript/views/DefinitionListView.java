@@ -108,33 +108,8 @@ public class DefinitionListView extends ViewPart {
     public static void openEditorAtLine(SymbolEntry entry) {
         if (entry == null)
             return;
-
-        try {
-            IFile file = entry.getFile();
-            if (file == null) return;
-            
-            int linenumber = entry.getLineNumber() - 1;
-
-            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            IEditorPart editor = IDE.openEditor(page, file, true);
-            if (editor == null) {
-                return;
-            }
-
-            if (editor instanceof SchemeEditor) {
-                SchemeEditor schemeEditor = (SchemeEditor) editor;
-                try {
-                    int lineStart = schemeEditor.getDocument().getLineOffset(linenumber);
-                    int lineEnd = lineStart + schemeEditor.getDocument().getLineLength(linenumber);
-                    schemeEditor.setSelection(lineStart, lineEnd);
-                }
-                catch (BadLocationException exception) {
-                }
-            }
-        }
-        catch (PartInitException exception) {
-            SchemeScriptPlugin.logException("Unable to open resource", exception);
-        }
+        
+        SchemeScriptTools.openEditor(entry.getFile(), entry.getLineNumber() - 1);
     }
     
     public static void showInView(SymbolEntry[] entries) {

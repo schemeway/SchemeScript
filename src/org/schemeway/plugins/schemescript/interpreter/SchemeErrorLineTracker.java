@@ -5,10 +5,9 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import java.io.*;
 import java.util.regex.*;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.*;
@@ -93,24 +92,7 @@ public class SchemeErrorLineTracker implements IConsoleLineTracker, IPropertyCha
     }
     
     private IFile findFile(String filename) {
-        if (filename != null && !filename.equals("")) {
-            File file = new File(filename);
-            if (!file.isAbsolute()) {
-                File directory = InterpreterPreferences.getWorkingDirectory();
-                if (directory == null)
-                    return null;
-                try {
-                    filename = (new File(directory, filename).getCanonicalPath());
-                }
-                catch (IOException exception) {
-                    return null;
-                }
-            }
-            IWorkspace ws = ResourcesPlugin.getWorkspace();
-            IWorkspaceRoot root = ws.getRoot();
-            return root.getFileForLocation(new Path(filename));
-        }
-        return null;
+        return SchemeScriptTools.findFile(filename, InterpreterPreferences.getWorkingDirectory().getAbsolutePath());
     }
 
     public void dispose() {
