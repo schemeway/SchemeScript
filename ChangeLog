@@ -1,11 +1,18 @@
+*** Version 0.2.0
+
+- Added a first version of the documentation
+- A new icon with transparent background
+- Bug fix: strings can now contain backslash characters (\)
+
+
 *** Version 0.1.7
    
 - Extended mouse copy
 - Can now open external files (bug reported by Matthew Morgan)
 - Added a new indentation category/scheme: 'none'. Ideal for PLT-style modules.
 - Added a new preference page - Lexical extensions
-  (determines whether square brackets are considered as parentheses or not,
-  and if dash characters can be part of identifiers)
+  (determines whether square brackets are treater as parentheses or not,
+  and if dash characters (#) can be part of identifiers)
 - Major modifications to the Color preferences (now Appearance page)
   Each token type can have its bold/italic attribute set 
 - Fixed the bug with the syntax/indentation preferences pages
