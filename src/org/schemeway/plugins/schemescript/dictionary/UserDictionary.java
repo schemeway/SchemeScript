@@ -343,6 +343,6 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
         // TODO - should be made configurable
         mSchemeExtensions = new LinkedList();
         mSchemeExtensions.add("scm");
-        mUserFile = "forms.scm";
+        mUserFile = "conf/forms.scm";
     }
 }
