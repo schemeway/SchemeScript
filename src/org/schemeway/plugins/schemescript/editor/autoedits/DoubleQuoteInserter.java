@@ -9,7 +9,7 @@ import org.eclipse.jface.text.*;
 
 public class DoubleQuoteInserter implements IAutoEditStrategy {
 
-    DoubleQuoteInserter() {
+    public DoubleQuoteInserter() {
     }
 
     public void customizeDocumentCommand(IDocument document, DocumentCommand command) {

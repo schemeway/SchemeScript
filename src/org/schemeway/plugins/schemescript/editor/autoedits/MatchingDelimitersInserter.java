@@ -9,7 +9,7 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 
 
-final class MatchingDelimitersInserter implements IAutoEditStrategy {
+public class MatchingDelimitersInserter implements IAutoEditStrategy {
     private final ISourceViewer viewer;
 
     public MatchingDelimitersInserter(ISourceViewer viewer) {
