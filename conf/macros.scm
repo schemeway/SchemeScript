@@ -11,5 +11,8 @@
 (define-syntax while
   (syntax-rules ()
     ((while expr body ...)
-     (let loop () (when expr (begin body ... (loop)))))))
+     (let loop () 
+       (when expr
+         body ...
+         (loop))))))
 
