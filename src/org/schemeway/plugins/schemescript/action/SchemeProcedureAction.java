@@ -19,22 +19,15 @@ import org.schemeway.plugins.schemescript.*;
  */
 public final class SchemeProcedureAction extends Action implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 
-    private Procedure mProcedure = null;
+    private Procedure mCachedProcedure = null;
+    private String    mProcedureName;
 
     public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
             throws CoreException {
         
         if (data instanceof String) {
-            String procedureName = (String)data;
-            try {
-                Object object = Scheme.getInstance().eval(procedureName);
-                if (object instanceof Procedure) {
-                    mProcedure = (Procedure) object;
-                }
-            }
-            catch (Throwable e) {
-                SchemeScriptPlugin.logException("Error while initializing Scheme action", e);
-            }
+            mProcedureName = (String)data;
+            mCachedProcedure = getProcedure(mProcedureName);
         }
     }
 
@@ -45,9 +38,14 @@ public final class SchemeProcedureAction extends Action implements IWorkbenchWin
     }
 
     public void run(IAction action) {
-        if (mProcedure != null) {
+        Procedure proc = getProcedure(mProcedureName);
+        
+        if (proc != null && proc != mCachedProcedure)
+            mCachedProcedure = proc;
+        
+        if (mCachedProcedure != null) {
             try {
-                mProcedure.apply0();
+                mCachedProcedure.apply0();
             }
             catch (Throwable e) {
                 SchemeScriptPlugin.logException("Error while evaluating Scheme action", e);
@@ -56,6 +54,21 @@ public final class SchemeProcedureAction extends Action implements IWorkbenchWin
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
+    }
+    
+    private Procedure getProcedure(String name)
+    {
+        try {
+            Object object = Scheme.getInstance().eval(name);
+            if (object instanceof Procedure)
+                return (Procedure) object;
+            else
+                return null;
+        }
+        catch (Throwable e) {
+            SchemeScriptPlugin.logException("Error while fetching Scheme action", e);
+            return null;
+        }
     }
 
 }
