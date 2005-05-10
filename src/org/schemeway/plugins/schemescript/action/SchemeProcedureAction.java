@@ -19,13 +19,22 @@ import org.schemeway.plugins.schemescript.*;
  */
 public final class SchemeProcedureAction extends Action implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 
-    private String mProcedureName = null;
+    private Procedure mProcedure = null;
 
     public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
             throws CoreException {
         
         if (data instanceof String) {
-            mProcedureName = (String)data;
+            String procedureName = (String)data;
+            try {
+                Object object = Scheme.getInstance().eval(procedureName);
+                if (object instanceof Procedure) {
+                    mProcedure = (Procedure) object;
+                }
+            }
+            catch (Throwable e) {
+                SchemeScriptPlugin.logException("Error while initializing Scheme action", e);
+            }
         }
     }
 
@@ -36,13 +45,9 @@ public final class SchemeProcedureAction extends Action implements IWorkbenchWin
     }
 
     public void run(IAction action) {
-        if (mProcedureName != null) {
+        if (mProcedure != null) {
             try {
-                Object object = Scheme.getInstance().eval(mProcedureName);
-                if (object instanceof Procedure) {
-                    Procedure proc = (Procedure) object;
-                    proc.apply0();
-                }
+                mProcedure.apply0();
             }
             catch (Throwable e) {
                 SchemeScriptPlugin.logException("Error while evaluating Scheme action", e);
