@@ -175,12 +175,17 @@ public class KawaStackTraceView extends ViewPart {
         logException(exception, exception.getMessage());
     }
     
-    public static void logException(Throwable exception, String message) {
-        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        if (!MessageDialog.openConfirm(shell, "Runtime Exception", message + "\nDebug?"))
-            return;
+    public static void logException(final Throwable exception, final String message) {
+    	// ensure we run in the UI thread - fix for Eclipse 3.1
+    	Display.getDefault().asyncExec(new Runnable() {
+    		public void run() {
+    	        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+    	        if (!MessageDialog.openConfirm(shell, "Runtime Exception", message + "\nDebug?"))
+    	            return;
 
-        showStackTrace(exception);
+    	        showStackTrace(exception);
+    		}
+    	});
     }
     
     public static void showStackTrace(Throwable exception) {
