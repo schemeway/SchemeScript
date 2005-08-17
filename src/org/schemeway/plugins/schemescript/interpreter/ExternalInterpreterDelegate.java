@@ -44,9 +44,12 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
 
     private String[] getCommandLine() throws CoreException {
         String command = InterpreterPreferences.getCommandLine();
-        String workdir = InterpreterPreferences.getWorkingDirectory().getPath();
-        workdir = workdir.replaceAll("\\\\", "/"); // HACK for Windows
-        command = command.replaceAll(WORKDIR_VAR, workdir);
+        File workdir = InterpreterPreferences.getWorkingDirectory();
+        if (workdir != null) {
+        	String dir = workdir.getPath();
+        	dir = dir.replaceAll("\\\\", "/"); // HACK for Windows
+        	command = command.replaceAll(WORKDIR_VAR, dir);
+        }
         if (InterpreterPreferences.getSavesPID()) {
             command = command.replaceAll(PIDFILE_VAR, ExternalInterpreter.getPIDFilename());
         }
