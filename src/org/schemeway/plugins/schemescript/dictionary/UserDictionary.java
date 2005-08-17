@@ -5,25 +5,49 @@
  */
 package org.schemeway.plugins.schemescript.dictionary;
 
-import gnu.expr.*;
-import gnu.kawa.lispexpr.*;
-import gnu.lists.*;
-import gnu.mapping.*;
-import gnu.text.*;
+import gnu.expr.Language;
+import gnu.kawa.lispexpr.ScmRead;
+import gnu.lists.EofClass;
+import gnu.lists.Pair;
+import gnu.lists.PairWithPosition;
+import gnu.mapping.Environment;
+import gnu.mapping.InPort;
+import gnu.mapping.Procedure;
+import gnu.mapping.Procedure2;
+import gnu.text.SyntaxException;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
 
-import kawa.standard.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.text.templates.*;
-import org.eclipse.ui.*;
-import org.schemeway.plugins.schemescript.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.schemeway.plugins.schemescript.SchemeScriptPlugin;
+import org.schemeway.plugins.schemescript.interpreter.KawaProxy;
 
 /**
  * User dictionary. Holds all the symbols defined by user code. All Scheme files
@@ -80,15 +104,15 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
         }
     }
 
-    private void loadFormProcessors(URL userFile) {
-        Language interp = Language.getDefaultLanguage();
-        interp.defineFunction("define-form-processor", new FormProcessorDefiner(this));
-        try {
-            load.load.apply1(userFile.toString());
-        }
-        catch (Throwable exception) {
-            SchemeScriptPlugin.logException("unable to load config file", exception);
-        }
+    private void loadFormProcessors(final URL userFile) {
+    	final UserDictionary currentDictionary = this;
+        KawaProxy.runInSchemeThread(new Runnable() {
+        	public void run() {
+        		Language interp = Language.getDefaultLanguage();
+        		interp.defineFunction("define-form-processor", new FormProcessorDefiner(currentDictionary));
+        	}
+        });
+        KawaProxy.loadFile(userFile.toString());
     }
 
     private void initialize() {
@@ -226,30 +250,32 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
         }
     }
 
-    private void scanExpressions(ScmRead lexer, IResource resource) throws IOException, SyntaxException {
+    private void scanExpressions(ScmRead lexer, final IResource resource) throws IOException, SyntaxException {
+    	final UserDictionary dictionary = this;
         while (true) {
-            Object object = lexer.readObject();
+            final Object object = lexer.readObject();
             if (object == EofClass.eofValue)
                 return;
 
             if (object instanceof Pair) {
                 Object car = ((Pair) object).car;
                 Object cdr = ((Pair) object).cdr;
-                int position = 0;
-                if (object instanceof PairWithPosition) {
-                    position = ((PairWithPosition) object).getLine();
-                }
+                final int position = (object instanceof PairWithPosition) ? ((PairWithPosition) object).getLine() : 0;
 
                 if ((car instanceof String) && (cdr instanceof Pair)) {
                     String name = ((String) car);
-                    Procedure formProcessor = (Procedure)mFormProcessors.get(name);
+                    final Procedure formProcessor = (Procedure)mFormProcessors.get(name);
                     if (formProcessor != null) {
-                        try {
-                            formProcessor.applyN(new Object[] {this, object, resource, new Integer(position)});
-                        }
-                        catch (Throwable exception) {
-                            SchemeScriptPlugin.logException("Unable to process form", exception);
-                        }
+                    	KawaProxy.runInSchemeThread(new Runnable() {
+                    		public void run () {
+                                try {
+                                	formProcessor.applyN(new Object[] {dictionary, object, resource, new Integer(position)});
+                                }
+                                catch (Throwable exception) {
+                                    SchemeScriptPlugin.logException("Unable to process form", exception);
+                                }
+                    		}
+                    	});
                     }
                 }
             }

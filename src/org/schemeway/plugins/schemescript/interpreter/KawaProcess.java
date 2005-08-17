@@ -18,6 +18,7 @@ import kawa.standard.*;
 
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
+import org.eclipse.swt.widgets.Display;
 import org.schemeway.plugins.schemescript.views.*;
 
 public class KawaProcess implements IProcess {
@@ -93,11 +94,15 @@ public class KawaProcess implements IProcess {
             return mOutputMonitor;
         }
 
-        public void write(String input) throws IOException {
-            OutPort out = OutPort.outDefault();
-            OutPort err = OutPort.errDefault();
+        public void write(final String input) throws IOException {
+            final OutPort out = OutPort.outDefault();
+            final OutPort err = OutPort.errDefault();
             out.setColumnNumber(0);
-            KawaProcess.eval(Scheme.getInstance(), new CharArrayInPort(input), out, err);
+            KawaProxy.runInSchemeThread(new Runnable() {
+            	public void run () {
+                    KawaProcess.eval(Scheme.getInstance(), new CharArrayInPort(input), out, err);
+            	}
+            });
             if (out.getColumnNumber() != 0) {
                 out.freshLine();
             }
@@ -178,7 +183,7 @@ public class KawaProcess implements IProcess {
 
     // Code adapter from Kawa.Shell
     static void eval(Scheme interp, InPort inp, OutPort out, OutPort perr) {
-        Environment env = Scheme.getInstance().getEnvironment();
+        Environment env = Environment.getCurrent();
         SourceMessages messages = new SourceMessages();
         Lexer lexer = interp.getLexer(inp, messages);
         lexer.setInteractive(false);

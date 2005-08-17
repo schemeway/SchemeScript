@@ -5,6 +5,8 @@
  */
 package org.schemeway.plugins.schemescript;
 
+import gnu.mapping.Environment;
+
 import java.net.*;
 import java.util.*;
 
@@ -13,6 +15,7 @@ import kawa.standard.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.*;
 import org.osgi.framework.*;
 import org.schemeway.plugins.schemescript.editor.*;
@@ -62,8 +65,8 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
         super.start(context);
 
         Scheme.registerEnvironment();
-        
-        loadUserFile(CONF_USER_SCM);
+
+        KawaProxy.loadFile(find (new Path(CONF_USER_SCM)).toString());
         
         textTools = new SchemeTextTools(new ColorManager());
         
@@ -80,16 +83,6 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
         }
     }
     
-    private void loadUserFile(String filename) {
-        URL filenameUrl = find(new Path(filename));
-        try {
-            load.load.apply1(filenameUrl);
-        }
-        catch (Throwable e) {
-            logException("Unable to load initialization files", e);
-        }
-    }
-
     /**
      * This method is called when the plug-in is stopped
      */

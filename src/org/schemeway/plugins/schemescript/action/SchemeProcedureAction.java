@@ -5,14 +5,17 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
+import gnu.lists.Pair;
 import gnu.mapping.*;
 import kawa.standard.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.schemeway.plugins.schemescript.*;
+import org.schemeway.plugins.schemescript.interpreter.KawaProxy;
 
 /**
  * @author SchemeWay.com
@@ -56,19 +59,13 @@ public final class SchemeProcedureAction extends Action implements IWorkbenchWin
     public void selectionChanged(IAction action, ISelection selection) {
     }
     
-    private Procedure getProcedure(String name)
+    private Procedure getProcedure(final String name)
     {
-        try {
-            Object object = Scheme.getInstance().eval(name);
-            if (object instanceof Procedure)
-                return (Procedure) object;
-            else
-                return null;
-        }
-        catch (Throwable e) {
-            SchemeScriptPlugin.logException("Error while fetching Scheme action", e);
-            return null;
-        }
-    }
+    	Object object = KawaProxy.get(name);
+    	if (object == null || !(object instanceof Procedure))
+    		return null;
+    	else
+    		return (Procedure)object;
+	}
 
 }
