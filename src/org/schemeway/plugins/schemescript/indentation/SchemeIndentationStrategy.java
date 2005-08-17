@@ -12,7 +12,7 @@ import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
-public class SchemeIndentationStrategy implements IAutoIndentStrategy {
+public class SchemeIndentationStrategy implements IAutoEditStrategy {
     private SexpNavigator mExplorer;
     private SchemeIndentationManager mIndentationManager;
 

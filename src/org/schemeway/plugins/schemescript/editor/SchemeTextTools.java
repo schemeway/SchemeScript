@@ -60,12 +60,12 @@ public class SchemeTextTools {
         return mDoubleClickStrategy;
     }
 
-    public IAutoIndentStrategy getAutoIndentStrategy(String contentType) {
+    public IAutoEditStrategy[] getAutoEditStrategies(String contentType) {
         if (contentType == IDocument.DEFAULT_CONTENT_TYPE 
                 || contentType == SchemePartitionScanner.SCHEME_COMMENT) {
-            return new SchemeIndentationStrategy(getIndentationManager());
+            return new IAutoEditStrategy[] { new SchemeIndentationStrategy(getIndentationManager()) };
         }
-        return null;
+        return new IAutoEditStrategy[] { };
     }
 
     public SchemeColoringScanner getSchemeColoringScanner() {

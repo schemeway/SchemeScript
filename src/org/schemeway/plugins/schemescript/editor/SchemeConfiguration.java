@@ -37,8 +37,8 @@ public class SchemeConfiguration extends SourceViewerConfiguration {
         return mTextTools.getDoubleClickStrategy(contentType);
     }
 
-    public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
-        return mTextTools.getAutoIndentStrategy(contentType);
+    public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+        return mTextTools.getAutoEditStrategies(contentType);
     }
 
     public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
