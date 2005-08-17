@@ -7,19 +7,12 @@
 ;; @copyright "NuEcho Inc."
 ;;
 
+(define-constant *DIALOG-STYLE*         :: <int> (+ (SWT:.DIALOG_TRIM) (SWT:.APPLICATION_MODAL)))
 
-(define *DIALOG-STYLE* :: <int>
-  (+ (static-field <org.eclipse.swt.SWT> 'DIALOG_TRIM)
-     (static-field <org.eclipse.swt.SWT> 'APPLICATION_MODAL)))
-
-(define *SWT.BORDER*   :: <int> (static-field <org.eclipse.swt.SWT> 'BORDER))
-(define *SWT.SINGLE*   :: <int> (static-field <org.eclipse.swt.SWT> 'SINGLE))
-(define *SWT.HSCROLL*  :: <int> (static-field <org.eclipse.swt.SWT> 'H_SCROLL))
-(define *SWT.VSCROLL*  :: <int> (static-field <org.eclipse.swt.SWT> 'V_SCROLL))
-(define *SWT.PUSH*     :: <int> (static-field <org.eclipse.swt.SWT> 'PUSH))
-(define *SWT.VERTICAL* :: <int> (static-field <org.eclipse.swt.SWT> 'VERTICAL))
-(define *SWT.HORIZONTAL* :: <int> (static-field <org.eclipse.swt.SWT> 'HORIZONTAL))
-
+(define-constant *BUTTON-WIDTH*         :: <int> 75)
+(define-constant *DIALOG-MARGIN-WIDTH*  :: <int> 5)
+(define-constant *DIALOG-MARGIN-HEIGHT* :: <int> 5)
+(define-constant *BUTTON-SPACING*       :: <int> 5)
 
 
 

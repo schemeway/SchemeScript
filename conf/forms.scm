@@ -6,9 +6,7 @@
 ;; @author    "Dominique Boucher"
 ;;
 
-
 (require 'srfi-1)
-
 
 ;;;
 ;;;; --
@@ -226,11 +224,11 @@
       (find-internal-class-methods class-name)))
 
 
-(define *workspace*      :: <org.eclipse.core.resources.IWorkspace>
+(define-constant *workspace*      :: <org.eclipse.core.resources.IWorkspace>
   (RsrcPlugin:getWorkspace))
-(define *workspace-root* :: <org.eclipse.core.resources.IWorkspaceRoot>
+(define-constant *workspace-root* :: <org.eclipse.core.resources.IWorkspaceRoot>
   (IWorkspace:getRoot *workspace*))
-(define *java-model*     :: <org.eclipse.jdt.core.IJavaModel>
+(define-constant *java-model*     :: <org.eclipse.jdt.core.IJavaModel>
   (JavaCore:create *workspace-root*))
 
 

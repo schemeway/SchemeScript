@@ -36,7 +36,7 @@
   (let ((engine  (SearchEngine:new))
         (pattern (SearchEngine:createSearchPattern symbol 0 0 #t))
         (scope   (SearchEngine:createWorkspaceScope))
-        (collector :: <SimpleSearchCollector> (make <SimpleSearchCollector>)))
+        (collector (make <SimpleSearchCollector>)))
     (SearchEngine:search engine (RsrcPlugin:getWorkspace) pattern scope collector)
     (field collector 'elements)))
 
@@ -45,7 +45,7 @@
   (let ((engine (SearchEngine:new))
         (pattern (SearchEngine:createSearchPattern (string-append symbol ".*") 0 0 #t))
         (scope (SearchEngine:createWorkspaceScope))
-        (collector :: <SimpleSearchCollector> (make <SimpleSearchCollector>)))
+        (collector (make <SimpleSearchCollector>)))
     (SearchEngine:search engine (RsrcPlugin:getWorkspace) pattern scope collector)
     (field collector 'elements)))
 
@@ -108,7 +108,7 @@
                   (insert-text clause)))))))))))
 
 
-(define expand-namespace (make-symbol-expander namespace-expander))
-(define expand-typename  (make-symbol-expander typename-expander))
-(define expand-package   (make-symbol-expander package-expander))
+(define-constant expand-namespace (make-symbol-expander namespace-expander))
+(define-constant expand-typename  (make-symbol-expander typename-expander))
+(define-constant expand-package   (make-symbol-expander package-expander))
 

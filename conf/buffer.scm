@@ -7,7 +7,6 @@
 ;; @copyright "NuEcho Inc."
 ;;
 
-
 (define (current-buffer)
   (let ((page (org.eclipse.ui.IWorkbenchWindow:getActivePage
                (org.eclipse.ui.IWorkbench:getActiveWorkbenchWindow
@@ -53,7 +52,7 @@
     (and start end
          (let* ((navigator (SchemeEditor:getExplorer buffer))
                 (type      (SexpNavigator:getSexpType navigator)))
-           (if (<= type 5)
+           (if (and (integer? type) (<= type 5))
                (vector-ref '#(error: symbol: list: string: constant: other:) type)
                none:)))))
 

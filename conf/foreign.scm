@@ -49,6 +49,7 @@
 (define-namespace PlatformUI "class:org.eclipse.ui.PlatformUI")
 (define-namespace IWorkbenchWindow "class:org.eclipse.ui.IWorkbenchWindow")
 (define-namespace IWorkbench "class:org.eclipse.ui.IWorkbench")
+
 (define-namespace Shell "class:org.eclipse.swt.widgets.Shell")
 (define-namespace SWT "class:org.eclipse.swt.SWT")
 (define-namespace Display "class:org.eclipse.swt.widgets.Display")
@@ -70,8 +71,15 @@
 (define-namespace KeyAdapter "class:org.eclipse.swt.events.KeyAdapter")
 (define-namespace KeyListener "class:org.eclipse.swt.events.KeyListener")
 (define-namespace KeyEvent "class:org.eclipse.swt.events.KeyEvent")
+(define-namespace Canvas "class:org.eclipse.swt.widgets.Canvas")
+(define-namespace GC "class:org.eclipse.swt.graphics.GC")
+(define-namespace Image "class:org.eclipse.swt.graphics.Image")
+(define-namespace Color "class:org.eclipse.swt.graphics.Color")
+
+
 
 (define-namespace PairWithPosition "class:gnu.lists.PairWithPosition")
 
 (define-namespace TextViewer "class:org.eclipse.jface.text.TextViewer")
 (define-namespace Document "class:org.eclipse.jface.text.Document")
+
