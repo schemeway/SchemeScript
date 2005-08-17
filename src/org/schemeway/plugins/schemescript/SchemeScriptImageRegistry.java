@@ -5,9 +5,9 @@
  */
 package org.schemeway.plugins.schemescript;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 
 public final class SchemeScriptImageRegistry {
 

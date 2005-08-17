@@ -8,6 +8,7 @@ package org.schemeway.plugins.schemescript.editor;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.actions.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.*;
