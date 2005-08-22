@@ -20,7 +20,7 @@ public class SchemeDocumentSetupParticipant implements IDocumentSetupParticipant
             SchemePartitionScanner.SCHEME_STRING, SchemePartitionScanner.SCHEME_COMMENT
         };
 
-        IDocumentPartitioner partitioner = new FastPartitioner(new SchemePartitionScanner(), partitions);
+        IDocumentPartitioner partitioner = new DefaultPartitioner(new SchemePartitionScanner(), partitions);
         partitioner.connect(document);
         document.setDocumentPartitioner(partitioner);
     }
