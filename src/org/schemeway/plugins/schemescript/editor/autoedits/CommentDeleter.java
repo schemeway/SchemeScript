@@ -22,7 +22,7 @@ public class CommentDeleter implements IAutoEditStrategy {
         try {
             ITypedRegion partition = document.getPartition(command.offset);
             if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
-                if (command.offset == partition.getOffset()) {
+                if (command.offset == partition.getOffset() && document.getChar(command.offset) != ';') {
                     command.text = "";
                     command.offset = partition.getOffset();
                     command.length = partition.getLength();

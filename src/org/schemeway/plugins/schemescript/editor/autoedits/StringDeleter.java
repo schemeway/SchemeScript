@@ -30,6 +30,9 @@ public class StringDeleter implements IAutoEditStrategy {
                         if (currentChar == '\\' && command.offset < partition.getOffset() + partition.getLength() - 1) {
                             // remove '\' and the next character
                             command.length = 2;
+                            if (document.getChar(command.offset - 1) == '\\') {
+                            	command.offset -= 1;
+                            }
                         }
                         else if (currentChar == '"') {
                             command.offset -= 1;

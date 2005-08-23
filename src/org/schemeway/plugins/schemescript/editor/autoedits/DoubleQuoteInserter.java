@@ -9,29 +9,37 @@ import org.eclipse.jface.text.*;
 
 public class DoubleQuoteInserter implements IAutoEditStrategy {
 
-    public DoubleQuoteInserter() {
-    }
+	public DoubleQuoteInserter() {
+	}
 
-    public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-        try {
-            if (command.text.equals("\"")) {
-                if (document.getChar(command.offset) == '"') {
-                    command.doit = true;
-                    command.text = "";
-                    command.length = 0;
-                    command.shiftsCaret = true;
-                    command.caretOffset = command.offset + 1;
-                }
-                else {
-                    command.text = "\\\"";
-                    command.doit = true;
-                    command.length = 0;
-                    command.shiftsCaret = true;
-                    command.caretOffset = command.offset;
-                }
-            }
-        }
-        catch (BadLocationException exception) {
-        }
-    }
+	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
+		try {
+			if (command.text.equals("\\")) {
+				if (document.getChar(command.offset) == '"') {
+					command.text = "\\\\";
+					command.doit = true;
+					command.length = 0;
+					command.shiftsCaret = true;
+					command.caretOffset = command.offset;
+				}
+			} 
+			else if (command.text.equals("\"")) {
+				if (document.getChar(command.offset) == '"') {
+					command.doit = true;
+					command.text = "";
+					command.length = 0;
+					command.shiftsCaret = true;
+					command.caretOffset = command.offset + 1;
+				}
+				else {
+					command.text = "\\\"";
+					command.doit = true;
+					command.length = 0;
+					command.shiftsCaret = true;
+					command.caretOffset = command.offset;
+				}
+			}
+		} catch (BadLocationException exception) {
+		}
+	}
 }
