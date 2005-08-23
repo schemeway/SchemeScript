@@ -34,5 +34,5 @@
 
 
 (define (string-replace str (ch-src :: <char>) (ch-dst :: <char>))
-  (symbol->string (invoke (string->symbol str) 'replace ch-src ch-dst)))
+  (symbol->string (java.lang.String:replace (string->symbol str) ch-src ch-dst)))
 
