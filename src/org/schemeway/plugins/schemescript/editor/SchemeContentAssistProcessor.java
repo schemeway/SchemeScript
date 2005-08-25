@@ -23,7 +23,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     private SchemeEditor mEditor;
     private IResource mResource;
     
-    private static final char[] TRIGGER_CHARS = new char[] { '\n', '\t', ' ' };
+    private static final char[] TRIGGER_CHARS = new char[] { '\n', ' ' };
 
     private static class SchemeCompletionProposal implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension3 {
         CompletionProposal mDelegate;
