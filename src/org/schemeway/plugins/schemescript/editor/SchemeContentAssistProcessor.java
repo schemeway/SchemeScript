@@ -22,16 +22,24 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     
     private SchemeEditor mEditor;
     private IResource mResource;
+    
+    private static final char[] TRIGGER_CHARS = new char[] { '\n', '\t', ' ' };
 
-    private static class SchemeCompletionProposal implements ICompletionProposal, ICompletionProposalExtension3 {
+    private static class SchemeCompletionProposal implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension3 {
         CompletionProposal mDelegate;
         String mInsertion;
+        String mSymbol;
         int mPriority;
+        int mStartOffset;
+        int mSymbolStartOffset;
 
         public SchemeCompletionProposal(String symbol, String insertion, int offset, int priority) {
             mDelegate = new CompletionProposal(insertion, offset, 0, insertion.length(), null, symbol, null, null);
+            mStartOffset = offset;
             mInsertion = insertion;
             mPriority = priority;
+            mSymbol = symbol;
+            mSymbolStartOffset = offset - (symbol.length() - insertion.length());
         }
 
         public void apply(IDocument document) {
@@ -63,7 +71,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         }
 
         public int getPrefixCompletionStart(IDocument document, int completionOffset) {
-            return completionOffset;
+            return mStartOffset;
         }
 
         public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
@@ -73,6 +81,39 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         public int getPriority() {
             return mPriority;
         }
+
+		public void apply(IDocument document, char trigger, int offset) {
+			int delta = offset - mStartOffset;
+			if (delta < 0)
+				delta = 0;
+			try {
+				document.replace(mStartOffset, delta, mInsertion);
+			} catch (BadLocationException x) {
+				// ignore
+			}
+		}
+
+		public boolean isValidFor(IDocument document, int offset) {
+			try {
+				int len = offset - mSymbolStartOffset;
+				if (len <= 0)
+					return false;
+				String prefix = document.get(mSymbolStartOffset, len);
+				return (mSymbol.startsWith(prefix));
+			}
+			catch (BadLocationException x) {
+				// ignore
+			}
+			return false;
+		}
+
+		public char[] getTriggerCharacters() {
+			return TRIGGER_CHARS;
+		}
+
+		public int getContextInformationPosition() {
+			return mSymbolStartOffset;
+		}
     }
 
     private static class ProposalComparator implements Comparator {
