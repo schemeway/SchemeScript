@@ -76,6 +76,9 @@ public class SchemeErrorLineTracker implements IConsoleLineTracker, IPropertyCha
                 
                 String filename = text.substring(matcher.start(mFilenameGroup), matcher.end(mFilenameGroup));
                 String lineStr = text.substring(matcher.start(mLineNoGroup), matcher.end(mLineNoGroup));
+                if (filename == null || filename.equals("") || lineStr == null || lineStr.equals(""))
+                	return;
+
                 int lineno = Integer.parseInt(lineStr);
                 
                 IFile file = findFile(filename);
