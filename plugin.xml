@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="0.4.16"
+   version="1.0.0"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -34,21 +34,56 @@
       <import plugin="org.eclipse.jdt.ui"/>
       <import plugin="org.eclipse.jdt.debug"/>
       <import plugin="org.eclipse.jdt.debug.ui"/>
+      <import plugin="org.eclipse.pde"/>
+      <import plugin="org.eclipse.pde.core"/>
+      <import plugin="org.eclipse.pde.ui"/>
+      <import plugin="org.eclipse.ui.forms"/>
    </requires>
    <extension-point id="interpreters" name="interpreters" schema="schema/interpreters.exsd"/>
+   <extension
+         point="org.eclipse.core.runtime.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            id="Scheme"
+            name="Scheme File"
+            file-extensions="%Extensions"
+            priority="normal"/>
+      <file-association
+            content-type="org.schemeway.plugins.schemescript.Scheme"
+            file-extensions="%Extensions"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.schemeway.plugins.schemescript.editor.SchemeDocumentSetupParticipant"
+            contentTypeId="org.schemeway.plugins.schemescript.Scheme"
+            extensions="%Extensions"
+            />
+   </extension>
+   <extension
+	   	 point="org.eclipse.core.filebuffers.annotationModelCreation">
+      <factory
+            class="org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory"
+            contentTypeId="org.schemeway.plugins.schemescript.Scheme"
+            extensions="%Extensions"
+            >
+	  </factory>
+   </extension>
 
    <extension
          point="org.eclipse.ui.editors">
       <editor
             name="Scheme Editor"
             default="true"
-            extensions="sch,scm,ss"
             icon="icons/scheme.gif"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             class="org.schemeway.plugins.schemescript.editor.SchemeEditor"
+            extensions="%Extensions"
             id="org.schemeway.plugins.schemescript.editor.SchemeEditor">
+         <contentTypeBinding contentTypeId="org.schemeway.plugins.schemescript.Scheme"/>
       </editor>
    </extension>
+   
    <extension
          point="org.eclipse.ui.contexts">
       <context
@@ -690,12 +725,6 @@
       <toc
             primary="true"
             file="toc.xml"/>
-   </extension>
-   <extension
-         point="org.eclipse.core.filebuffers.documentSetup">
-      <participant
-            class="org.schemeway.plugins.schemescript.editor.SchemeDocumentSetupParticipant"
-            extensions="scm,ss,sch"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
