@@ -1,4 +1,4 @@
-*** Version 0.5.0
+*** Version 1.0.0 alpha
 
 - The evaluation can be interrupted if it is supported by the interpreter
   (see the documentation for more details)
@@ -8,7 +8,7 @@
   running inside the plug-in context/classpath. It comes with a 
   stack trace viewer.
 - Added a 'Kawa scratchpad' view (see the documentation for more
-  details)
+  details and the examples subdirectory)
 - Structural editing commands (configurable and highly experimental/unstable)
 - new actions (add-require, expand-namespace expand-typename)
 - 'define-namespace' clauses are processed for content assist

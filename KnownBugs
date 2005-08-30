@@ -1,4 +1,3 @@
-Version 0.1.7
+Version 0.5.0
 
-- Sometimes, there are multiple occurrences of the same symbol 
-  in the code completion list.
+- The structural editing feature is not yet stable.
