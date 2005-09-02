@@ -14,7 +14,7 @@ public class KawaDictionary extends AbstractSymbolDictionary
 
     private static SymbolEntry[] mKawaSymbols = {
        new SymbolEntry("module-name", "(module-name symbol)", SymbolEntry.SYNTAX, SymbolEntry.MEDIUM),
-       new SymbolEntry("module-static", "(module-static boolean)", SymbolEntry.SYNTAX),
+       new SymbolEntry("module-static", "(module-static [boolean|'init-run])", SymbolEntry.SYNTAX),
        new SymbolEntry("module-export", "(module-exports symbol ...)", SymbolEntry.SYNTAX),
        new SymbolEntry("module-extends", "(module-extends <class>)", SymbolEntry.SYNTAX),
        new SymbolEntry("module-implements", "(module-implements <interface> ...)", SymbolEntry.SYNTAX),
@@ -22,6 +22,7 @@ public class KawaDictionary extends AbstractSymbolDictionary
        new SymbolEntry("define-private", "(define-private name [:: <type>] value)", SymbolEntry.SYNTAX),
        new SymbolEntry("define-constant", "(define-constant name [:: <type>] value)", SymbolEntry.SYNTAX),
        new SymbolEntry("define-namespace", "(define-namespace name namespace-uri)", SymbolEntry.SYNTAX, SymbolEntry.MEDIUM),
+       new SymbolEntry("define-alias", "(define-alias name type)", SymbolEntry.SYNTAX, SymbolEntry.MEDIUM),
        new SymbolEntry("define-simple-class", "(define-simple-class name (type ...) fields/methods ...)", SymbolEntry.SYNTAX, SymbolEntry.MEDIUM),
        new SymbolEntry("define-class", "(define-class name (type ...) fields/methods ...)", SymbolEntry.SYNTAX),
        new SymbolEntry("object", "(object (type ...) fields/methods...)", SymbolEntry.SYNTAX, SymbolEntry.MEDIUM),
