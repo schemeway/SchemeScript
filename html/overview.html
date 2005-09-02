@@ -66,6 +66,22 @@
 <h2>Recent Changes</h2>
 
 <ul>
+    <li><b>Version 1.0.0</b>
+    	<ul>
+    		<li> The evaluation can be interrupted if it is supported by the interpreter
+				 (see the documentation for more details)
+		    <li> Added an <i>interpreters</i> extension point, and a menu item to 
+	            select the current interpreter
+		    <li> Added an interpreter: Embedded Kawa. It is the Kawa interpreter
+				 running inside the plug-in context/classpath. It comes with a 
+				 stack trace viewer.
+			<li> Added a <i>Kawa scratchpad</i> view (see the documentation for more
+				 details and the examples subdirectory)
+			<li> Structural editing commands (configurable and highly experimental/unstable)
+			<li> new actions (add-require, expand-namespace expand-typename)
+			<li> <code>define-namespace</code> clauses are processed for content assist
+			<li> Bug fixes.
+    	</ul>
 	<li><b>Version 0.3.0</b>
 		<ul>
 			<li>Added a Scheme perspective, with menus, toolbar actions
@@ -105,7 +121,7 @@
 
 <hr/>
 <p>
-	Copyright (C) 2004 <b>Dominique Boucher</b>.
+	Copyright (C) 2004-2005 <b>Dominique Boucher</b>.
 </p>
 </body>
 </html>

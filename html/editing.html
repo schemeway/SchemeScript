@@ -21,8 +21,10 @@ the editor's context menu):
 </p>
 <table>
 	<tr><th>Command</th><th>Description</th><th>Default key sequences</th></tr>
+	
 	<!-- Movements -->
-	<tr><td colspan="3" align="center" bgcolor="#dddddd"><b>Movement</b></td></tr>
+	<tr class="keycategory"><td colspan="3" align="center" bgcolor="#dddddd"><b>Movement</b></td></tr>
+	
 	<tr><td class="command">Forward S-expression</td>
 		<td>Moves the cursor to the end of the next S-expression.</td>
 		<td class="key">ALT-CTRL-F</td>
@@ -50,8 +52,10 @@ the editor's context menu):
 			symbols. <i>(Only available in the Scheme Perspective.)</i></td>
 		<td class="key">CTRL-F12</td>
 	</tr>
+	
 	<!-- Selection -->
-	<tr><td colspan="3" align="center" bgcolor="#dddddd"><b>Selection</b></td></tr>
+	<tr class="keycategory"><td colspan="3" align="center" bgcolor="#dddddd"><b>Selection</b></td></tr>
+	
 	<tr><td class="command">Select Forward S-expression</td>
 		<td>Adds the next S-expression to the selection.</td>
 		<td class="key">ALT-CTRL-SHIFT-F</td>
@@ -70,8 +74,9 @@ the editor's context menu):
 				S-expression.</td>
 			<td class="key">CTRL-SHIFT-DOWN_ARROW</td>
 		</tr>
+		
 	<!-- Editing-->	
-	<tr><td colspan="3" align="center" bgcolor="#dddddd"><b>Edition</b></td></tr>
+	<tr class="keycategory"><td colspan="3" align="center" bgcolor="#dddddd"><b>Edition</b></td></tr>
 	<tr><td class="command">Swap S-expressions</td>
 		<td>Swaps the two S-expressions that before and after the current cursor position.</td>
 		<td class="key">ALT-CTRL-T</td>
@@ -95,8 +100,21 @@ the editor's context menu):
 			a quote, an unquote, etc.). See the <a href="#Mousecopy">Mouse copy section</a>.</td>
 		<td class="key">ALT-CTRL-X</td>
 	</tr>
+
+	<tr><td class="command">Extent S-expression on left</td>
+		<td>If the cursor is positioned in front of an opening parenthesis, the
+		    parenthesis is moved before the S-expression that precedes it, if
+		    any.</td>
+		<td class="key">CTRL-(</td></tr>
+	<tr><td class="command">Extent S-expression on right</td>
+		<td>If the cursor is positioned in front of closing parenthesis, the
+		    parenthesis is moved right after the S-expression that follows it, if
+		    any.</td>
+		<td class="key">CTRL-)</td></tr>
+	
 	<!-- Comments -->
-	<tr><td colspan="3" align="center" bgcolor="#dddddd"><b>Comments</b></td></tr>
+	<tr class="keycategory"><td colspan="3" align="center" bgcolor="#dddddd"><b>Comments</b></td></tr>
+	
 	<tr><td class="command">Scheme file header comment</td>
 		<td>Insert, at the beginning of the file, a file header comment, with the author name,
 			and a copyright notice (see the <a href="prefs.html#comments">the comment
@@ -113,8 +131,9 @@ the editor's context menu):
 			selection) or uncomment the lines if they are already commented out.</td>
 		<td class="key">CTRL-/</td>
 	</tr>
+	
 	<!-- Evaluation -->	
-	<tr><td colspan="3" align="center" bgcolor="#dddddd"><b>Evaluation</b></td></tr>
+	<tr class="keycategory"><td colspan="3" align="center" bgcolor="#dddddd"><b>Evaluation</b></td></tr>
 	
 	<tr><td class="command"><a name="eval">Start Interpreter</a></td>
 		<td>Starts the interpreter, if not already started. 
@@ -149,6 +168,24 @@ the editor's context menu):
 		<td>Sends a predefined string to the Scheme interpreter, starting it
 			if necessary.</td>
 		<td class="key">ALT-k 9</td>
+
+
+	<!-- Kawa-specific-->	
+	<tr class="keycategory"><td colspan="3" align="center" bgcolor="#dddddd"><b>Kawa-specific</b></td></tr>
+	
+	<tr><td class="command"><a name="eval">Expand typename</a></td>
+		<td>Replaces the symbol located just before the cursor position by 
+		    the corresponding Java fully-qualified type name, surrounded by 
+		    angle brackets (&lt;<i>fqn</i>&gt;).</td>
+		<td class="key">ALT-CTRL-SHIFT-T</td>
+	<tr><td class="command"><a name="eval">Expand namespace</a></td>
+		<td>Replaces the symbol located just before the cursor position by 
+		    a <code>define-namespace</code> form for the corresponding fully-qualified type name.</td>
+		<td class="key">ALT-CTRL-SHIFT-N</td>
+	<tr><td class="command"><a name="eval">Insert require clause</a></td>
+		<td>Adds a <code>require</code> clause for the module that defines the symbol at the
+		    cursor position.</td>
+		<td class="key">CTRL-SHIFT-M</td>
 </table>
 
 <h2><a name="Mousecopy">Mouse copy</a></h2>
@@ -165,7 +202,7 @@ the editor's context menu):
 
 <hr/>
 <p>
-	Copyright (C) 2004 <b>Dominique Boucher</b>.
+	Copyright (C) 2004-2005 <b>Dominique Boucher</b>.
 </p>
 </body>
 </html>

@@ -10,10 +10,22 @@
 <body>
 <h1>Preferences</h1>
 
-The Scheme preference pages are used to configure various aspects of
-the Scheme editor and it's integration with a Scheme interpreter.
+<p>
+	The Scheme preference pages are used to configure various aspects of
+	the Scheme editor and it's integration with a Scheme interpreter.
+</p>
 
-<h2>Scheme - main page</h2>
+<a href="#main">Scheme - main page</a></br>
+<a href="#appear">Appearance</a><br>
+<a href="#comments">Comments</a><br>
+<a href="#interp">External Interpreter</a><br>
+<a href="#fasteval">Fast Eval Keys</a><br>
+<a href="#indent">Indentation</a><br>
+<a href="#lexical">Lexical Extensions</a><br>
+<a href="#syntax">Syntax</a><br>
+
+
+<h2><a name="main">Scheme - main page</a></h2>
 <p>
 	This page controls the tab size width, and allows the serialization
 	of a subset of the preferences, namely those relating to syntax
@@ -22,7 +34,7 @@ the Scheme editor and it's integration with a Scheme interpreter.
 </p>
 <center><img src="images/schemeprefs.JPG"/></center>
 
-<h2>Appearance</h2>
+<h2><a name="appear">Appearance</a></h2>
 <p>
 	The <i>Appearance</i> page controls the appearance of the various tokens
 	in a Scheme source file, as well as the background color, and the
@@ -43,7 +55,55 @@ the Scheme editor and it's integration with a Scheme interpreter.
 </p>
 <center><img src="images/commentprefs.JPG"/></center>
 
-<h2>Indentation</h2>
+<h2><a name="interp">External Interpreter</a></h2>
+<p>
+	The External Interpreter preference page is used to configure an external Scheme interpreter 
+	with which the Scheme editor interacts (as opposed to the embedded Kawa interpreter).
+</p>
+<center><img src="images/interpreter.JPG"/></center>
+<p>
+	To set up a Scheme interpreter, you must minimally provide:
+	<ul>
+		<li>the interpreter's name,</li>
+		<li>the command line to start the interpreter, and</li>
+		<li>the directory where the interpreter is started.</li>
+	</ul>
+</p>
+<p>
+	Also, you can specify a regular expression that will be matched 
+	against all lines in the console window to detect error messages
+	with their corresponding file name and line number (the location 
+	of the error). Simply enter a valid (Java) regular expression in 
+	the field named <b>Error Regexp</b>, taking care to have a group 
+	that matches the filename, another group that matches the
+	line number, and a third group that matches the part of the line
+	that should be highlighted as an hyperlink. 
+</p>
+ <p>
+	Here are a few configurations for some Scheme interpreters:
+	<table>
+		<tr><th>Interpreter</th><th width="60%">Error Regexp</th><th>Filename</th><th>Line</th><th>Link</th></tr>
+		<tr><td>MzScheme (with errortrace)</td>
+			<td><code>((([a-z]:)?[^:]+):([0-9]+):[0-9]+): .*</code></td>
+			<td align=center>2</td>
+			<td align=center>4</td>
+			<td align=center>1</td></tr>
+		<tr><td>Kawa </td>
+			<td><code>[\t ]+at [^(]+\(((.+):([0-9]+))\)</code></td>
+			<td align=center>2</td>
+			<td align=center>3</td>
+			<td align=center>1</td></tr>
+	</table>
+	Note that with Kawa, files must be loaded by giving their full path name.
+ </p>
+
+<h2><a name="fasteval">Fast Eval Keys</a></h2>
+<p>
+	You can configure the Fast Eval keys using the Fast Eval preference page:
+</p>
+<center><img src="images/fasteval.JPG"/></center>
+
+<h2><a name="indent">Indentation</a></h2>
 <p>
 	Indentation is a crucial part of a Scheme editor. The <i>Indentation</i> 
 	page controls how sub-expressions are indented. To be easily readable by
@@ -88,54 +148,7 @@ the Scheme editor and it's integration with a Scheme interpreter.
 	</ul>
 </p>
 
-<h2><a name="interp">Interpreter</a></h2>
-<p>
-	The Interpreter preference page is used to configure the Scheme interpreter 
-	with which the Scheme editor interacts.
-</p>
-<center><img src="images/interpreter.JPG"/></center>
-<p>
-	To set up a Scheme interpreter, you must minimally provide:
-	<ul>
-		<li>the interpreter's name,</li>
-		<li>the command line to start the interpreter, and</li>
-		<li>the directory where the interpreter is started.</li>
-	</ul>
-</p>
-<p>
-	Also, you can specify a regular expression that will be matched 
-	against all lines in the console window to detect error messages
-	with their corresponding file name and line number (the location 
-	of the error). Simply enter a valid (Java) regular expression in 
-	the field named <b>Error Regexp</b>, taking care to have a group 
-	that matches the filename, another group that matches the
-	line number, and a third group that matches the part of the line
-	that should be highlighted as an hyperlink. 
-</p>
- <p>
-	Here are a few configurations for some Scheme interpreters:
-	<table>
-		<tr><th>Interpreter</th><th width="60%">Error Regexp</th><th>Filename</th><th>Line</th><th>Link</th></tr>
-		<tr><td>MzScheme (with errortrace)</td>
-			<td><code>((([a-z]:)?[^:]+):([0-9]+):[0-9]+): .*</code></td>
-			<td align=center>2</td>
-			<td align=center>4</td>
-			<td align=center>1</td></tr>
-		<tr><td>Kawa </td>
-			<td><code>[\t ]+at [^(]+\(((.+):([0-9]+))\)</code></td>
-			<td align=center>2</td>
-			<td align=center>3</td>
-			<td align=center>1</td></tr>
-	</table>
-	Note that with Kawa, files must be loaded by giving their full path name.
- </p>
-<h3><a name="fasteval">Fast Eval Keys</a></h3>
-<p>
-	You can configure the Fast Eval keys using the Fast Eval preference page:
-</p>
-<center><img src="images/fasteval.JPG"/></center>
-
-<h2>Lexical extensions</h2>
+<h2><a name="lexical">Lexical extensions</a></h2>
 <p>
 	Lexical extensions are flags that can be set to change how some tokens are 
 	processed in the Scheme source file. 
@@ -153,7 +166,7 @@ the Scheme editor and it's integration with a Scheme interpreter.
 	</ul> 
 </p>
 
-<h2>Syntax</h2>
+<h2><a name="syntax">Syntax</a></h2>
 <p>
 	The <i>Syntax</i> page is used to categorize symbols. These categories are used when
 	coloring the various symbols in a source file. Symbols not appearing in any of these
@@ -163,7 +176,7 @@ the Scheme editor and it's integration with a Scheme interpreter.
 
 <hr/>
 <p>
-	Copyright (C) 2004 <b>Dominique Boucher</b>.
+	Copyright (C) 2004-2005 <b>Dominique Boucher</b>.
 </p>
 </body>
 </html>

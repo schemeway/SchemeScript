@@ -13,6 +13,9 @@ td {
   text-align: left;
 }
 
+img {
+  margin: 10px;
+}
 .command {
   font-weight: bold;
 }
@@ -29,6 +32,8 @@ h1 {
 
 h2 {
 	font-size: 14pt;
+	border-bottom: 1px solid;
+	font-family: Tahoma;
 }
 
 h3 {
