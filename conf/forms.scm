@@ -186,6 +186,25 @@
 
 
 ;;;
+;;;;   define-alias
+;;;
+
+(define-form-processor
+ 'define-alias
+ (lambda (dictionary form resource line-number)
+   (when (alias-form? form)
+     (let* ((name        (cadr form))
+            (description (format #f "~a" name)))
+       (add-entry! dictionary name description 'alias resource line-number)))))
+
+
+(define (alias-form? form)
+  (and (list? form)
+       (= (length form) 3)
+       (typename? (cadr form))
+       (typename? (caddr form))))
+
+;;;
 ;;;;   define-namespace
 ;;;
 
