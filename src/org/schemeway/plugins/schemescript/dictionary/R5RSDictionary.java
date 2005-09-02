@@ -20,6 +20,8 @@ public class R5RSDictionary extends AbstractSymbolDictionary {
         new SymbolEntry("begin", "(begin body ...)", SymbolEntry.SYNTAX, SymbolEntry.HIGH),
         new SymbolEntry("lambda", "(lambda formals body)", SymbolEntry.SYNTAX, SymbolEntry.HIGH),
         new SymbolEntry("if", "(if test consequent [alternative])", SymbolEntry.SYNTAX),
+        new SymbolEntry("set!", "(set! var val)", SymbolEntry.SYNTAX),
+        
         new SymbolEntry("boolean?", "(boolean? o)", SymbolEntry.FUNCTION),
         new SymbolEntry("not", "(not expr)", SymbolEntry.FUNCTION),
         new SymbolEntry("and", "(and expr ...)", SymbolEntry.SYNTAX),
