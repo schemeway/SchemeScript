@@ -10,6 +10,8 @@
 
 (define-namespace Method           "class:java.lang.reflect.Method")
 (define-namespace Modifier         "class:java.lang.reflect.Modifier")
+(define-namespace Field            "class:java.lang.reflect.Field")
+
 (define-namespace Constructor      "class:java.lang.reflect.Constructor")
 (define-namespace Class            "class:java.lang.Class")
 (define-namespace String           "class:java.lang.String")
@@ -34,6 +36,8 @@
 (define-namespace IType            "class:org.eclipse.jdt.core.IType")
 (define-namespace IMember          "class:org.eclipse.jdt.core.IMember")
 (define-namespace IMethod          "class:org.eclipse.jdt.core.IMethod")
+(define-namespace IField           "class:org.eclipse.jdt.core.IField")
+
 (define-namespace IParent          "class:org.eclipse.jdt.core.IParent")
 (define-namespace Flags            "class:org.eclipse.jdt.core.Flags")
 (define-namespace SearchEngine     "class:org.eclipse.jdt.core.search.SearchEngine")

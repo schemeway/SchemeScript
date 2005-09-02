@@ -148,7 +148,6 @@
 ;;;;   define-record-type
 ;;;
 
-
 (define-form-processor 
  'define-record-type
  (lambda (dictionary form resource line-number)
@@ -195,29 +194,41 @@
  'define-namespace
  (lambda (dictionary form resource line-number)
    (when (namespace-form? form)
-     (let* ((namespace-symbol    (cadr form))
-            (namespace-string    (symbol->string namespace-symbol))
-            (qualified-classname (caddr form)))
-       (when (and (>= (string-length qualified-classname) 6)
-                  (string=? "class:" (substring qualified-classname 0 6)))
-         (let* ((classname  (substring qualified-classname 6 (string-length qualified-classname)))
-                (signatures (find-class-methods classname)))
-           (when signatures
-             (for-each (lambda (name/signature)
-                         (let ((description (string->symbol (format #f "(~a:~a)" namespace-string (cadr name/signature))))
-                               (entry-name  (string->symbol (format #f "~a:~a" namespace-string (car name/signature)))))
-                           (add-entry! dictionary entry-name description 'function resource line-number)))
-                       signatures))
-           (let ((namespace-description (string->symbol (format #f "~a - namespace" namespace-symbol))))
-             (add-entry! dictionary namespace-symbol namespace-description 'namespace resource line-number))))))))
+     (let* ((namespace-symbol (cadr form))
+            (classname        (namespace->fqn (caddr form)))
+            (signatures       (find-class-methods classname)))
+       (when signatures
+         (for-each (lambda (name/signature)
+                     (let ((description (string->symbol (format #f "(~a:~a)" namespace-symbol (cadr name/signature))))
+                           (entry-name  (string->symbol (format #f "~a:~a" namespace-symbol (car name/signature)))))
+                       (add-entry! dictionary entry-name description 'function resource line-number)))
+                   signatures))))))
 
 
 (define (namespace-form? form)
   (and (list? form)
        (= (length form) 3)
        (symbol? (cadr form))
-       (string? (caddr form))))
+       (let ((clsname (caddr form)))
+         (or (and (string? clsname)
+                  (>= (string-length clsname) 6)
+                  (string=? "class:" (substring clsname 0 6)))
+             (typename? clsname)))))
 
+
+(define (typename? obj)
+  (and (symbol? obj)
+       (let ((str (symbol->string obj)))
+         (>= (string-length str) 2)
+         (and (char=? #\< (string-ref str 0))
+              (char=? #\> (string-ref str (- (string-length str) 1)))))))
+
+(define (namespace->fqn typename)
+  (cond ((string? typename)
+         (substring typename 6 (string-length typename)))
+        ((symbol? typename)
+         (let ((clsname (symbol->string typename)))
+           (substring clsname 1 (- (string-length clsname) 1))))))
 
 (define (find-class-methods class-name)
   (or (find-project-class-methods (classname->pathname class-name))
@@ -244,12 +255,17 @@
                                 (instance? unit <org.eclipse.jdt.core.ICompilationUnit>)
                                 (ICompilationUnit:findPrimaryType unit))))
                 (if type
-                    (map (lambda (method)
-                           (imethod-signature method))
-                         (filter (lambda (method)
-                                   (or (IType:isInterface type)
-                                       (Flags:isPublic (IMember:getFlags method))))
-                                 (array->list (IType:getMethods type))))
+                    (append 
+                     (map ifield-name
+                          (filter (lambda (fld)
+                                    (let ((flags (IMember:getFlags fld)))
+                                      (Flags:isPublic flags)))
+                                  (array->list (IType:getFields type))))
+                     (map imethod-signature
+                          (filter (lambda (method)
+                                    (or (IType:isInterface type)
+                                        (Flags:isPublic (IMember:getFlags method))))
+                                  (array->list (IType:getMethods type)))))
                     (loop (cdr projects))))
               (loop (cdr projects)))))))
 
@@ -269,6 +285,16 @@
                          (array->list (IMethod:getParameterTypes method))))))))
 
 
+(define (ifield-name fld)
+  (let ((name (symbol->string (IField:getElementName fld))))
+    (list (string->symbol (string-append "." name))
+          (call-with-output-string
+           (lambda (port)
+             (display name port)
+             (when (not (Flags:isStatic (IMember:getFlags fld)))
+               (display " self" port)))))))
+
+
 (define (signature->string signature)
   (Signature:toString (make <string> (as <String> signature))))
 
@@ -276,13 +302,20 @@
 (define (find-internal-class-methods class-name)
   (try-catch 
       (let* ((class   (java.lang.Class:forName class-name))
+             (flds    (filter (lambda (fld)
+                                (Modifier:isPublic (Field:getModifiers fld)))
+                              (array->list (Class:getFields class))))
              (methods (filter (lambda (method)
                                 (Modifier:isPublic (Method:getModifiers method)))
-                              (array->list (Class:getDeclaredMethods class))))
+                              (array->list (Class:getMethods class))))
              (ctors   (filter (lambda (constructor)
                                 (Modifier:isPublic (Constructor:getModifiers constructor)))
                               (array->list (Class:getConstructors class))))
-             (names   (append (map (lambda (constructor)
+             (names   (append (list (list '.class "Class"))
+                              (map (lambda (fld)
+                                     (field-name fld))
+                                   flds)
+                              (map (lambda (constructor)
                                      (method-signature 'new
                                                        (Constructor:getModifiers constructor)
                                                        (Constructor:getParameterTypes constructor)
@@ -319,6 +352,17 @@
            (for-each (lambda (param-type)
                        (format port " <~a>" (type->signature param-type)))
                      (array->list parameter-types))))))
+
+
+(define (field-name fld)
+  (let ((name (Field:getName fld)))
+    (list (string->symbol (format #f ".~a" name))
+          (call-with-output-string 
+           (lambda (port)
+             (display name port)
+             (let ((flags (Field:getModifiers fld)))
+               (when (not (Modifier:isStatic flags))
+                 (display " self" port))))))))
 
 
 (define (type->signature cls)
