@@ -1,3 +1,9 @@
+*** Version 1.0.1
+
+- Fix to content assist. Content assist is shown for the enclosing form
+  of function call. Also, content assist is not systematically shown
+  when the spacebar is pressed. This was annoying.
+
 *** Version 1.0.0 alpha
 
 - The evaluation can be interrupted if it is supported by the interpreter

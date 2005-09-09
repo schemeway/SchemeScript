@@ -14,6 +14,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
+import org.schemeway.plugins.schemescript.parser.SexpNavigator;
 
 /**
  * @author Nu Echo Inc.
@@ -140,7 +141,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     private static class Validator implements IContextInformationValidator {
         private int mInstallOffset;
         public boolean isContextInformationValid(int offset) {
-            return Math.abs(mInstallOffset - offset) < 5;
+            return Math.abs(mInstallOffset - offset) == 0;
         }
         public void install(IContextInformation info, ITextViewer viewer, int offset) {
             mInstallOffset = offset;
@@ -225,21 +226,27 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     
     public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
         IContextInformation[] result = null;
-        try {
-            String symbol = SchemeTextUtilities.findSymbolAroundPoint(viewer.getDocument(), offset);
-            if (symbol != null) {
-                List informations = new LinkedList();
-                SymbolEntry[] matchingEntries = getEditor().getSymbolDictionary().findSymbol(symbol);
-                for (int index = 0; index < matchingEntries.length; index++) {
-                    informations.add(makeContextInfo(matchingEntries[index]));
-                }
-
-                if (informations.size() != 0) {
-                    result = (IContextInformation[]) informations.toArray(new IContextInformation[informations.size()]);
-                }
+        String symbol = null;
+        
+        SexpNavigator navigator = new SexpNavigator(viewer.getDocument());
+        if (navigator.upSexpression(offset)) {
+            navigator.downSexpression(navigator.getSexpStart());
+            if (navigator.forwardSexpression(navigator.getSexpEnd())
+                    && navigator.getSexpType() == SexpNavigator.TYPE_SYMBOL) {
+                symbol = navigator.getText();
             }
         }
-        catch (BadLocationException exception) {
+        
+        if (symbol != null) {
+            List informations = new LinkedList();
+            SymbolEntry[] matchingEntries = getEditor().getSymbolDictionary().findSymbol(symbol);
+            for (int index = 0; index < matchingEntries.length; index++) {
+                informations.add(makeContextInfo(matchingEntries[index]));
+            }
+
+            if (informations.size() != 0) {
+                result = (IContextInformation[]) informations.toArray(new IContextInformation[informations.size()]);
+            }
         }
         return result;
     }
@@ -251,7 +258,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     }
 
     public char[] getContextInformationAutoActivationCharacters() {
-        return new char[]  { ' ' };
+        return new char[]  { };
     }
 
     public String getErrorMessage() {
