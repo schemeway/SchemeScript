@@ -7,12 +7,15 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.HashMap;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.schemeway.plugins.schemescript.preferences.RemoteInterpreterPreferences;
 
 public class RemoteInterpreterProcess implements IProcess
 {
@@ -51,7 +54,8 @@ public class RemoteInterpreterProcess implements IProcess
     
     private RemoteInterpreterProcess() {
         try {
-            mSocket = new Socket(getHost(), getPort());
+            mSocket = new Socket(RemoteInterpreterPreferences.getInterpreterHost(),
+                                 RemoteInterpreterPreferences.getInterpreterPort());
             mProxy = new StreamsProxy(mSocket.getInputStream(), mSocket.getOutputStream());
         } 
         catch (IOException e)  {
@@ -68,7 +72,7 @@ public class RemoteInterpreterProcess implements IProcess
     }
     
     public String getLabel() {
-        return "Remote interpreter (" + getHost() + ":" + getPort() + ")";
+        return "on (" + getHost() + ":" + getPort() + ")";
     }
     
     protected String getHost() {
@@ -113,20 +117,30 @@ public class RemoteInterpreterProcess implements IProcess
     }
     
     public boolean canTerminate() {
-        return mSocket != null && mSocket.isConnected();
+        return (mSocket != null) && (mSocket.isConnected());
     }
 
     public boolean isTerminated() {
-        return mSocket == null || mSocket.isClosed();
+        return (mSocket == null) || (mSocket.isClosed());
     }
 
     public void terminate() throws DebugException {
         try {
-            mSocket.close();
+            if (mSocket != null)
+                mSocket.close();
         } 
         catch (IOException e) {
         }
-        mSocket = null;
+        finally {
+            mSocket = null;
+            terminated();
+        }
+    }
+
+    private void terminated()
+    {
+        DebugEvent event = new DebugEvent(this, DebugEvent.TERMINATE);
+        DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { event });
         mInstance = null;
     }
     
@@ -138,5 +152,4 @@ public class RemoteInterpreterProcess implements IProcess
             // TODO Auto-generated catch block
         }
     }
-
 }
