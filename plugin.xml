@@ -773,6 +773,11 @@
             name="Kawa Interpreter"
             modes="run"
             id="org.schemeway.plugins.schemescript.kawaInterpreter"/>
+      <launchConfigurationType
+            delegate="org.schemeway.plugins.schemescript.interpreter.RemoteInterpreterDelegate"
+            id="org.schemeway.plugins.schemescript.remoteInterpreter"
+            modes="run"
+            name="Remote Interpreter"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -925,5 +930,9 @@
       		class="org.schemeway.plugins.schemescript.interpreter.KawaInterpreter"
       		name="Embedded Kawa"
       		id="kawa"/>
+      <interpreter
+            class="org.schemeway.plugins.schemescript.interpreter.RemoteInterpreter"
+            id="remote"
+            name="Remote Interpreter"/>
    </extension>
 </plugin>
