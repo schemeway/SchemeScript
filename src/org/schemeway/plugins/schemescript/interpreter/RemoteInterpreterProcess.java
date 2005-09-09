@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.schemeway.plugins.schemescript.preferences.RemoteInterpreterPreferences;
 
-public class RemoteInterpreterProcess implements IProcess
+public class RemoteInterpreterProcess implements IInterpreterProcess
 {
     private static class StreamsProxy implements IStreamsProxy {
         private OutputStreamMonitor mMonitor;
@@ -54,8 +54,7 @@ public class RemoteInterpreterProcess implements IProcess
     
     private RemoteInterpreterProcess() {
         try {
-            mSocket = new Socket(RemoteInterpreterPreferences.getInterpreterHost(),
-                                 RemoteInterpreterPreferences.getInterpreterPort());
+            mSocket = new Socket(getHost(), getPort());
             mProxy = new StreamsProxy(mSocket.getInputStream(), mSocket.getOutputStream());
         } 
         catch (IOException e)  {
@@ -67,20 +66,22 @@ public class RemoteInterpreterProcess implements IProcess
     public static RemoteInterpreterProcess getInstance() {
         if (mInstance == null) {
             mInstance = new RemoteInterpreterProcess();
+            if (!mInstance.isRunning())
+                mInstance = null;
         }
         return mInstance;
     }
     
     public String getLabel() {
-        return "on (" + getHost() + ":" + getPort() + ")";
+        return "REPL on " + getHost() + ":" + getPort();
     }
     
     protected String getHost() {
-        return "localhost"; // TODO
+        return RemoteInterpreterPreferences.getInterpreterHost();
     }
     
     private int getPort() {
-        return 5156;
+        return RemoteInterpreterPreferences.getInterpreterPort();
     }
 
     public ILaunch getLaunch() {

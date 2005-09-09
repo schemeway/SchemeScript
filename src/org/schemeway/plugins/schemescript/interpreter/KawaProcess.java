@@ -5,23 +5,39 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import gnu.expr.*;
-import gnu.kawa.functions.*;
-import gnu.lists.*;
-import gnu.mapping.*;
-import gnu.text.*;
+import gnu.expr.Compilation;
+import gnu.expr.ModuleExp;
+import gnu.kawa.functions.DisplayFormat;
+import gnu.lists.Consumer;
+import gnu.mapping.CallContext;
+import gnu.mapping.CharArrayInPort;
+import gnu.mapping.Environment;
+import gnu.mapping.InPort;
+import gnu.mapping.OutPort;
+import gnu.mapping.WrongArguments;
+import gnu.text.Lexer;
+import gnu.text.SourceMessages;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import kawa.standard.*;
+import kawa.standard.Scheme;
 
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
-import org.eclipse.swt.widgets.Display;
-import org.schemeway.plugins.schemescript.views.*;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.IStreamListener;
+import org.eclipse.debug.core.model.IStreamMonitor;
+import org.eclipse.debug.core.model.IStreamsProxy;
+import org.schemeway.plugins.schemescript.views.KawaStackTraceView;
 
-public class KawaProcess implements IProcess {
+public class KawaProcess implements IInterpreterProcess {
     private final static String PROMPT = "> ";
 
     private static class KawaPortStreamMonitor extends OutputStream implements IStreamMonitor {
@@ -152,6 +168,10 @@ public class KawaProcess implements IProcess {
         return null;
     }
 
+    public boolean isRunning() {
+        return getLaunch() != null;
+    }
+    
     public boolean canTerminate() {
         return false;
     }
@@ -170,7 +190,7 @@ public class KawaProcess implements IProcess {
         return mInstance;
     }
 
-    static void sendToInterpreter(String text) {
+    public void sendToInterpreter(String text) {
         try {
             getInstance().getStreamsProxy().write(text);
         }

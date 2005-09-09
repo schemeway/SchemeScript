@@ -5,47 +5,21 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.ui.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.console.*;
-import org.schemeway.plugins.schemescript.*;
+import org.schemeway.plugins.schemescript.SchemeScriptPlugin;
 
-public class KawaInterpreter implements Interpreter {
+public class KawaInterpreter extends AbstractInterpreter {
     public static final String CONFIG_TYPE = SchemeScriptPlugin.PLUGIN_NS + ".kawaInterpreter";
 
     public KawaInterpreter() {
         super();
     }
-
-    public void showConsole() {
-        IConsole console = DebugUITools.getConsole(KawaProcess.getInstance());
-        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IViewPart view = page.findView("org.eclipse.ui.console.ConsoleView");
-        if (view != null)
-            view.setFocus();
+    
+    public IInterpreterProcess getProcess() {
+        return KawaProcess.getInstance();
     }
-
-    public boolean isRunning() {
-        return KawaProcess.getInstance().getLaunch() != null;
-    }
-
-    public void start() {
-        if (KawaProcess.getInstance().getLaunch() == null) {
-            try {
-                ILaunchConfigurationType configType = DebugPlugin.getDefault()
-                                                                 .getLaunchManager()
-                                                                 .getLaunchConfigurationType(CONFIG_TYPE);
-                ILaunchConfigurationWorkingCopy copy = configType.newInstance(null, "");
-                copy.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
-            }
-            catch (CoreException exception) {
-            }
-        }
-        showConsole();
+    
+    public String getConfigurationType() {
+        return CONFIG_TYPE;
     }
 
     public void stop() {
@@ -57,19 +31,5 @@ public class KawaInterpreter implements Interpreter {
 
     public boolean supportInterruption() {
         return false;
-    }
-
-    public void interrupt() {
-    }
-
-    public void eval(String code) {
-        if (!isRunning())
-            start(); // Ensure that the process is running...
-        KawaProcess.sendToInterpreter(code);
-    }
-
-    public void load(IFile file) {
-        String filename = file.getRawLocation().toString();
-        eval("(load \"" + filename + "\")");
     }
 }
