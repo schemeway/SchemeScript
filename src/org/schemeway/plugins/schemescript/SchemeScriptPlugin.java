@@ -188,6 +188,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
         SyntaxPreferences.initializeDefaults(store);
         IndentationPreferences.initializeDefaults(store);
         SchemeLexicalExtensionsPreferences.initializeDefaults(store);
+        RemoteInterpreterPreferences.initializeDefaults(store);
         initializeScanner(store);
     }
     

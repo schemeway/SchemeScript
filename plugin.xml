@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="1.0.0"
+   version="1.0.1"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -719,6 +719,11 @@
             class="org.schemeway.plugins.schemescript.preferences.SchemeLexicalExtensionsPreferences"
             id="org.schemeway.plugins.schemescript.preferences.syntax-extensions">
       </page>
+      <page
+            category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.RemoteInterpreterPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.remoteInterpreter"
+            name="Remote Interpreter"/>
    </extension>
    <extension
          point="org.eclipse.help.toc">
