@@ -26,7 +26,6 @@ public class StartInterpreterAction extends Action implements IWorkbenchWindowAc
             return;
     
         interp.start();
-        interp.showConsole();
     }
     
     
