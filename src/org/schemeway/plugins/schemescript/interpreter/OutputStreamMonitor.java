@@ -13,6 +13,7 @@ package org.schemeway.plugins.schemescript.interpreter;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ import org.eclipse.debug.core.model.IFlushableStreamMonitor;
  * and input stream.
  */
 public class OutputStreamMonitor implements IFlushableStreamMonitor {
+    
+    private SocketExceptionHandler fExceptionListener;
+    
     /**
      * The stream being monitored (connected system out or err).
      */
@@ -73,9 +77,10 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
      * Creates an output stream monitor on the
      * given stream (connected to system out or err).
      */
-    public OutputStreamMonitor(InputStream stream) {
+    public OutputStreamMonitor(InputStream stream, SocketExceptionHandler listener) {
         fStream = new BufferedInputStream(stream, 8192);
         fContents= new StringBuffer();
+        fExceptionListener = listener;
     }
 
     /* (non-Javadoc)
@@ -145,8 +150,15 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
                         fireStreamAppended(text);
                     }
                 }
+            } catch (SocketException se) {
+                if (fExceptionListener != null) {
+                    if (isBuffered()) {
+                        fContents.append("Connection closed!\n");
+                    }
+                    fireStreamAppended("Connection closed!\n");
+                    fExceptionListener.exceptionOccurred(se);
+                }
             } catch (IOException ioe) {
-                DebugPlugin.log(ioe);
                 return;
             } catch (NullPointerException e) {
                 // killing the stream monitor while reading can cause an NPE

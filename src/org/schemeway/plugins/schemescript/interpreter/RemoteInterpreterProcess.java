@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2004-2005 Nu Echo Inc.
+ * 
+ * This is free software. For terms and warranty disclaimer, see ./COPYING
+ */
 package org.schemeway.plugins.schemescript.interpreter;
 
 import java.io.IOException;
@@ -5,13 +10,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -24,7 +29,15 @@ public class RemoteInterpreterProcess implements IInterpreterProcess
         private PrintStream mReplInput;
         
         public StreamsProxy(InputStream is, OutputStream os) {
-            mMonitor = new OutputStreamMonitor(is);
+            SocketExceptionHandler listener = new SocketExceptionHandler() {
+                public void exceptionOccurred(SocketException exception) {
+                    try {
+                        mInstance.terminate();
+                    } catch (DebugException e) {
+                    }
+                }
+            };
+            mMonitor = new OutputStreamMonitor(is, listener);
             mMonitor.startMonitoring();
             mReplInput = new PrintStream(os);
         }

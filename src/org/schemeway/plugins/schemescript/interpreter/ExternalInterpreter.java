@@ -60,6 +60,8 @@ public class ExternalInterpreter implements Interpreter {
             MessageDialog.openError(sh, "Unable to start interpreter!", ADVICE);
             mProcess = null;
         }
+        if (isRunning())
+            showConsole();
     }
 
     public void restart() {

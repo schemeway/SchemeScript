@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2004-2005 Nu Echo Inc.
+ * 
+ * This is free software. For terms and warranty disclaimer, see ./COPYING
+ */
 package org.schemeway.plugins.schemescript.interpreter;
 
 import org.eclipse.core.resources.IFile;
@@ -8,6 +13,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -38,8 +44,9 @@ public abstract class AbstractInterpreter implements Interpreter
             }
             catch (CoreException exception) {
             }
-            showConsole();
         }
+        if (instance != null && instance.getLaunch() != null)
+            showConsole();
     }
 
     public void stop() {
@@ -79,7 +86,11 @@ public abstract class AbstractInterpreter implements Interpreter
     }
 
     public void showConsole() {
-        IConsole console = DebugUITools.getConsole(getProcess());
+        IProcess process = getProcess();
+        if (process == null || process.getLaunch() == null)
+            return;
+        
+        IConsole console = DebugUITools.getConsole(process);
         ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IViewPart view = page.findView("org.eclipse.ui.console.ConsoleView");

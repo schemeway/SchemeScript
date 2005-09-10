@@ -5,11 +5,9 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import org.eclipse.debug.core.model.IProcess;
+import java.net.SocketException;
 
-public interface IInterpreterProcess extends IProcess
+public interface SocketExceptionHandler
 {
-    boolean isRunning();
-    
-    void sendToInterpreter(String code);
+    void exceptionOccurred(SocketException exception);
 }
