@@ -69,6 +69,7 @@ public class RemoteInterpreterProcess implements IInterpreterProcess
         try {
             mSocket = new Socket(getHost(), getPort());
             mProxy = new StreamsProxy(mSocket.getInputStream(), mSocket.getOutputStream());
+            fireCreationEvent();
         } 
         catch (IOException e)  {
             MessageDialog.openError(null, getLabel(), "Unable to establish connection: " + e.getMessage());
@@ -153,9 +154,17 @@ public class RemoteInterpreterProcess implements IInterpreterProcess
 
     private void terminated()
     {
-        DebugEvent event = new DebugEvent(this, DebugEvent.TERMINATE);
-        DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { event });
+        fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
         mInstance = null;
+    }
+
+    private void fireCreationEvent() {
+        fireEvent(new DebugEvent(this, DebugEvent.CREATE));
+    }
+    
+    private void fireEvent(DebugEvent event)
+    {
+        DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { event });
     }
     
     public void sendToInterpreter(String text) {
