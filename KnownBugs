@@ -1,3 +1,4 @@
-Version 0.5.0
+Version 1.1.0
 
 - The structural editing feature is not yet stable.
+- The Console view does not scroll automatically in Eclipse 3.1. This is not a bug.

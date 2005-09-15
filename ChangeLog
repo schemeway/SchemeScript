@@ -1,13 +1,13 @@
-*** Version 1.0.1
+*** Version 1.1.0
 
-- Added a 'Remote Interpreter'. Using this interpreter, one can send expressions
+- Added a 'Remote Interpreter'. Using this interface, one can send expressions
   to a remote interpreter over a socket. It is SISCweb-ready (default port number
   is 5156).
 - Fix to content assist. Content assist is shown for the enclosing form
-  of function call. Also, content assist is not systematically shown
+  or function call. Also, content assist is not systematically shown
   when the spacebar is pressed. This was annoying.
 
-*** Version 1.0.0 alpha
+*** Version 1.0.0	
 
 - The evaluation can be interrupted if it is supported by the interpreter
   (see the documentation for more details)
