@@ -124,7 +124,11 @@ public class SchemeParenthesisPainter implements IPainter, PaintListener {
 
             if (mBox) {
                 gc.setForeground(color);
-                gc.drawRectangle(left.x, left.y, right.x - left.x - 1, gc.getFontMetrics().getHeight() - 1);
+                int x = left.x;
+                int y = left.y;
+                int w = right.x - left.x - 1;
+                int h = gc.getFontMetrics().getHeight();
+                gc.drawRectangle(x, y, w, h);
             }
             else {
                 gc.setForeground(mDefaultColor);
