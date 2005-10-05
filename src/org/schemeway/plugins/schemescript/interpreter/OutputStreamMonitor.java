@@ -141,6 +141,10 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
                     break;
                 }
                 read= fStream.read(bytes);
+                if (read < 0) {
+                    notifiedSocketException(null);
+                    return;
+                }
                 if (read > 0) {
                     String text= new String(bytes, 0, read);
                     synchronized (this) {
@@ -151,14 +155,10 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
                     }
                 }
             } catch (SocketException se) {
-                if (fExceptionListener != null) {
-                    if (isBuffered()) {
-                        fContents.append("Connection closed!\n");
-                    }
-                    fireStreamAppended("Connection closed!\n");
-                    fExceptionListener.exceptionOccurred(se);
-                }
+                notifiedSocketException(se);
+                return;
             } catch (IOException ioe) {
+                notifiedSocketException(null);
                 return;
             } catch (NullPointerException e) {
                 // killing the stream monitor while reading can cause an NPE
@@ -182,6 +182,16 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
             fStream.close();
         } catch (IOException e) {
             DebugPlugin.log(e);
+        }
+    }
+    
+    private void notifiedSocketException(SocketException exception) {
+        if (fExceptionListener != null) {
+            if (isBuffered()) {
+                fContents.append("Connection closed!\n");
+            }
+            fireStreamAppended("Connection closed!\n");
+            fExceptionListener.exceptionOccurred(se);
         }
     }
     

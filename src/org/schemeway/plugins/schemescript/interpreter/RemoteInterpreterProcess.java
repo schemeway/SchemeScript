@@ -55,6 +55,13 @@ public class RemoteInterpreterProcess implements IInterpreterProcess
         public void write(String input) throws IOException
         {
             mReplInput.print(input);
+            if (mReplInput.checkError()) {
+                try {
+                    mInstance.terminate();
+                }
+                catch (DebugException exception) {
+                }
+            }
         }
     }
     
