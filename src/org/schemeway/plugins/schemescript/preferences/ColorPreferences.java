@@ -38,6 +38,7 @@ public class ColorPreferences extends SchemePreferencePage {
 
     public final static String PREFIX = SchemeScriptPlugin.PLUGIN_NS + ".colors.";
     public final static String BACKGROUND_COLOR = PREFIX + "background";
+    public final static String SYSTEM_BACKGROUND = PREFIX + "systembackground";
     public final static String MATCHER_COLOR = PREFIX + "matcher";
     public final static String MATCHER_BOX = PREFIX + "matcherbox";
 
@@ -78,6 +79,7 @@ public class ColorPreferences extends SchemePreferencePage {
     private ColorSelector mBackgroundColorSelector;
     private ColorSelector mMatchingColorSelector;
     private Button mMatchingBox;
+    private Button mSystemBackground;
 
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
@@ -109,8 +111,17 @@ public class ColorPreferences extends SchemePreferencePage {
         group.setLayout(new GridLayout(2, false));
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+        new Label(group, SWT.NONE).setText("Use system default: ");
+        mSystemBackground = new Button(group, SWT.CHECK);
         new Label(group, SWT.NONE).setText("Background color: ");
         mBackgroundColorSelector = new ColorSelector(group);
+        
+        mSystemBackground.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                mBackgroundColorSelector.setEnabled(!(mSystemBackground.getSelection()));
+            } 
+        });
     }
 
     private void createForegroundSection(Composite parent) {
@@ -187,6 +198,7 @@ public class ColorPreferences extends SchemePreferencePage {
         PreferenceConverter.setDefault(store, MATCHER_COLOR, ISchemeColorConstants.MATCHING_PARENS);
         PreferenceConverter.setDefault(store, BACKGROUND_COLOR, ISchemeColorConstants.SCHEME_BACKGROUND);
         store.setDefault(MATCHER_BOX, false);
+        store.setDefault(SYSTEM_BACKGROUND, true);
 
         for (int i = 0; i < mItems.length; i++) {
             AppearanceItem item = mItems[i];
@@ -200,6 +212,7 @@ public class ColorPreferences extends SchemePreferencePage {
         mBackgroundColorSelector.setColorValue(ISchemeColorConstants.SCHEME_BACKGROUND);
         mMatchingColorSelector.setColorValue(ISchemeColorConstants.MATCHING_PARENS);
         mMatchingBox.setSelection(false);
+        mSystemBackground.setSelection(true);
 
         for (int i = 0; i < mItems.length; i++) {
             AppearanceItem item = mItems[i];
@@ -214,6 +227,8 @@ public class ColorPreferences extends SchemePreferencePage {
         mBackgroundColorSelector.setColorValue(PreferenceConverter.getColor(store, BACKGROUND_COLOR));
         mMatchingColorSelector.setColorValue(PreferenceConverter.getColor(store, MATCHER_COLOR));
         mMatchingBox.setSelection(store.getBoolean(MATCHER_BOX));
+        mSystemBackground.setSelection(store.getBoolean(SYSTEM_BACKGROUND));
+        mBackgroundColorSelector.setEnabled(!(mSystemBackground.getSelection()));
 
         for (int i = 0; i < mItems.length; i++) {
             AppearanceItem item = mItems[i];
@@ -228,6 +243,7 @@ public class ColorPreferences extends SchemePreferencePage {
         PreferenceConverter.setValue(store, MATCHER_COLOR, mMatchingColorSelector.getColorValue());
         PreferenceConverter.setValue(store, BACKGROUND_COLOR, mBackgroundColorSelector.getColorValue());
         store.setValue(MATCHER_BOX, mMatchingBox.getSelection());
+        store.setValue(SYSTEM_BACKGROUND, mSystemBackground.getSelection());
 
         for (int i = 0; i < mItems.length; i++) {
             AppearanceItem item = mItems[i];

@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.views.contentoutline.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.debug.*;
@@ -51,7 +52,13 @@ public class SchemeEditor extends TextEditor {
         super();
         SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
         setSourceViewerConfiguration(new SchemeConfiguration(textTools, this));
-        setPreferenceStore(SchemeScriptPlugin.getDefault().getPreferenceStore());
+        IPropertyChangeListener listener = new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event)
+            {
+                handlePreferenceStoreChanged(event);
+            }
+        };
+        SchemeScriptPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener);
     }
 
     public void dispose() {
@@ -126,17 +133,14 @@ public class SchemeEditor extends TextEditor {
 
     protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
         String property = event.getProperty();
-        if (property.equals(ColorPreferences.BACKGROUND_COLOR)) {
-            getSourceViewer().getTextWidget().setBackground(new Color(null, (RGB) event.getNewValue()));
-        }
-        else if (property.equals(SchemePreferences.TAB_WIDTH)) {
+        if (property.equals(SchemePreferences.TAB_WIDTH)) {
             getSourceViewer().getTextWidget().setTabs(SchemePreferences.getTabWidth());
         }
         else if (affectsTextPresentation(event)) {
             SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
             textTools.updateColors(event);
 
-            IPreferenceStore store = getPreferenceStore();
+            IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
             mParenPainter.setHighlightColor(new Color(null,
                                                       PreferenceConverter.getColor(store,
                                                                                    ColorPreferences.MATCHER_COLOR)));
@@ -144,6 +148,7 @@ public class SchemeEditor extends TextEditor {
                                                         PreferenceConverter.getColor(store,
                                                                                      ColorPreferences.PAREN_COLOR)));
             mParenPainter.setHighlightStyle(store.getBoolean(ColorPreferences.MATCHER_BOX));
+            setupBackgroundColor();
         }
         else if (property.startsWith(IndentationPreferences.PREFIX)) {
             SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
@@ -161,13 +166,28 @@ public class SchemeEditor extends TextEditor {
     public final void createPartControl(final Composite parent) {
         super.createPartControl(parent);
         mPaintManager = new PaintManager(getSourceViewer());
-        IPreferenceStore store = getPreferenceStore();
-        Color color = new Color(null, PreferenceConverter.getColor(store, ColorPreferences.BACKGROUND_COLOR));
-        getSourceViewer().getTextWidget().setBackground(color);
         startParenthesisHighlighting();
 
         if (SchemePreferences.isStructuralEditingEnabled())
             addAutoEditStrategies();
+        
+        setupBackgroundColor();
+    }
+    
+    private void setupBackgroundColor() {
+        IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
+        Color color = null; 
+        if (!store.getBoolean(ColorPreferences.SYSTEM_BACKGROUND)) {
+            color = new Color(null, PreferenceConverter.getColor(store, ColorPreferences.BACKGROUND_COLOR));
+        }
+        else {
+            store = getPreferenceStore();
+            if (store.contains(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND))
+                color = new Color(null, PreferenceConverter.getColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND));
+            else
+                color = new Color(null, ISchemeColorConstants.SCHEME_BACKGROUND);
+        }
+        getSourceViewer().getTextWidget().setBackground(color);
     }
 
     private void addAutoEditStrategies() {
@@ -284,7 +304,7 @@ public class SchemeEditor extends TextEditor {
     private void startParenthesisHighlighting() {
         if (mParenPainter == null) {
             ISourceViewer sourceViewer = getSourceViewer();
-            IPreferenceStore store = getPreferenceStore();
+            IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
             mParenPainter = new SchemeParenthesisPainter(sourceViewer, this);
             mParenPainter.setHighlightStyle(store.getBoolean(ColorPreferences.MATCHER_BOX));
             mParenPainter.setHighlightColor(new Color(null,
