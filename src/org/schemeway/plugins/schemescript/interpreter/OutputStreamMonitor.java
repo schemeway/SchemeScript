@@ -191,7 +191,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
                 fContents.append("Connection closed!\n");
             }
             fireStreamAppended("Connection closed!\n");
-            fExceptionListener.exceptionOccurred(se);
+            fExceptionListener.exceptionOccurred(exception);
         }
     }
     
