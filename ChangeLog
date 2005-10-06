@@ -1,3 +1,10 @@
+*** Version 1.1.3
+
+- The Remote Interpreter now properly detects when the remote socket closes
+  gracefully.
+- Fixed bug "1309531 - text editor properties not applied"
+- Fixed bug "1306344 - Bracket matching box slightly off"
+
 *** Version 1.1.0
 
 - Added a 'Remote Interpreter'. Using this interface, one can send expressions
