@@ -181,7 +181,7 @@ public class SchemeEditor extends TextEditor {
             color = new Color(null, PreferenceConverter.getColor(store, ColorPreferences.BACKGROUND_COLOR));
         }
         else {
-            store = getPreferenceStore();
+            store = EditorsUI.getPreferenceStore();
             if (store.contains(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND))
                 color = new Color(null, PreferenceConverter.getColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND));
             else
