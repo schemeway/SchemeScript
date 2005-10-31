@@ -5,12 +5,10 @@
  */
 package org.schemeway.plugins.schemescript.dictionary;
 
-import gnu.expr.Language;
 import gnu.kawa.lispexpr.ScmRead;
 import gnu.lists.EofClass;
 import gnu.lists.Pair;
 import gnu.lists.PairWithPosition;
-import gnu.mapping.Environment;
 import gnu.mapping.InPort;
 import gnu.mapping.Procedure;
 import gnu.mapping.Procedure2;
@@ -43,7 +41,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.schemeway.plugins.schemescript.SchemeScriptPlugin;
@@ -106,12 +103,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
 
     private void loadFormProcessors(final URL userFile) {
     	final UserDictionary currentDictionary = this;
-        KawaProxy.runInSchemeThread(new Runnable() {
-        	public void run() {
-        		Language interp = Language.getDefaultLanguage();
-        		interp.defineFunction("define-form-processor", new FormProcessorDefiner(currentDictionary));
-        	}
-        });
+        KawaProxy.set("define-form-processor", new FormProcessorDefiner(currentDictionary));
         KawaProxy.loadFile(userFile.toString());
     }
 

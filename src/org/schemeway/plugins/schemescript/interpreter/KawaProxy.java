@@ -56,6 +56,17 @@ public final class KawaProxy {
 		});
 		return box.car;
 	}
+    
+    // Sets a symbol in the global environment
+    public static void set(final String symbolName, final Object value)
+    {
+        runInSchemeThread(new Runnable() {
+            public void run() {
+                Environment env = Environment.getCurrent();
+                env.define(env.getSymbol(symbolName), null, value);
+            }
+        });
+    }
 	
 	// Runs a runnable in the Scheme thread
 	public static void runInSchemeThread(Runnable runnable) {
