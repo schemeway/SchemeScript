@@ -5,6 +5,8 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
+import javax.sound.sampled.LineListener;
+
 import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.indentation.*;
@@ -59,15 +61,42 @@ public class FormatAction extends SchemeAction {
 
     public static void indentLine(IDocument document, int lineNo, SchemeIndentationContext context)
             throws BadLocationException {
-        int lineOffset = document.getLineOffset(lineNo);
+        IRegion lineInfo = document.getLineInformation(lineNo);
+        int lineOffset = lineInfo.getOffset();
+        int lineEnd = lineInfo.getLength() + lineOffset;
+        
         ITypedRegion partition = document.getPartition(lineOffset);
         context.setOffset(lineOffset);
+
+        // re-indent line
         if (partition.getType() == IDocument.DEFAULT_CONTENT_TYPE) {
             int newIndentation = SchemeIndentationStrategy.findIndentation(context);
             int oldIndentation = SchemeIndentationStrategy.indentationLength(document, lineOffset);
             String indentString = SchemeIndentationStrategy.makeIndentationString(newIndentation);
-            if (indentString.length() != oldIndentation)
+            if (indentString.length() != oldIndentation) {
                 document.replace(lineOffset, oldIndentation, indentString);
+                lineEnd += (indentString.length() - oldIndentation);
+            }
+        }
+        // remove extra whitespace at end of line
+        if (lineEnd > lineOffset) {
+            removeExtraWhitespace(document, lineEnd - 1);
+        }
+    }
+
+    private static void removeExtraWhitespace(IDocument document, int lineLastChar) throws BadLocationException
+    {
+        ITypedRegion partition;
+        
+        int index = lineLastChar;
+        partition = document.getPartition(index);
+        if (partition.getType() == IDocument.DEFAULT_CONTENT_TYPE) {
+            while (Character.isWhitespace(document.getChar(index))) {
+                index --;
+            }
+        }
+        if (index != lineLastChar) {
+            document.replace(index + 1, (lineLastChar - index), "");
         }
     }
 
