@@ -5,7 +5,11 @@
  */
 package org.schemeway.plugins.schemescript.dictionary;
 
-import org.eclipse.jface.text.templates.*;
+import java.util.List;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContextType;
 
 /**
  * A symbol dictionary is a catalog of symbols that should be known
@@ -30,6 +34,11 @@ public interface ISymbolDictionary {
      * @return 
      */
     SymbolEntry[] completeSymbol(String prefix);
+    
+    /**
+     * Finds all symbol entries in a given resource
+     */
+    List findSymbolForResource(IResource resource);
     
     /**
      * Finds all templates beginning with the given prefix 

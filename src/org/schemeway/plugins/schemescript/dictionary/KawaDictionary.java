@@ -7,6 +7,8 @@ package org.schemeway.plugins.schemescript.dictionary;
 
 import java.util.*;
 
+import org.eclipse.core.resources.IResource;
+
 public class KawaDictionary extends AbstractSymbolDictionary
 {
     private static Hashtable mEntries = null;
@@ -100,5 +102,10 @@ public class KawaDictionary extends AbstractSymbolDictionary
             SymbolEntry entry = mKawaSymbols[index];
             mEntries.put(entry.getName(), entry); 
         }
+    }
+
+    public List findSymbolForResource(IResource resource)
+    {
+        return new LinkedList();
     }
 }

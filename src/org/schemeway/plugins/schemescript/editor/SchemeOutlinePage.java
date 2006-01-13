@@ -5,10 +5,16 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.internal.resources.LinkDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IRegion;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -26,8 +32,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.schemeway.plugins.schemescript.SchemeScriptPlugin;
+import org.schemeway.plugins.schemescript.dictionary.SymbolEntry;
 
 public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutlinePage {
     
@@ -37,17 +46,21 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
     private static final String CHAPTER_CATEGORY = "___chapters";
     private static final String CHAPTER = "chapter";
     private static final String SECTION = "section";
+    private static final String DEFINITION = "definition";
     private static Image CHAPTER_IMAGE;
     private static Image SECTION_IMAGE;
+    private static Image DEFINITION_IMAGE;
     
     static {
         try {
             CHAPTER_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/chapter.gif")).openStream());
             SECTION_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/section.gif")).openStream());
+            DEFINITION_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/definition.gif")).openStream());
         }
         catch (Throwable exception) {
             CHAPTER_IMAGE = null;
             SECTION_IMAGE = null;
+            DEFINITION_IMAGE = null;
         }
     }
     
@@ -82,7 +95,27 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         public static Section createChapter(String name, Position position) {
             return new Section(CHAPTER, name, position);
         }
+        
+        public static Section createDefinition(String name, Position position) {
+            return new Section(DEFINITION, name, position);
+        }
     }
+    
+    private static class SectionPositionComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
+            Section s1 = (Section)o1;
+            Section s2 = (Section)o2;
+            
+            if (s1.position.offset < s2.position.offset)
+                return -1;
+            else if (s1.position.offset > s2.position.offset)
+                return 1;
+            else
+                return 0;
+        }
+    }
+    
+    private static final SectionPositionComparator SECTION_COMPARATOR = new SectionPositionComparator();
     
     private static class SectionContentProvider implements ITreeContentProvider {
         
@@ -128,9 +161,11 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
             if (section.type == SECTION) {
                 return SECTION_IMAGE;
             }
-            else {
+            else if (section.type == CHAPTER ) {
                 return CHAPTER_IMAGE;
             }
+            
+            return DEFINITION_IMAGE;
         }
     }
     
@@ -169,32 +204,11 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
             root = Section.createChapter("Root", position);
             Section current = root;
             
-            int offset = 0;
-            int documentLength = document.getLength();
-            while (offset < documentLength) {
-                ITypedRegion partition = document.getPartition(offset);
-                if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
-                    String text = document.get(partition.getOffset(), partition.getLength());
-                    text = text.trim();
-                    if (text.startsWith(SECTION_START)) {
-                        position = new Position(offset + 7, text.length() - 7);
-                        document.addPosition(CHAPTER_CATEGORY, position);
-                        Section newSection = Section.createSection(text.substring(7), position);
-                        current.addSubsection(newSection);
-                    }
-                    else if (text.startsWith(CHAPTER_START) && !(text.equals(MENU_DELIMITER))) {
-                        position = new Position(offset + 5, text.length() - 5);
-                        document.addPosition(CHAPTER_CATEGORY, position);
-                        Section newSection = Section.createChapter(text.substring(5), position);
-                        if (current.parent != null) {
-                            current = current.parent;
-                        }
-                        current.addSubsection(newSection);
-                        current = newSection;
-                    }
-                }
-                offset += partition.getLength();
-            }
+            List nodes = new LinkedList();
+            addSections(document, nodes);
+            addDefinitions(nodes);
+            Collections.sort(nodes, SECTION_COMPARATOR);
+            populateTree(root, nodes);
         }
         catch (BadLocationException exception) {
         }
@@ -202,7 +216,80 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         }
         return root;
     }
+
+    /**
+     * @param root
+     * @param nodes
+     */
+    private void populateTree(Section root, List nodes)
+    {
+        Section current = root;
+        
+        for (Iterator entries = nodes.iterator(); entries.hasNext();)
+        {
+            Section node = (Section) entries.next();
+            if (node.type == CHAPTER) {
+                root.addSubsection(node);
+                current = node;
+            }
+            else if (node.type == SECTION) {
+                if (current.type == SECTION) {
+                    current = current.parent;
+                }
+                current.addSubsection(node);
+                current = node;
+            }
+            else
+                current.addSubsection(node);
+        }
+    }
+
+    private void addSections(IDocument document, List nodes) throws BadLocationException, BadPositionCategoryException
+    {
+        Position position;
+        int offset = 0;
+        int documentLength = document.getLength();
+        while (offset < documentLength) {
+            ITypedRegion partition = document.getPartition(offset);
+            if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
+                String text = document.get(partition.getOffset(), partition.getLength());
+                text = text.trim();
+                if (text.startsWith(SECTION_START)) {
+                    position = new Position(offset + 7, text.length() - 7);
+                    document.addPosition(CHAPTER_CATEGORY, position);
+                    Section newSection = Section.createSection(text.substring(7), position);
+                    nodes.add(newSection);
+                }
+                else if (text.startsWith(CHAPTER_START) && !(text.equals(MENU_DELIMITER))) {
+                    position = new Position(offset + 5, text.length() - 5);
+                    document.addPosition(CHAPTER_CATEGORY, position);
+                    Section newSection = Section.createChapter(text.substring(5), position);
+                    nodes.add(newSection);
+                }
+            }
+            offset += partition.getLength();
+        }
+    }
     
+    private void addDefinitions(List sections) throws BadLocationException {
+        IDocument document = mEditor.getDocument();
+        IEditorInput input = mEditor.getEditorInput();
+
+        if (input instanceof IFileEditorInput) {
+            IFileEditorInput editorInput = (IFileEditorInput) input;
+            List entries = mEditor.getSymbolDictionary().findSymbolForResource(editorInput.getFile());
+            for (int index = 0; index < entries.size(); index++) {
+                SymbolEntry entry = (SymbolEntry) entries.get(index);
+                int offset = document.getLineOffset(entry.getLineNumber() - 1);
+                Position position = new Position(offset);
+                document.addPosition(position);
+                Section section = Section.createDefinition(entry.getName(), position);
+                sections.add(section);
+            }
+        }
+    }
+
+
     private void cleanPositions(IDocument document)
     {
         try {

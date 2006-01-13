@@ -7,6 +7,8 @@ package org.schemeway.plugins.schemescript.dictionary;
 
 import java.util.*;
 
+import org.eclipse.core.resources.IResource;
+
 /**
  * The R5RS dictionary. Contains all symbols from the R^5RS.
  */
@@ -286,5 +288,10 @@ public class R5RSDictionary extends AbstractSymbolDictionary {
             SymbolEntry entry = mR5rsSymbols[index];
             mEntries.put(entry.getName(), entry);
         }
+    }
+
+    public List findSymbolForResource(IResource resource)
+    {
+        return new LinkedList();
     }
 }

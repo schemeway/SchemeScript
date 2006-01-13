@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -371,5 +372,24 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
         for (int i = 0; i < children.length; i++) {
             processResourceDelta(children[i]);
         }
+    }
+
+    public List findSymbolForResource(IResource resource)
+    {
+        List resourceEntries = new ArrayList();
+
+        if (resource != null) {
+            for (Iterator entryLists = mEntries.values().iterator(); entryLists.hasNext();) {
+                List entriesForName = (List) entryLists.next();
+                for (Iterator entries = entriesForName.iterator(); entries.hasNext();) {
+                    SymbolEntry entry = (SymbolEntry) entries.next();
+                    if (resource.equals(entry.getFile())) {
+                        resourceEntries.add(entry);
+                    }
+                }
+            }
+        }
+        
+        return resourceEntries;
     }
 }
