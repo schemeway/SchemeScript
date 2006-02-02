@@ -86,6 +86,11 @@ public class PreferenceUtil {
         String[] constants = getKeywords(store, SyntaxPreferences.SYNTAX_CONSTANT);
         for (int i = 0; i < constants.length; i++)
             keywordManager.addConstant(constants[i]);
+        keywordManager.setDefineRegularExpression(store.getString(SyntaxPreferences.SYNTAX_DEFINE_RE));
+        keywordManager.setKeywordRegularExpression(store.getString(SyntaxPreferences.SYNTAX_KEYWORD_RE));
+        keywordManager.setSpecialRegularExpression(store.getString(SyntaxPreferences.SYNTAX_SPECIAL_RE));
+        keywordManager.setMutatorRegularExpression(store.getString(SyntaxPreferences.SYNTAX_MUTATOR_RE));
+        keywordManager.setConstantRegularExpression(store.getString(SyntaxPreferences.SYNTAX_CONSTANT_RE));
     }
 
     // -- Indentation keyworkds

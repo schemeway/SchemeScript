@@ -5,6 +5,9 @@
  */
 package org.schemeway.plugins.schemescript.preferences;
 
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -21,12 +24,28 @@ public class SyntaxPreferences extends SchemePreferencePage {
     public final static String SYNTAX_SPECIAL = PREFIX + "special";
     public final static String SYNTAX_MUTATOR = PREFIX + "mutator";
     public final static String SYNTAX_CONSTANT = PREFIX + "constant";
+    public final static String SYNTAX_KEYWORD_RE = PREFIX + "keywords-re";
+    public final static String SYNTAX_DEFINE_RE = PREFIX + "define-re";
+    public final static String SYNTAX_SPECIAL_RE = PREFIX + "special-re";
+    public final static String SYNTAX_MUTATOR_RE = PREFIX + "mutator-re";
+    public final static String SYNTAX_CONSTANT_RE = PREFIX + "constant-re";
 
-    private List mDefineList;
-    private List mKeywordList;
-    private List mSpecialList;
-    private List mMutatorList;
-    private List mConstantList;
+    private static class SyntaxCategoryWidgets {
+    	public List listbox;
+    	public Text reTextbox;
+
+    	public SyntaxCategoryWidgets(List listbox, Text textbox) {
+			super();
+			this.listbox = listbox;
+			reTextbox = textbox;
+		}
+    }
+    
+    private SyntaxCategoryWidgets mDefineWidgets;
+    private SyntaxCategoryWidgets mKeywordWidgets;
+    private SyntaxCategoryWidgets mSpecialWidgets;
+    private SyntaxCategoryWidgets mMutatorWidgets;
+    private SyntaxCategoryWidgets mConstantWidgets;
 
     private final static String[] DEFAULT_DEFINES = new String[] {
                 "define",
@@ -109,17 +128,19 @@ public class SyntaxPreferences extends SchemePreferencePage {
         data.heightHint = 400;
         folder.setLayoutData(data);
 
-        mDefineList = createListControl(folder, "Define", "Defining forms");
-        mKeywordList = createListControl(folder, "Special names", "Special names");
-        mSpecialList = createListControl(folder, "Special forms", "Special forms");
-        mMutatorList = createListControl(folder, "Mutator", "Mutating special forms/functions");
-        mConstantList = createListControl(folder, "Constant", "Constants");
+        mDefineWidgets = createListControl(folder, "Define", "Defining forms");
+        mKeywordWidgets = createListControl(folder, "Special names", "Special names");
+        mSpecialWidgets = createListControl(folder, "Special forms", "Special forms");
+        mMutatorWidgets = createListControl(folder, "Mutator", "Mutating special forms/functions");
+        mConstantWidgets = createListControl(folder, "Constant", "Constants");
 
         initializeValues();
         return composite;
     }
 
-    private List createListControl(TabFolder folder, String tabName, String toolTip) {
+    private SyntaxCategoryWidgets createListControl(TabFolder folder, String tabName, String toolTip) {
+    	GridData data;
+    	
         TabItem item = new TabItem(folder, SWT.NULL);
         item.setText(tabName);
         item.setToolTipText(toolTip);
@@ -134,14 +155,20 @@ public class SyntaxPreferences extends SchemePreferencePage {
         deleteButton.setText("Delete");
         deleteButton.setToolTipText("Delete the selected symbols");
         deleteButton.setEnabled(false);
+        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data.horizontalSpan = 1;
+        deleteButton.setLayoutData(data);
 
         final Button addButton = new Button(composite, SWT.NONE);
         addButton.setText("Add");
         addButton.setToolTipText("Add a new symbol");
         addButton.setEnabled(false);
+        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data.horizontalSpan = 1;
+        addButton.setLayoutData(data);
 
         final Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
         text.setLayoutData(data);
 
         final List list = new List(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
@@ -177,41 +204,87 @@ public class SyntaxPreferences extends SchemePreferencePage {
             }
         });
 
-        return list;
+        Label reLabel = new Label(composite, SWT.NONE);
+        reLabel.setText("Regular expression:");
+        data = new GridData(GridData.BEGINNING);
+        data.horizontalSpan = 2;
+        reLabel.setLayoutData(data);
+        
+        final Text reText = new Text(composite, SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        reText.setLayoutData(data);
+        
+        reText.addKeyListener(new KeyAdapter() {
+        	public void keyReleased(KeyEvent e) {
+        		String text = reText.getText();
+        		try {
+        			Pattern.compile(text);
+        			setValid(true);
+        			setErrorMessage(null);
+        		}
+        		catch (PatternSyntaxException exception) {
+        			setValid(false);
+        			setErrorMessage("Invalid regular expression");
+        		}
+        	}
+        });
+        
+        return new SyntaxCategoryWidgets(list, reText);
     }
 
     protected void doPerformDefaults() {
-        mDefineList.setItems(DEFAULT_DEFINES);
-        mKeywordList.setItems(DEFAULT_KEYWORDS);
-        mSpecialList.setItems(DEFAULT_SPECIALS);
-        mMutatorList.setItems(DEFAULT_MUTATORS);
-        mConstantList.setItems(DEFAULT_CONSTANTS);
+        mDefineWidgets.listbox.setItems(DEFAULT_DEFINES);
+        mDefineWidgets.reTextbox.setText("");
+        mKeywordWidgets.listbox.setItems(DEFAULT_KEYWORDS);
+        mKeywordWidgets.reTextbox.setText("");
+        mSpecialWidgets.listbox.setItems(DEFAULT_SPECIALS);
+        mSpecialWidgets.reTextbox.setText("");
+        mMutatorWidgets.listbox.setItems(DEFAULT_MUTATORS);
+        mMutatorWidgets.reTextbox.setText("");
+        mConstantWidgets.listbox.setItems(DEFAULT_CONSTANTS);
+        mConstantWidgets.reTextbox.setText("");
     }
 
     public static void initializeDefaults(IPreferenceStore store) {
         PreferenceUtil.setDefaultKeywords(store, SYNTAX_DEFINE, DEFAULT_DEFINES);
+        store.setDefault(SYNTAX_DEFINE_RE, "");
         PreferenceUtil.setDefaultKeywords(store, SYNTAX_KEYWORD, DEFAULT_KEYWORDS);
+        store.setDefault(SYNTAX_KEYWORD_RE, "");
         PreferenceUtil.setDefaultKeywords(store, SYNTAX_SPECIAL, DEFAULT_SPECIALS);
+        store.setDefault(SYNTAX_SPECIAL_RE, "");
         PreferenceUtil.setDefaultKeywords(store, SYNTAX_MUTATOR, DEFAULT_MUTATORS);
+        store.setDefault(SYNTAX_MUTATOR_RE, "");
         PreferenceUtil.setDefaultKeywords(store, SYNTAX_CONSTANT, DEFAULT_CONSTANTS);
+        store.setDefault(SYNTAX_CONSTANT_RE, "");
     }
 
     protected void initializeValues() {
         IPreferenceStore store = getPreferenceStore();
-        mDefineList.setItems(PreferenceUtil.getKeywords(store, SYNTAX_DEFINE));
-        mKeywordList.setItems(PreferenceUtil.getKeywords(store, SYNTAX_KEYWORD));
-        mSpecialList.setItems(PreferenceUtil.getKeywords(store, SYNTAX_SPECIAL));
-        mMutatorList.setItems(PreferenceUtil.getKeywords(store, SYNTAX_MUTATOR));
-        mConstantList.setItems(PreferenceUtil.getKeywords(store, SYNTAX_CONSTANT));
+        mDefineWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_DEFINE));
+        mDefineWidgets.reTextbox.setText(store.getString(SYNTAX_DEFINE_RE));
+        mKeywordWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_KEYWORD));
+        mKeywordWidgets.reTextbox.setText(store.getString(SYNTAX_KEYWORD_RE));
+        mSpecialWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_SPECIAL));
+        mSpecialWidgets.reTextbox.setText(store.getString(SYNTAX_SPECIAL_RE));
+        mMutatorWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_MUTATOR));
+        mMutatorWidgets.reTextbox.setText(store.getString(SYNTAX_MUTATOR_RE));
+        mConstantWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_CONSTANT));
+        mConstantWidgets.reTextbox.setText(store.getString(SYNTAX_CONSTANT_RE));
+        
     }
 
     protected void storeValues() {
         IPreferenceStore store = getPreferenceStore();
-        PreferenceUtil.setKeywords(store, SYNTAX_DEFINE, mDefineList.getItems());
-        PreferenceUtil.setKeywords(store, SYNTAX_KEYWORD, mKeywordList.getItems());
-        PreferenceUtil.setKeywords(store, SYNTAX_SPECIAL, mSpecialList.getItems());
-        PreferenceUtil.setKeywords(store, SYNTAX_MUTATOR, mMutatorList.getItems());
-        PreferenceUtil.setKeywords(store, SYNTAX_CONSTANT, mConstantList.getItems());
+        PreferenceUtil.setKeywords(store, SYNTAX_DEFINE, mDefineWidgets.listbox.getItems());
+        store.setValue(SYNTAX_DEFINE_RE, mDefineWidgets.reTextbox.getText());
+        PreferenceUtil.setKeywords(store, SYNTAX_KEYWORD, mKeywordWidgets.listbox.getItems());
+        store.setValue(SYNTAX_KEYWORD_RE, mKeywordWidgets.reTextbox.getText());
+        PreferenceUtil.setKeywords(store, SYNTAX_SPECIAL, mSpecialWidgets.listbox.getItems());
+        store.setValue(SYNTAX_SPECIAL_RE, mSpecialWidgets.reTextbox.getText());
+        PreferenceUtil.setKeywords(store, SYNTAX_MUTATOR, mMutatorWidgets.listbox.getItems());
+        store.setValue(SYNTAX_MUTATOR_RE, mMutatorWidgets.reTextbox.getText());
+        PreferenceUtil.setKeywords(store, SYNTAX_CONSTANT, mConstantWidgets.listbox.getItems());
+        store.setValue(SYNTAX_CONSTANT_RE, mConstantWidgets.reTextbox.getText());
     }
 
 }
