@@ -376,6 +376,7 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
 
     public List findSymbolForResource(IResource resource)
     {
+        processPendingResources(true);
         List resourceEntries = new ArrayList();
 
         if (resource != null) {
