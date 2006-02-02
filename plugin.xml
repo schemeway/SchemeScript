@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="1.1.4"
+   version="1.1.6"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -765,22 +765,25 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="org.schemeway.plugins.schemescript.interpreter.ExternalInterpreterDelegate"
-            name="Scheme Interpreter"
+            id="org.schemeway.plugins.schemescript.interpreter"
             modes="run"
-            id="org.schemeway.plugins.schemescript.interpreter"/>
+            name="Scheme Interpreter"
+            public="false"/>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="org.schemeway.plugins.schemescript.interpreter.KawaInterpreterDelegate"
-            name="Kawa Interpreter"
+            id="org.schemeway.plugins.schemescript.kawaInterpreter"
             modes="run"
-            id="org.schemeway.plugins.schemescript.kawaInterpreter"/>
+            name="Kawa Interpreter"
+            public="false"/>
       <launchConfigurationType
             delegate="org.schemeway.plugins.schemescript.interpreter.RemoteInterpreterDelegate"
             id="org.schemeway.plugins.schemescript.remoteInterpreter"
             modes="run"
-            name="Remote Interpreter"/>
+            name="Remote Interpreter"
+            public="false"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
