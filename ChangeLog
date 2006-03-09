@@ -1,3 +1,12 @@
+*** Version 1.2.0
+
+- Bug fix related to the initialization of the user dictionary used by code assist.
+- Launchers are now private (they won't show anymore in the Run/Run... dialog).
+- Implemented feature request #1404254 : Reformatting - remove trailing whitespaces
+- Implemented feature request #1404253 : Include definitions in outline
+- Implemented feature request #1307138 : Regular expressions for symbol definitions
+- Implemented feature request #1437953 : Add BRL support
+
 *** Version 1.1.4
 
 - Now uses the official Kawa 1.8
