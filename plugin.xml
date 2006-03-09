@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="1.1.6"
+   version="1.1.7"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -51,6 +51,15 @@
       <file-association
             content-type="org.schemeway.plugins.schemescript.Scheme"
             file-extensions="%Extensions"/>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            id="BRL"
+            name="BRL File"
+            file-extensions="%BrlExtensions"
+            priority="normal"/>
+      <file-association
+            content-type="org.schemeway.plugins.schemescript.BRL"
+            file-extensions="%BrlExtensions"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -60,9 +69,10 @@
             icon="icons/scheme.gif"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             class="org.schemeway.plugins.schemescript.editor.SchemeEditor"
-            extensions="%Extensions"
+            extensions="%Extensions,%BrlExtensions"
             id="org.schemeway.plugins.schemescript.editor.SchemeEditor">
          <contentTypeBinding contentTypeId="org.schemeway.plugins.schemescript.Scheme"/>
+         <contentTypeBinding contentTypeId="org.schemeway.plugins.schemescript.BRL"/>
       </editor>
    </extension>
    
@@ -72,6 +82,10 @@
             class="org.schemeway.plugins.schemescript.editor.SchemeDocumentSetupParticipant"
             contentTypeId="org.schemeway.plugins.schemescript.Scheme"
             extensions="%Extensions"/>
+      <participant
+            class="org.schemeway.plugins.schemescript.editor.BrlDocumentSetupParticipant"
+            contentTypeId="org.schemeway.plugins.schemescript.BRL"
+            extensions="%BrlExtensions"/>
    </extension>
    <extension
 	   	 point="org.eclipse.core.filebuffers.annotationModelCreation">
@@ -79,6 +93,11 @@
             class="org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory"
             contentTypeId="org.schemeway.plugins.schemescript.Scheme"
             extensions="%Extensions">
+	  </factory>
+      <factory
+            class="org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory"
+            contentTypeId="org.schemeway.plugins.schemescript.BRL"
+            extensions="%BrlExtensions">
 	  </factory>
    </extension>
 
