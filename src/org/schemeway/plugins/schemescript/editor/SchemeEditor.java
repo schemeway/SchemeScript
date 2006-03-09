@@ -241,7 +241,7 @@ public class SchemeEditor extends TextEditor {
     public static ISymbolDictionary getSchemeSymbolDictionary() {
         if (mDictionary == null) {
             URL url = SchemeScriptPlugin.getDefault().find(new Path("conf/forms.scm"));
-            mDictionary = UserDictionary.createInstance(KawaDictionary.getInstance(), "scm", url);
+            mDictionary = UserDictionary.createInstance(KawaDictionary.getInstance(), "scm,ss,sch,brl,krl", url);
         }
         return mDictionary;
     }
