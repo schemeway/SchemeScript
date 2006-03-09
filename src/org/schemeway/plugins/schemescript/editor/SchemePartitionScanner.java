@@ -15,9 +15,9 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
     public final static String SCHEME_COMMENT = PREFIX + "comment";
     public final static String SCHEME_STRING = PREFIX + "tag";
 
-    private static final Token TOKEN_COMMENT = new Token(SCHEME_COMMENT);
-    private static final Token TOKEN_STRING = new Token(SCHEME_STRING);
-    private static final Token TOKEN_DEFAULT = new Token(IDocument.DEFAULT_CONTENT_TYPE);
+    protected static final Token TOKEN_COMMENT = new Token(SCHEME_COMMENT);
+    protected static final Token TOKEN_STRING = new Token(SCHEME_STRING);
+    protected static final Token TOKEN_DEFAULT = new Token(IDocument.DEFAULT_CONTENT_TYPE);
 
     private static final int STATE_DEFAULT = 0;
     private static final int STATE_VBAR = 1;
@@ -61,7 +61,14 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
         mTokenStart = mPosition;
         Token result = null;
 
-        switch (lookahead()) {
+        result = scanToken();
+
+        return result;
+    }
+
+	protected Token scanToken() {
+		Token result;
+		switch (lookahead()) {
             case '#':
             {
                 consume();
@@ -91,9 +98,8 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
                 result = scanDefault();
             }
         }
-
-        return result;
-    }
+		return result;
+	}
 
     private Token scanMultilineComment() {
         // we assume that the starting #| has already been read.
@@ -231,14 +237,24 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
                 }
                 default:
                 {
-                    mState = STATE_DEFAULT;
-                    consume();
+                	if (endOfDefaultPartition()) { 
+                		mState = STATE_DONE;
+                		break;
+                	}
+                	else {
+                		mState = STATE_DEFAULT;
+                		consume();
+                	}
                 }
             }
             if (mState == STATE_DONE)
                 break;
         }
         return TOKEN_DEFAULT;
+    }
+    
+    protected boolean endOfDefaultPartition() {
+    	return false;
     }
 
     public void setRange(IDocument document, int offset, int length) {
@@ -247,7 +263,7 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
         mPosition = offset;
     }
 
-    private char lookahead() {
+    protected final char lookahead() {
         try {
             return mDocument.getChar(mPosition);
         }
@@ -256,8 +272,16 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
             return '\0';
         }
     }
+    
+    protected final int getPosition() {
+    	return mPosition;
+    }
+    
+    protected final boolean isEndPosition(int position) {
+    	return position >= mEnd;
+    }
 
-    private void consume() {
+    protected final void consume() {
         if (mPosition < mEnd) {
             mPosition++;
         }
