@@ -94,8 +94,10 @@ public class FormatAction extends SchemeAction {
         int index = lineLastChar;
         partition = document.getPartition(index);
         if (partition.getType() == IDocument.DEFAULT_CONTENT_TYPE) {
-            while (Character.isWhitespace(document.getChar(index))) {
+        	char c = document.getChar(index);
+            while (Character.isWhitespace(c) && !(c == '\n' || c == '\r')) {
                 index --;
+                c = document.getChar(index);
             }
         }
         if (index != lineLastChar) {
