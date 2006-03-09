@@ -29,6 +29,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
@@ -47,12 +49,27 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
     private static Image CHAPTER_IMAGE;
     private static Image SECTION_IMAGE;
     private static Image DEFINITION_IMAGE;
+//    private static ImageDescriptor DEFINITION_DESCRIPTOR;
+//    private static ImageDescriptor CHAPTER_DESCRIPTOR;
+    
+    private static final SectionPositionComparator SECTION_COMPARATOR = new SectionPositionComparator();
+//    private static final ShowDefinitionsOnlyFilter SHOW_DEFINITIONS_FILTER = new ShowDefinitionsOnlyFilter();
+
+//    private ViewerFilter currentFilter = null; 
+    
+    private SchemeEditor mEditor;
+//    private List mTreeElements;
+    private Section mDefaultTree;
+    
+    private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(CHAPTER_CATEGORY);
     
     static {
         try {
             CHAPTER_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/chapter.gif")).openStream());
             SECTION_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/section.gif")).openStream());
             DEFINITION_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/definition.gif")).openStream());
+//            DEFINITION_DESCRIPTOR = ImageDescriptor.createFromImage(DEFINITION_IMAGE);
+//            CHAPTER_DESCRIPTOR = ImageDescriptor.createFromImage(CHAPTER_IMAGE);
         }
         catch (Throwable exception) {
             CHAPTER_IMAGE = null;
@@ -85,6 +102,10 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
             return (Section[]) children.toArray(new Section[children.size()]);
         }
         
+        public int size() {
+        	return children.size();
+        }
+        
         public static Section createSection(String name, Position position) {
             return new Section(SECTION, name, position);
         }
@@ -95,6 +116,10 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         
         public static Section createDefinition(String name, Position position) {
             return new Section(DEFINITION, name, position);
+        }
+        
+        public Object clone() {
+            return new Section(type, name, position);
         }
     }
     
@@ -112,7 +137,63 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         }
     }
     
-    private static final SectionPositionComparator SECTION_COMPARATOR = new SectionPositionComparator();
+//    private static class ShowDefinitionsOnlyFilter extends ViewerFilter {
+//
+//        public boolean select(Viewer viewer, Object parentElement, Object element)
+//        {
+//            Section section = (Section) element;
+//            return DEFINITION == section.type;
+//        }
+//    }
+    
+//    private class ShowDefinitionsOnlyAction extends Action {
+//        public ShowDefinitionsOnlyAction () {
+//            super("Definitions", Action.AS_CHECK_BOX);
+//            setToolTipText("Show definitions only");
+//            setImageDescriptor(DEFINITION_DESCRIPTOR);
+//            setChecked(false);
+//        }
+//        public void run() {
+//            TreeViewer viewer = getTreeViewer();
+//            if (currentFilter == null) {
+//                currentFilter = SHOW_DEFINITIONS_FILTER;
+//                viewer.addFilter(SHOW_DEFINITIONS_FILTER);
+//                setChecked(true);
+//            }
+//            else {
+//                currentFilter = null;
+//                viewer.removeFilter(SHOW_DEFINITIONS_FILTER);
+//                setChecked(false);
+//            }
+//        }
+//    }
+//    
+//    private static class ShowHeadersOnlyFilter extends ViewerFilter {
+//    	public boolean select(Viewer viewer, Object parentElement, Object element) {
+//    		Section section = (Section) element;
+//    		return DEFINITION != section.type;
+//    	}
+//    }
+//    
+//    private static class ShowHeadersOnlyAction extends Action {
+//    	boolean checked = false;
+//		public ShowHeadersOnlyAction() {
+//            super("Headers", Action.AS_CHECK_BOX);
+//            setToolTipText("Show headers only");
+//            setImageDescriptor(CHAPTER_DESCRIPTOR);
+//            setChecked(false);
+//		}
+//		public void run() {
+//			if (checked) {
+//				setChecked(false);
+//				checked = false;
+//			}
+//			else {
+//				setChecked(true);
+//				checked = true;
+//			}
+//		}
+//    }
     
     private static class SectionContentProvider implements ITreeContentProvider {
         
@@ -145,7 +226,7 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
         {
         }
-}
+    }
    
     private static class SectionLabelProvider extends LabelProvider {
         public String getText(Object element) {
@@ -166,9 +247,6 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         }
     }
     
-    private SchemeEditor mEditor;
-    private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(CHAPTER_CATEGORY);
-    
     public SchemeOutlinePage(SchemeEditor editor) {
         super();
         mEditor = editor;
@@ -180,9 +258,19 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         TreeViewer viewer = getTreeViewer();
         viewer.setContentProvider(new SectionContentProvider());
         viewer.setLabelProvider(new SectionLabelProvider());
-        viewer.addSelectionChangedListener(this);
-        viewer.setInput(createTree());
+        Section tree = createTree();
+        viewer.setInput(tree);
+        Tree treeControl = (Tree) viewer.getControl();
+        if (tree.size() > 0) {
+        	TreeItem item = treeControl.getItem(0);
+        	treeControl.setSelection(new TreeItem[] { item });
+        }
         viewer.expandAll();
+        
+        
+//        IToolBarManager manager = getSite().getActionBars().getToolBarManager();
+//        manager.add(new ShowDefinitionsOnlyAction());
+//        manager.add(new ShowHeadersOnlyAction());
     }
     
     private Section createTree() {
@@ -192,20 +280,16 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
 
             cleanPositions(document);
             document.addPositionUpdater(mPositionUpdater);
-            
             document.addPositionCategory(CHAPTER_CATEGORY);
-            Position position;
             
-            position = new Position(0,0);
-            document.addPosition(CHAPTER_CATEGORY, position);
-            root = Section.createChapter("Root", position);
-            Section current = root;
-            
+            root = createRoot(document);
+
             List nodes = new LinkedList();
             addSections(document, nodes);
             addDefinitions(nodes);
             Collections.sort(nodes, SECTION_COMPARATOR);
             populateTree(root, nodes);
+//            mTreeElements = nodes;
         }
         catch (BadLocationException exception) {
         }
@@ -213,6 +297,15 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         }
         return root;
     }
+
+	private Section createRoot(IDocument document) throws BadLocationException, BadPositionCategoryException {
+		Section root;
+		Position position;
+		position = new Position(0,0);
+		document.addPosition(CHAPTER_CATEGORY, position);
+		root = Section.createChapter("Root", position);
+		return root;
+	}
 
     /**
      * @param root
@@ -300,7 +393,8 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
     public void update() {
         TreeViewer viewer = getTreeViewer();
         viewer.getControl().setRedraw(false);
-        getTreeViewer().setInput(createTree());
+        mDefaultTree = createTree();
+        getTreeViewer().setInput(mDefaultTree);
         viewer.expandAll();
         viewer.getControl().setRedraw(true);
     }
