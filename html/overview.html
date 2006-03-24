@@ -66,48 +66,14 @@
 <h2>Recent Changes</h2>
 
 <ul>
-    <li><b>Version 1.0.0</b>
+    <li><b>Version 1.2.0</b>
     	<ul>
-    		<li> The evaluation can be interrupted if it is supported by the interpreter
-				 (see the documentation for more details)
-		    <li> Added an <i>interpreters</i> extension point, and a menu item to 
-	            select the current interpreter
-		    <li> Added an interpreter: Embedded Kawa. It is the Kawa interpreter
-				 running inside the plug-in context/classpath. It comes with a 
-				 stack trace viewer.
-			<li> Added a <i>Kawa scratchpad</i> view (see the documentation for more
-				 details and the examples subdirectory)
-			<li> Structural editing commands (configurable and highly experimental/unstable)
-			<li> new actions (add-require, expand-namespace expand-typename)
-			<li> <code>define-namespace</code> clauses are processed for content assist
-			<li> Bug fixes.
-    	</ul>
-	<li><b>Version 0.3.0</b>
-		<ul>
-			<li>Added a Scheme perspective, with menus, toolbar actions
-			<li>Added integrated Scheme interpreter support
-			<li>>Added fast eval keys
-			<li>Bug fixes (parenthesis highlighting works even when the first
-		     character of the file is an opening parenthesis,
-			 renaming a file no longer breaks parenthesis highlighting,
-		     pressing TAB on an already indented line no longer marks
-		     the file as modified)
-		</ul>
-	</li>
-	<li>
-		<b>Version 0.2.1</b>
-		<ul>
-			<li>The "Find Definition" action now opens the "Definitions" view
-			<li>Added a "Find Symbol" action that pops up a dialog box for 	
-			  querying a symbol definition
-		</ul>
-	</li>
-	<li>
-		<b>Version 0.2.0</b>
-		<ul>
-			<li>Added a first version of the documentation
-			<li>A new icon with transparent background
-			<li>Bug fix: strings can now contain backslash characters (<code>\</code>)
+		<li>Implemented feature request #1404254 : Reformatting - remove trailing whitespaces</li>
+		<li>Implemented feature request #1404253 : Include definitions in outline</li>
+		<li>Implemented feature request #1307138 : Regular expressions for symbol definitions</li>
+		<li>Implemented feature request #1437953 : Add BRL support</li>
+		<li>Launchers are now private (they won't show anymore in the Run/Run... dialog)</li>
+		<li>Bug fix related to the initialization of the user dictionary used by code assist</li>
 		</ul>
 	</li>
 </ul>
@@ -121,7 +87,7 @@
 
 <hr/>
 <p>
-	Copyright (C) 2004-2005 <b>Dominique Boucher</b>.
+	Copyright (C) 2004-2006 <b>Dominique Boucher</b>.
 </p>
 </body>
 </html>
