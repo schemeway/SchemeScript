@@ -15,6 +15,7 @@
 (define-namespace Constructor      "class:java.lang.reflect.Constructor")
 (define-namespace Class            "class:java.lang.Class")
 (define-namespace String           "class:java.lang.String")
+(define-namespace Hashtable        "class:java.util.Hashtable")
 
 (define-namespace Region           "class:org.eclipse.jface.text.Region")
 (define-namespace IDocument         "class:org.eclipse.jface.text.IDocument")
@@ -47,6 +48,7 @@
 (define-namespace RsrcPlugin       "class:org.eclipse.core.resources.ResourcesPlugin")
 (define-namespace IWorkspace       "class:org.eclipse.core.resources.IWorkspace")
 (define-namespace IProject         "class:org.eclipse.core.resources.IProject")
+(define-namespace IResource        "class:org.eclipse.core.resources.IResource")
 
 (define-namespace Path             "class:org.eclipse.core.runtime.Path")
 
@@ -87,3 +89,4 @@
 (define-namespace TextViewer "class:org.eclipse.jface.text.TextViewer")
 (define-namespace Document "class:org.eclipse.jface.text.Document")
 
+(define-namespace MarkerUtilities "class:org.eclipse.ui.texteditor.MarkerUtilities")

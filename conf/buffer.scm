@@ -148,3 +148,25 @@
     (when start
       (set-point start buffer))))
 
+
+
+;; Adds a function that is called when a Scheme buffer is saved.
+;; The function must accept one parameter, the buffer saved.
+(define (add-save-hook proc)
+  (if (procedure? proc)
+      (SchemeEditor:addSaveHook proc)
+      (error "invalid save hook: must be a procedure")))
+
+;; Clears all installed save hooks
+(define (clear-save-hooks)
+  (SchemeEditor:clearSaveHooks))
+
+;; Returns the filename of the buffer
+(define (buffer-file-name #!optional (buffer (current-buffer)))
+  (SchemeEditor:getFileName buffer))
+
+
+;; Returns the file corresponding to the buffer
+(define (buffer-file #!optional (buffer (current-buffer)))
+  (SchemeEditor:getFile buffer))
+

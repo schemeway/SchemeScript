@@ -22,6 +22,7 @@
 (load-relative "dialogs.scm")
 (load-relative "namespaces.scm")
 (load-relative "modules.scm")
+(load-relative "markers.scm")
 (load-relative "scratchpad.scm")
 
 
