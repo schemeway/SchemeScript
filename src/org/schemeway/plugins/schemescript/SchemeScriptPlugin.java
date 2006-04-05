@@ -66,7 +66,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 
         Scheme.registerEnvironment();
 
-        KawaProxy.loadFile(find (new Path(CONF_USER_SCM)).toString());
+        loadConfigFile(CONF_USER_SCM);
         
         textTools = new SchemeTextTools(new ColorManager());
         
@@ -81,6 +81,12 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
             };
             getPreferenceStore().addPropertyChangeListener(propertyChangedListener);
         }
+    }
+    
+    protected void loadConfigFile(String filename) {
+    	if (filename != null) {
+    		KawaProxy.loadFile(find (new Path(filename)). toString());
+    	}
     }
     
     /**
