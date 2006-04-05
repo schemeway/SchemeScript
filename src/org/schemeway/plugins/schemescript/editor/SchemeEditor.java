@@ -5,8 +5,14 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
-import java.net.*;
+import gnu.mapping.Procedure;
 
+import java.net.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.actions.*;
@@ -21,6 +27,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.views.contentoutline.*;
 import org.schemeway.plugins.schemescript.*;
@@ -47,6 +54,8 @@ public class SchemeEditor extends TextEditor {
     private IAutoEditStrategy mSexpDeleter;
     private IAutoEditStrategy mStringDeleter;
     private IAutoEditStrategy mCommentDeleter;
+    
+    private static List sSaveHooks = new ArrayList(); 
 
     public SchemeEditor() {
         super();
@@ -93,6 +102,30 @@ public class SchemeEditor extends TextEditor {
         return mBreakpointTarget;
     }
 
+    //
+    /// Save hooks
+    //
+    
+    private void runSaveHooks(SchemeEditor buffer) {
+    	for (Iterator hooks = sSaveHooks.iterator(); hooks.hasNext();) {
+			Procedure hook = (Procedure) hooks.next();
+			try {
+				hook.applyN(new Object[] { buffer });
+			}
+			catch (Throwable exception) {
+				SchemeScriptPlugin.logException("Exception occurred during save hook", exception);
+			}
+		}
+    }
+    
+    public static void addSaveHook(Procedure hook) {
+    	sSaveHooks.add(hook);
+    }
+    
+    public static void clearSaveHooks() {
+    	sSaveHooks.clear();
+    }
+    
     public void doSaveAs() {
         super.doSaveAs();
         if (mOutlinePage != null) {
@@ -107,6 +140,7 @@ public class SchemeEditor extends TextEditor {
 
     public void doSave(IProgressMonitor monitor) {
         super.doSave(monitor);
+        runSaveHooks(this);
         if (mOutlinePage != null) {
             mOutlinePage.update();
         }
@@ -326,6 +360,26 @@ public class SchemeEditor extends TextEditor {
             mNavigator = new SexpNavigator(getDocument());
         }
         return mNavigator;
+    }
+    
+    public IFile getFile() {
+    	IEditorInput input = getEditorInput();
+    	if (input instanceof FileEditorInput) {
+    		return ((FileEditorInput)input).getFile();
+    	}
+    	else {
+    		return null;
+    	}
+    }
+    
+    public String getFileName() {
+    	IFile file = getFile();
+    	if (file != null) {
+    		return file.getRawLocation().toString();
+    	}
+    	else {
+    		return null;
+    	}
     }
 
     public SchemeIndentationManager getIndentationManager() {
