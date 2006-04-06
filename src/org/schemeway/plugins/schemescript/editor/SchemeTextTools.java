@@ -49,7 +49,8 @@ public class SchemeTextTools {
         return new String[] {
                                 IDocument.DEFAULT_CONTENT_TYPE,
                                 SchemePartitionScanner.SCHEME_COMMENT,
-                                SchemePartitionScanner.SCHEME_STRING
+                                SchemePartitionScanner.SCHEME_STRING,
+                                SchemePartitionScanner.SCHEME_HERESTRING
         };
     }
 
@@ -108,6 +109,10 @@ public class SchemeTextTools {
         dr = new DefaultDamagerRepairer(getSchemeStringScanner());
         reconciler.setDamager(dr, SchemePartitionScanner.SCHEME_STRING);
         reconciler.setRepairer(dr, SchemePartitionScanner.SCHEME_STRING);
+
+        dr = new DefaultDamagerRepairer(getSchemeStringScanner());
+        reconciler.setDamager(dr, SchemePartitionScanner.SCHEME_HERESTRING);
+        reconciler.setRepairer(dr, SchemePartitionScanner.SCHEME_HERESTRING);
 
         dr = new DefaultDamagerRepairer(getSchemeCommentScanner());
         reconciler.setDamager(dr, SchemePartitionScanner.SCHEME_COMMENT);

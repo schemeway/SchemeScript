@@ -123,7 +123,7 @@ public final class SexpUtils {
             if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT && partition.getOffset() < startOffset) {
                 startOffset = partition.getOffset();
             }
-            else if (partition.getType() == SchemePartitionScanner.SCHEME_STRING
+            else if (SchemePartitionScanner.isStringPartition(partition.getType())
                      && startOffset != partition.getOffset()) {
                 return false;
             }
@@ -134,7 +134,7 @@ public final class SexpUtils {
             if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT && endOffset > partition.getOffset()) {
                 endOffset = partition.getOffset();
             }
-            else if (partition.getType() == SchemePartitionScanner.SCHEME_STRING && endOffset != partition.getOffset()) {
+            else if (SchemePartitionScanner.isStringPartition(partition.getType()) && endOffset != partition.getOffset()) {
                 return false;
             }
 

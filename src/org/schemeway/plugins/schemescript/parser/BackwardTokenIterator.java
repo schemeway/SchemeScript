@@ -47,7 +47,7 @@ public final class BackwardTokenIterator implements ISchemeTokenIterator {
                     continue;
                 }
                 else
-                    if (mType == SchemePartitionScanner.SCHEME_STRING) {
+                    if (SchemePartitionScanner.isStringPartition(mType)) {
                         int length = mPosition - mStart;
                         mPosition = mStart;
                         result = SchemeToken.createString(mStart, length);
@@ -79,7 +79,7 @@ public final class BackwardTokenIterator implements ISchemeTokenIterator {
                 mPosition = mStart;
             }
             else
-                if (mType == SchemePartitionScanner.SCHEME_STRING) {
+                if (SchemePartitionScanner.isStringPartition(mType)) {
                     mPosition = mStart + mCurrentPartition.getLength();
                     if (mStart == position) {
                         mPosition = mStart;
@@ -106,7 +106,7 @@ public final class BackwardTokenIterator implements ISchemeTokenIterator {
                 }
                 mStart = mCurrentPartition.getOffset();
                 mPosition = mStart + mCurrentPartition.getLength();
-                if (mType != SchemePartitionScanner.SCHEME_STRING) {
+                if (!SchemePartitionScanner.isStringPartition(mType)) {
                     fetchTokens();
                 }
             }

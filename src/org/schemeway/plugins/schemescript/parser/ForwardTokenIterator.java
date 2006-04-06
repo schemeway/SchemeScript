@@ -35,7 +35,7 @@ public class ForwardTokenIterator implements ISchemeTokenIterator {
             if (mCurrentPartition == null)
                 result = SchemeToken.EOF;
             else {
-                if (mCurrentPartition.getType() == SchemePartitionScanner.SCHEME_STRING) {
+                if (SchemePartitionScanner.isStringPartition(mCurrentPartition.getType())) {
                     int length = mEnd - mPosition;
                     int start = mPosition;
                     mPosition = mEnd;
@@ -62,7 +62,7 @@ public class ForwardTokenIterator implements ISchemeTokenIterator {
         try {
             if (position < mDocument.getLength()) {
                 mCurrentPartition = mDocument.getPartition(position);
-                if (mCurrentPartition.getType() == SchemePartitionScanner.SCHEME_STRING) {
+                if (SchemePartitionScanner.isStringPartition(mCurrentPartition.getType())) {
                     mPosition = mCurrentPartition.getOffset();
                     mEnd = mPosition + mCurrentPartition.getLength();
                 }
@@ -100,7 +100,7 @@ public class ForwardTokenIterator implements ISchemeTokenIterator {
                 }
                 mPosition = mCurrentPartition.getOffset();
                 mEnd = mPosition + mCurrentPartition.getLength();
-                if (mCurrentPartition.getType() != SchemePartitionScanner.SCHEME_STRING)
+                if (!SchemePartitionScanner.isStringPartition(mCurrentPartition.getType()))
                     mScanner.setRange(mDocument, mPosition, mEnd - mPosition);
             }
             else

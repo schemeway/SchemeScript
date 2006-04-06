@@ -17,7 +17,7 @@ public class SchemeDocumentSetupParticipant implements IDocumentSetupParticipant
     public void setup(IDocument document) {
         String[] partitions = new String[]
         {
-            SchemePartitionScanner.SCHEME_STRING, SchemePartitionScanner.SCHEME_COMMENT
+            SchemePartitionScanner.SCHEME_STRING, SchemePartitionScanner.SCHEME_COMMENT, SchemePartitionScanner.SCHEME_HERESTRING
         };
 
         IDocumentPartitioner partitioner = new DefaultPartitioner(new SchemePartitionScanner(), partitions);

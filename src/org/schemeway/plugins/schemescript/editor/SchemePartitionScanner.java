@@ -14,9 +14,11 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
     public final static String SCHEME_DEFAULT = PREFIX + "default";
     public final static String SCHEME_COMMENT = PREFIX + "comment";
     public final static String SCHEME_STRING = PREFIX + "tag";
+    public final static String SCHEME_HERESTRING = PREFIX + "herestring";
 
     protected static final Token TOKEN_COMMENT = new Token(SCHEME_COMMENT);
     protected static final Token TOKEN_STRING = new Token(SCHEME_STRING);
+    protected static final Token TOKEN_HERESTRING = new Token(SCHEME_HERESTRING);
     protected static final Token TOKEN_DEFAULT = new Token(IDocument.DEFAULT_CONTENT_TYPE);
 
     private static final int STATE_DEFAULT = 0;
@@ -24,7 +26,8 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
     private static final int STATE_CHARACTER = 2;
     private static final int STATE_SHARP = 3;
     private static final int STATE_ESCAPE = 4;
-    private static final int STATE_DONE = 5;
+    private static final int STATE_SHARP_LT = 5;
+    private static final int STATE_DONE = 6;
 
     private IDocument mDocument;
     private int mEnd;
@@ -59,11 +62,7 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
         }
 
         mTokenStart = mPosition;
-        Token result = null;
-
-        result = scanToken();
-
-        return result;
+        return scanToken();
     }
 
 	protected Token scanToken() {
@@ -75,6 +74,9 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
                 if (lookahead() == '|') {
                     consume();
                     result = scanMultilineComment();
+                }
+                else if (lookahead() == '<') {
+                	result = scanHereString();
                 }
                 else {
                     result = scanDefault();
@@ -101,7 +103,47 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 		return result;
 	}
 
-    private Token scanMultilineComment() {
+	private Token scanHereString() {
+		consume();
+		if (lookahead() == '<') {
+			consume();
+			String tag = readToEndOfLine();
+			String nextLine = readToEndOfLine();
+			while (nextLine != null && !nextLine.equals(tag))
+			{
+				nextLine = readToEndOfLine();
+			}
+			
+			return TOKEN_HERESTRING;
+		}
+		else {
+			return scanDefault(); 
+		}
+	}
+	
+	private String readToEndOfLine() {
+		int startPosition = getPosition();
+		if (isEndPosition(startPosition)) {
+			return null;
+		}
+		try {
+			IRegion lineInfo = mDocument.getLineInformationOfOffset(startPosition);
+			int length = lineInfo.getLength() - (startPosition - lineInfo.getOffset());
+			mPosition = startPosition + length;
+			char ch = lookahead();
+			while (ch == '\n' || ch == '\r') {
+				consume();
+				ch = lookahead();
+			}
+			return mDocument.get(startPosition, length);
+			
+		} catch (BadLocationException e) {
+			return null;
+		}
+		
+	}
+
+	private Token scanMultilineComment() {
         // we assume that the starting #| has already been read.
         mState = STATE_DEFAULT;
         char ch;
@@ -235,6 +277,22 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 
                     break;
                 }
+                case '<':
+                {
+                	if (mState == STATE_SHARP) {
+                		mState = STATE_SHARP_LT;
+                		consume();
+                	}
+                	else if (mState == STATE_SHARP_LT) {
+                		mPosition -= 2;
+                		mState = STATE_DONE;
+                	}
+                	else {
+                		mState = STATE_DEFAULT;
+                		consume();
+                	}
+                	break;
+                }
                 default:
                 {
                 	if (endOfDefaultPartition()) { 
@@ -285,5 +343,9 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
         if (mPosition < mEnd) {
             mPosition++;
         }
+    }
+    
+    public static boolean isStringPartition(String partitionName) {
+    	return partitionName == SCHEME_STRING || partitionName == SCHEME_HERESTRING;
     }
 }

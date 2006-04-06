@@ -49,7 +49,7 @@ public class SchemeDoubleClickStrategy implements ITextDoubleClickStrategy {
     protected boolean selectString(int caretPos) {
         try {
             ITypedRegion partition = mExplorer.getDocument().getPartition(caretPos);
-            if (partition.getType() == SchemePartitionScanner.SCHEME_STRING) {
+            if (SchemePartitionScanner.isStringPartition(partition.getType())) {
                 selectRange(partition.getOffset(), partition.getOffset() + partition.getLength());
                 return true;
             }
