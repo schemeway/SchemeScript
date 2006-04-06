@@ -35,6 +35,7 @@ import org.schemeway.plugins.schemescript.debug.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.autoedits.*;
 import org.schemeway.plugins.schemescript.indentation.*;
+import org.schemeway.plugins.schemescript.interpreter.KawaProxy;
 import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
@@ -108,9 +109,16 @@ public class SchemeEditor extends TextEditor {
     
     private void runSaveHooks(SchemeEditor buffer) {
     	for (Iterator hooks = sSaveHooks.iterator(); hooks.hasNext();) {
-			Procedure hook = (Procedure) hooks.next();
+			String symbol = (String) hooks.next();
 			try {
-				hook.applyN(new Object[] { buffer });
+				Object hook = KawaProxy.get(symbol);
+				if (hook instanceof Procedure) {
+					Procedure hookProcedure = (Procedure) hook;
+					hookProcedure.applyN(new Object[] { buffer });
+				}
+				else {
+					SchemeScriptPlugin.logException("Save hook is does not evaluate to a thunk: '" + symbol + "'", null);
+				}
 			}
 			catch (Throwable exception) {
 				SchemeScriptPlugin.logException("Exception occurred during save hook", exception);
@@ -118,8 +126,15 @@ public class SchemeEditor extends TextEditor {
 		}
     }
     
-    public static void addSaveHook(Procedure hook) {
-    	sSaveHooks.add(hook);
+    public static void addSaveHook(String hook) {
+    	if (hook != null && !("".equals(hook))) {
+    		if (!sSaveHooks.contains(hook))
+    			sSaveHooks.add(hook);
+    	}
+    }
+    
+    public static void removeSaveHook(String hook) {
+    	sSaveHooks.remove(hook);
     }
     
     public static void clearSaveHooks() {

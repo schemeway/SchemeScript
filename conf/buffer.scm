@@ -152,10 +152,15 @@
 
 ;; Adds a function that is called when a Scheme buffer is saved.
 ;; The function must accept one parameter, the buffer saved.
-(define (add-save-hook proc)
-  (if (procedure? proc)
-      (SchemeEditor:addSaveHook proc)
-      (error "invalid save hook: must be a procedure")))
+(define (add-save-hook hook)
+  (if (symbol? hook)
+      (SchemeEditor:addSaveHook hook)
+      (error "invalid save hook: must be a symbol")))
+
+(define (remove-save-hook hook)
+  (if (symbol? hook)
+      (SchemeEditor:removeSaveHook hook)
+      (error "invalid save hook: must be a symbol")))
 
 ;; Clears all installed save hooks
 (define (clear-save-hooks)
