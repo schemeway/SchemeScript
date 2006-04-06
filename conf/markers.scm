@@ -10,11 +10,12 @@
 
 (define *error-type*       :: <int> (static-field <org.eclipse.core.resources.IMarker> 'SEVERITY_ERROR))
 (define *warning-type*     :: <int> (static-field <org.eclipse.core.resources.IMarker> 'SEVERITY_WARNING))
-(define *char-start-attr*  :: <int> (static-field <org.eclipse.core.resources.IMarker> 'CHAR_START))
-(define *char-end-attr*    :: <int> (static-field <org.eclipse.core.resources.IMarker> 'CHAR_END))
-(define *line-number-attr* :: <int> (static-field <org.eclipse.core.resources.IMarker> 'LINE_NUMBER))
-(define *severity-attr*    :: <int> (static-field <org.eclipse.core.resources.IMarker> 'SEVERITY))
-(define *message-attr*     :: <int> (static-field <org.eclipse.core.resources.IMarker> 'MESSAGE))
+(define *char-start-attr*  :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'CHAR_START))
+(define *char-end-attr*    :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'CHAR_END))
+(define *line-number-attr* :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'LINE_NUMBER))
+(define *severity-attr*    :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'SEVERITY))
+(define *text-attr*        :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'TEXT))
+(define *message-attr*     :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'MESSAGE))
 
 
 (define *marker-id* :: <symbol> 'org.schemeway.plugins.schemescript.error)
@@ -30,6 +31,7 @@
 (define (add-marker! level (file :: <org.eclipse.core.resources.IResource>) (line :: <int>) message)
   (let ((attr (Hashtable:new)))
     (Hashtable:put attr *message-attr*      (as <String> message))
+    (Hashtable:put attr *text-attr*         (as <String> message))
     (Hashtable:put attr *severity-attr*     (let ((type :: <int> (level->marker-type level)))
                                               (java.lang.Integer:new type)))
     (Hashtable:put attr *line-number-attr*  (java.lang.Integer:new line))
