@@ -36,3 +36,11 @@
 (define (string-replace str (ch-src :: <char>) (ch-dst :: <char>))
   (symbol->string (java.lang.String:replace (string->symbol str) ch-src ch-dst)))
 
+
+(define (starts-with (s1 :: <string>) (s2 :: <string>)) :: <boolean>
+  (and (string? s1)
+       (string? s2)
+       (>= (string-length s2) (string-length s1))
+       (let ((n1 :: <int> (string-length s1)))
+         (string=? s1 (substring s2 0 n1)))))
+
