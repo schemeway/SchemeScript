@@ -16,6 +16,7 @@
 (load-relative "macros.scm")
 (load-relative "util.scm")
 (load-relative "foreign.scm")
+(load-relative "bundles.scm")
 (load-relative "constants.scm")
 (load-relative "buffer.scm")
 (load-relative "widgets.scm")
