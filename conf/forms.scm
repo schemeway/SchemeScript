@@ -14,8 +14,12 @@
 ;;;
 
 
-(define (add-entry! dictionary name description type resource line-number)
-  (UserDictionary:addEntry dictionary (SymbolEntry:new name description type resource line-number 5)))
+(define (add-entry! dictionary name description type resource line-number #!optional (parent #!null))
+  (let ((entry (SymbolEntry:new name description type resource line-number 5)))
+    (when (not (eq? parent #!null))
+      (SymbolEntry:setParent entry parent))
+    (UserDictionary:addEntry dictionary entry)
+    entry))
 
 
 (define (get-line-number form default-value)
@@ -115,9 +119,9 @@
                     (>= (length form) 3)
                     (symbol? (cadr form))
                     (list? (caddr form)))
-           (let* ((class-name (cadr form))
-                  (class-description (format #f "~a - Class" class-name)))
-             (add-entry! dictionary class-name class-description 'class resource line-number)
+           (let* ((class-name        (cadr form))
+                  (class-description (format #f "~a - Class" class-name))
+                  (class-entry       (add-entry! dictionary class-name class-description 'class resource line-number)))
              (for-each (lambda (field-or-method)
                          (cond 
                           ;; -- add an entry for a field
@@ -126,7 +130,7 @@
                            (let* ((field-name  (car field-or-method))
                                   (description (format #f "~a - field in ~a" field-name class-name))
                                   (line        (get-line-number field-or-method line-number)))
-                             (add-entry! dictionary field-name description 'class resource line)))
+                             (add-entry! dictionary field-name description 'class resource line class-entry)))
                           ;; -- add an entry for a method
                           ((and (pair? field-or-method) 
                                 (pair? (car field-or-method))
@@ -138,7 +142,7 @@
                                                                  (signature->formals (cdr (car field-or-method)))))))
                                   (description (format #f "~a - method in ~a" method-form class-name))
                                   (line        (get-line-number field-or-method line-number)))
-                             (add-entry! dictionary method-name description 'class resource line)))))
+                             (add-entry! dictionary method-name description 'class resource line class-entry)))))
                        (cdddr form)))))))
   (define-form-processor 'define-simple-class class-processor)
   (define-form-processor 'define-class class-processor))

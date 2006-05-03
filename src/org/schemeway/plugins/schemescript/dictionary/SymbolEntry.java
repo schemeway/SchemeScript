@@ -32,6 +32,7 @@ public class SymbolEntry {
     private int mPriority;
     private int mLineNumber;
     private IFile mFile;
+    private SymbolEntry mParent;
     
     public SymbolEntry(String name, String description, String category) {
         this(name, description, category, null, -1, LOW);
@@ -103,4 +104,12 @@ public class SymbolEntry {
         else
             return segments[0];
     }
+
+	public SymbolEntry getParent() {
+		return mParent;
+	}
+
+	public void setParent(SymbolEntry parent) {
+		mParent = parent;
+	}
 }

@@ -7,6 +7,7 @@ package org.schemeway.plugins.schemescript.editor;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -95,6 +96,13 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         
         public void addSubsection(Section section) {
             section.parent = this;
+            for(int i=0; i<children.size(); i++) {
+            	Section child = (Section) children.get(i);
+            	if (child.position.offset > section.position.offset) {
+            		children.add(i, section);
+            		return;
+            	}
+            }
             children.add(section);
         }
         
@@ -364,20 +372,46 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
     private void addDefinitions(List sections) throws BadLocationException {
         IDocument document = mEditor.getDocument();
         IEditorInput input = mEditor.getEditorInput();
+        
+        HashMap entriesAdded = new HashMap();
 
         if (input instanceof IFileEditorInput) {
             IFileEditorInput editorInput = (IFileEditorInput) input;
             List entries = mEditor.getSymbolDictionary().findSymbolForResource(editorInput.getFile());
             for (int index = 0; index < entries.size(); index++) {
                 SymbolEntry entry = (SymbolEntry) entries.get(index);
-                int offset = document.getLineOffset(entry.getLineNumber() - 1);
-                Position position = new Position(offset);
-                document.addPosition(position);
-                Section section = Section.createDefinition(entry.getName(), position);
-                sections.add(section);
+                Section section = (Section) entriesAdded.get(entry);
+
+                if (section != null)
+                	continue;
+                
+                section = createSectionForEntry(document, entry);
+                entriesAdded.put(entry , section);
+                
+            	SymbolEntry parent = entry.getParent();
+            	while (parent != null) {
+            		Section parentSection = (Section) entriesAdded.get(parent);
+            		if (parentSection == null) {
+            			parentSection = createSectionForEntry(document, parent);
+                        entriesAdded.put(parent, parentSection);
+            		}
+            		parentSection.addSubsection(section);
+            		section = parentSection;
+            		parent = parent.getParent();
+            	}
+    
+        		sections.add(section);
             }
         }
     }
+
+	private Section createSectionForEntry(IDocument document, SymbolEntry entry) throws BadLocationException {
+		int offset = document.getLineOffset(entry.getLineNumber() - 1);
+		Position position = new Position(offset);
+		document.addPosition(position);
+		Section section = Section.createDefinition(entry.getName(), position);
+		return section;
+	}
 
 
     private void cleanPositions(IDocument document)
