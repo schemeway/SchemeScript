@@ -58,7 +58,7 @@
                ((and (pair? (cdr form)) (pair? (cadr form)) (symbol? (caadr form)))
                 (let ((name        (caadr form))
                       (description (format #f "~a - procedure" (signature->formals (cadr form)))))
-                  (add-entry! dictionary name description 'function resource line-number)))))))
+                  (add-entry! dictionary name description 'procedure resource line-number)))))))
   (define-form-processor 'define          define-processor)
   (define-form-processor 'define-private  define-processor)
   (define-form-processor 'define-constant define-processor))
@@ -130,7 +130,7 @@
                            (let* ((field-name  (car field-or-method))
                                   (description (format #f "~a - field in ~a" field-name class-name))
                                   (line        (get-line-number field-or-method line-number)))
-                             (add-entry! dictionary field-name description 'class resource line class-entry)))
+                             (add-entry! dictionary field-name description 'field resource line class-entry)))
                           ;; -- add an entry for a method
                           ((and (pair? field-or-method) 
                                 (pair? (car field-or-method))
@@ -142,7 +142,7 @@
                                                                  (signature->formals (cdr (car field-or-method)))))))
                                   (description (format #f "~a - method in ~a" method-form class-name))
                                   (line        (get-line-number field-or-method line-number)))
-                             (add-entry! dictionary method-name description 'class resource line class-entry)))))
+                             (add-entry! dictionary method-name description 'method resource line class-entry)))))
                        (cdddr form)))))))
   (define-form-processor 'define-simple-class class-processor)
   (define-form-processor 'define-class class-processor))
@@ -224,7 +224,7 @@
          (for-each (lambda (name/signature)
                      (let ((description (string->symbol (format #f "(~a:~a)" namespace-symbol (cadr name/signature))))
                            (entry-name  (string->symbol (format #f "~a:~a" namespace-symbol (car name/signature)))))
-                       (add-entry! dictionary entry-name description 'function resource line-number)))
+                       (add-entry! dictionary entry-name description 'java-member resource line-number)))
                    signatures))))))
 
 

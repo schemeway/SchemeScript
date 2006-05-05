@@ -53,14 +53,14 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
 //    private static ImageDescriptor DEFINITION_DESCRIPTOR;
 //    private static ImageDescriptor CHAPTER_DESCRIPTOR;
     
-    private static final SectionPositionComparator SECTION_COMPARATOR = new SectionPositionComparator();
+    private static final NodePositionComparator NODE_COMPARATOR = new NodePositionComparator();
 //    private static final ShowDefinitionsOnlyFilter SHOW_DEFINITIONS_FILTER = new ShowDefinitionsOnlyFilter();
 
 //    private ViewerFilter currentFilter = null; 
     
     private SchemeEditor mEditor;
 //    private List mTreeElements;
-    private Section mDefaultTree;
+    private Node mDefaultTree;
     
     private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(CHAPTER_CATEGORY);
     
@@ -79,14 +79,14 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         }
     }
     
-    private static class Section {
+    private static class Node {
         public String   name;
         public Position position;
         public List     children;
-        public Section  parent;
+        public Node  parent;
         public String   type;
         
-        public Section(String type, String name, Position position) {
+        public Node(String type, String name, Position position) {
             this.type = type;
             this.name = name;
             this.position = position;
@@ -94,10 +94,10 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
             this.children = new LinkedList();
         }
         
-        public void addSubsection(Section section) {
+        public void addSubsection(Node section) {
             section.parent = this;
             for(int i=0; i<children.size(); i++) {
-            	Section child = (Section) children.get(i);
+            	Node child = (Node) children.get(i);
             	if (child.position.offset > section.position.offset) {
             		children.add(i, section);
             		return;
@@ -106,35 +106,35 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
             children.add(section);
         }
         
-        public Section[] getChildren() {
-            return (Section[]) children.toArray(new Section[children.size()]);
+        public Node[] getChildren() {
+            return (Node[]) children.toArray(new Node[children.size()]);
         }
         
         public int size() {
         	return children.size();
         }
         
-        public static Section createSection(String name, Position position) {
-            return new Section(SECTION, name, position);
+        public static Node createSection(String name, Position position) {
+            return new Node(SECTION, name, position);
         }
 
-        public static Section createChapter(String name, Position position) {
-            return new Section(CHAPTER, name, position);
+        public static Node createChapter(String name, Position position) {
+            return new Node(CHAPTER, name, position);
         }
         
-        public static Section createDefinition(String name, Position position) {
-            return new Section(DEFINITION, name, position);
+        public static Node createDefinition(String name, Position position) {
+            return new Node(DEFINITION, name, position);
         }
         
         public Object clone() {
-            return new Section(type, name, position);
+            return new Node(type, name, position);
         }
     }
     
-    private static class SectionPositionComparator implements Comparator {
+    private static class NodePositionComparator implements Comparator {
         public int compare(Object o1, Object o2) {
-            Section s1 = (Section)o1;
-            Section s2 = (Section)o2;
+            Node s1 = (Node)o1;
+            Node s2 = (Node)o2;
             
             if (s1.position.offset < s2.position.offset)
                 return -1;
@@ -203,23 +203,23 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
 //		}
 //    }
     
-    private static class SectionContentProvider implements ITreeContentProvider {
+    private static class NodeContentProvider implements ITreeContentProvider {
         
         public Object[] getChildren(Object parentElement)
         {
             if (parentElement != null) {
-                return ((Section)parentElement).getChildren();
+                return ((Node)parentElement).getChildren();
             }
             return null;
         }
         public Object getParent(Object element)
         {
-            return ((Section)element).parent;
+            return ((Node)element).parent;
         }
         
         public boolean hasChildren(Object element)
         {
-            return ((Section)element).children.size() > 0;
+            return ((Node)element).children.size() > 0;
         }
         
         public Object[] getElements(Object inputElement)
@@ -236,14 +236,14 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         }
     }
    
-    private static class SectionLabelProvider extends LabelProvider {
+    private static class NodeLabelProvider extends LabelProvider {
         public String getText(Object element) {
-            return ((Section)element).name;
+            return ((Node)element).name;
         }
         
         public Image getImage(Object element)
         {
-            Section section = (Section)element;
+            Node section = (Node)element;
             if (section.type == SECTION) {
                 return SECTION_IMAGE;
             }
@@ -264,9 +264,9 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         super.createControl(parent);
         
         TreeViewer viewer = getTreeViewer();
-        viewer.setContentProvider(new SectionContentProvider());
-        viewer.setLabelProvider(new SectionLabelProvider());
-        Section tree = createTree();
+        viewer.setContentProvider(new NodeContentProvider());
+        viewer.setLabelProvider(new NodeLabelProvider());
+        Node tree = createTree();
         viewer.setInput(tree);
         Tree treeControl = (Tree) viewer.getControl();
         if (tree.size() > 0) {
@@ -281,8 +281,8 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
 //        manager.add(new ShowHeadersOnlyAction());
     }
     
-    private Section createTree() {
-        Section root = null;
+    private Node createTree() {
+        Node root = null;
         try {
             IDocument document = mEditor.getDocument();
 
@@ -295,7 +295,7 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
             List nodes = new LinkedList();
             addSections(document, nodes);
             addDefinitions(nodes);
-            Collections.sort(nodes, SECTION_COMPARATOR);
+            Collections.sort(nodes, NODE_COMPARATOR);
             populateTree(root, nodes);
 //            mTreeElements = nodes;
         }
@@ -306,12 +306,12 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         return root;
     }
 
-	private Section createRoot(IDocument document) throws BadLocationException, BadPositionCategoryException {
-		Section root;
+	private Node createRoot(IDocument document) throws BadLocationException, BadPositionCategoryException {
+		Node root;
 		Position position;
 		position = new Position(0,0);
 		document.addPosition(CHAPTER_CATEGORY, position);
-		root = Section.createChapter("Root", position);
+		root = Node.createChapter("Root", position);
 		return root;
 	}
 
@@ -319,13 +319,13 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
      * @param root
      * @param nodes
      */
-    private void populateTree(Section root, List nodes)
+    private void populateTree(Node root, List nodes)
     {
-        Section current = root;
+        Node current = root;
         
         for (Iterator entries = nodes.iterator(); entries.hasNext();)
         {
-            Section node = (Section) entries.next();
+            Node node = (Node) entries.next();
             if (node.type == CHAPTER) {
                 root.addSubsection(node);
                 current = node;
@@ -355,13 +355,13 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
                 if (text.startsWith(SECTION_START)) {
                     position = new Position(offset + 7, text.length() - 7);
                     document.addPosition(CHAPTER_CATEGORY, position);
-                    Section newSection = Section.createSection(text.substring(7), position);
+                    Node newSection = Node.createSection(text.substring(7), position);
                     nodes.add(newSection);
                 }
                 else if (text.startsWith(CHAPTER_START) && !(text.equals(MENU_DELIMITER))) {
                     position = new Position(offset + 5, text.length() - 5);
                     document.addPosition(CHAPTER_CATEGORY, position);
-                    Section newSection = Section.createChapter(text.substring(5), position);
+                    Node newSection = Node.createChapter(text.substring(5), position);
                     nodes.add(newSection);
                 }
             }
@@ -369,48 +369,50 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         }
     }
     
-    private void addDefinitions(List sections) throws BadLocationException {
+    private void addDefinitions(List topNodes) throws BadLocationException {
         IDocument document = mEditor.getDocument();
         IEditorInput input = mEditor.getEditorInput();
-        
-        HashMap entriesAdded = new HashMap();
+        	
+        HashMap entriesProcessed = new HashMap();
 
         if (input instanceof IFileEditorInput) {
             IFileEditorInput editorInput = (IFileEditorInput) input;
             List entries = mEditor.getSymbolDictionary().findSymbolForResource(editorInput.getFile());
             for (int index = 0; index < entries.size(); index++) {
                 SymbolEntry entry = (SymbolEntry) entries.get(index);
-                Section section = (Section) entriesAdded.get(entry);
-
-                if (section != null)
-                	continue;
-                
-                section = createSectionForEntry(document, entry);
-                entriesAdded.put(entry , section);
-                
-            	SymbolEntry parent = entry.getParent();
-            	while (parent != null) {
-            		Section parentSection = (Section) entriesAdded.get(parent);
-            		if (parentSection == null) {
-            			parentSection = createSectionForEntry(document, parent);
-                        entriesAdded.put(parent, parentSection);
-            		}
-            		parentSection.addSubsection(section);
-            		section = parentSection;
-            		parent = parent.getParent();
-            	}
-    
-        		sections.add(section);
+                createNodesForEntryRecursively(document, entry, topNodes, entriesProcessed);
             }
         }
     }
 
-	private Section createSectionForEntry(IDocument document, SymbolEntry entry) throws BadLocationException {
+	private Node createNodesForEntryRecursively(IDocument document, SymbolEntry entry, List topNodes, HashMap entriesProcessed) throws BadLocationException {
+        Node node = (Node) entriesProcessed.get(entry);
+        if (node == null) {
+	        node = createNodeForEntry(document, entry);
+	        entriesProcessed.put(entry , node);
+	        
+	    	SymbolEntry parent = entry.getParent();
+	    	if (parent == null) {
+	    		topNodes.add(node);
+	    	}
+	    	else {
+	    		Node parentNode = createNodesForEntryRecursively(document, parent, topNodes, entriesProcessed);
+	    		parentNode.addSubsection(node);
+	    	}
+        }
+    	return node;
+	}
+
+	private Node createNodeForEntry(IDocument document, SymbolEntry entry) throws BadLocationException {
 		int offset = document.getLineOffset(entry.getLineNumber() - 1);
 		Position position = new Position(offset);
 		document.addPosition(position);
-		Section section = Section.createDefinition(entry.getName(), position);
-		return section;
+		Node node = Node.createDefinition(createNodeName(entry), position);
+		return node;
+	}
+
+	private String createNodeName(SymbolEntry entry) {
+		return entry.getName() + " - " + entry.getCategory();
 	}
 
 
@@ -440,7 +442,7 @@ public class SchemeOutlinePage extends ContentOutlinePage implements ISchemeOutl
         if (selection.isEmpty())
             mEditor.resetHighlightRange();
         else {
-            Section section = (Section) ((IStructuredSelection) selection).getFirstElement();
+            Node section = (Node) ((IStructuredSelection) selection).getFirstElement();
             mEditor.setSelection(section.position.offset, section.position.offset + section.position.length);
         }
     }
