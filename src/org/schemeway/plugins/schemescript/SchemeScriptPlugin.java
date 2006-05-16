@@ -5,9 +5,6 @@
  */
 package org.schemeway.plugins.schemescript;
 
-import gnu.mapping.Environment;
-
-import java.net.*;
 import java.util.*;
 
 import kawa.standard.*;
@@ -15,7 +12,6 @@ import kawa.standard.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.*;
 import org.osgi.framework.*;
 import org.schemeway.plugins.schemescript.editor.*;
