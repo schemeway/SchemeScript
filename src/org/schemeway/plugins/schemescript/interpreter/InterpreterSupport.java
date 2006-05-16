@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.*;
 import org.schemeway.plugins.schemescript.*;
 
 public class InterpreterSupport {
+	
+	private static final String EXTENSION_POINT_ID = SchemeScriptPlugin.PLUGIN_NS + ".interpreters";
 
     private InterpreterSupport() {
         // make sure this class is never instantiated
@@ -23,11 +25,8 @@ public class InterpreterSupport {
             return mCachedTypes;
         }
 
-        IExtension[] extensions = SchemeScriptPlugin.getDefault()
-                                                    .getDescriptor()
-                                                    .getExtensionPoint("interpreters")
-                                                    .getExtensions();
-
+        IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID).getExtensions();
+        
         mCachedTypes = parseTypes(extensions);
         return mCachedTypes;
     }
