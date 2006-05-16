@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="1.2.0"
+   version="1.2.1"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -38,6 +38,7 @@
       <import plugin="org.eclipse.pde.core"/>
       <import plugin="org.eclipse.pde.ui"/>
       <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.search"/>
    </requires>
    <extension-point id="interpreters" name="interpreters" schema="schema/interpreters.exsd"/>
    <extension
@@ -110,6 +111,14 @@
             parentId="org.eclipse.ui.textEditorScope">
       </context>
    </extension>
+   <extension
+         id="error"
+         name="Error Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.commands">
       <activeKeyConfiguration
@@ -803,6 +812,12 @@
             modes="run"
             name="Remote Interpreter"
             public="false"/>
+      <launchConfigurationType
+            delegate="org.schemeway.plugins.schemescript.interpreter.SiscInterpreterDelegate"
+            id="org.schemeway.plugins.schemescript.siscInterpreter"
+            modes="run"
+            name="SISC"
+            public="false"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -959,5 +974,9 @@
             class="org.schemeway.plugins.schemescript.interpreter.RemoteInterpreter"
             id="remote"
             name="Remote Interpreter"/>
+      <interpreter
+            class="org.schemeway.plugins.schemescript.interpreter.SiscInterpreter"
+            id="sisc"
+            name="SISC interpreter"/>
    </extension>
 </plugin>
