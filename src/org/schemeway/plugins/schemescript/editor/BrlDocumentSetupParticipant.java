@@ -3,10 +3,9 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
-import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.core.filebuffers.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.rules.*;
 
 /**
  * @author SchemeWay Project.
@@ -23,7 +22,7 @@ public class BrlDocumentSetupParticipant implements IDocumentSetupParticipant {
             SchemePartitionScanner.SCHEME_STRING, SchemePartitionScanner.SCHEME_COMMENT, SchemePartitionScanner.SCHEME_HERESTRING
         };
 
-        IDocumentPartitioner partitioner = new DefaultPartitioner(new BrlPartitionScanner(), partitions);
+        IDocumentPartitioner partitioner = new FastPartitioner(new BrlPartitionScanner(), partitions);
         partitioner.connect(document);
         document.setDocumentPartitioner(partitioner);
     }
