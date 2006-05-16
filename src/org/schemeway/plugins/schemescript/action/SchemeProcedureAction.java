@@ -5,17 +5,14 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import gnu.lists.Pair;
 import gnu.mapping.*;
-import kawa.standard.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.schemeway.plugins.schemescript.*;
-import org.schemeway.plugins.schemescript.interpreter.KawaProxy;
+import org.schemeway.plugins.schemescript.interpreter.*;
 
 /**
  * @author SchemeWay.com
