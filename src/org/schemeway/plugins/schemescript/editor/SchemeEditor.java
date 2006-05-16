@@ -34,6 +34,7 @@ import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.debug.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.autoedits.*;
+import org.schemeway.plugins.schemescript.editor.outline.SchemeOutlinePage;
 import org.schemeway.plugins.schemescript.indentation.*;
 import org.schemeway.plugins.schemescript.interpreter.KawaProxy;
 import org.schemeway.plugins.schemescript.parser.*;
