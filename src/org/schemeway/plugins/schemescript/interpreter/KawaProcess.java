@@ -19,82 +19,24 @@ import gnu.text.Lexer;
 import gnu.text.SourceMessages;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import kawa.standard.Scheme;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.schemeway.plugins.schemescript.views.KawaStackTraceView;
 
 public class KawaProcess implements IInterpreterProcess {
-    private final static String PROMPT = "> ";
-
-    private static class KawaPortStreamMonitor extends OutputStream implements IStreamMonitor {
-
-        private List mListeners = new LinkedList();
-        private boolean mIsStdout = false;
-
-        public KawaPortStreamMonitor(boolean isStdout) {
-            mIsStdout = isStdout;
-        }
-
-        public void addListener(IStreamListener listener) {
-            if (!mListeners.contains(listener))
-                mListeners.add(listener);
-        }
-
-        public String getContents() {
-            return (mIsStdout ? PROMPT : "");
-        }
-
-        public void removeListener(IStreamListener listener) {
-            if (mListeners.remove(listener))
-                ;
-        }
-
-        // send the string to all listeners.
-        private void writeString(String text) {
-            for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-                IStreamListener listener = (IStreamListener) iter.next();
-                listener.streamAppended(text, this);
-            }
-        }
-
-        public void write(byte[] bytes) {
-            char[] chars = new char[bytes.length];
-            for (int i = 0; i < chars.length; i++) {
-                chars[i] = (char) bytes[i];
-            }
-            writeString(new String(chars));
-        }
-
-        public void write(int b) {
-            if ((char) b == '\r')
-                return;
-            char[] chars =
-            {
-                (char) b
-            };
-            writeString(new String(chars));
-        }
-
-    }
-
     private static class KawaStreamsProxy implements IStreamsProxy {
 
-        private KawaPortStreamMonitor mErrorMonitor = new KawaPortStreamMonitor(false);
-        private KawaPortStreamMonitor mOutputMonitor = new KawaPortStreamMonitor(true);
+        private MonitoredOutputStream mErrorMonitor = new MonitoredOutputStream(false);
+        private MonitoredOutputStream mOutputMonitor = new MonitoredOutputStream(true);
 
         public KawaStreamsProxy() {
             OutPort.setOutDefault(new OutPort(new OutputStreamWriter(mOutputMonitor), false, true));
@@ -122,7 +64,7 @@ public class KawaProcess implements IInterpreterProcess {
             if (out.getColumnNumber() != 0) {
                 out.freshLine();
             }
-            out.write(PROMPT);
+            out.write(MonitoredOutputStream.PROMPT);
             out.flush();
         }
     }
