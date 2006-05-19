@@ -91,6 +91,11 @@ public final class FindSymbolDialog extends Dialog {
             String symbol = mSymbols.getItem(selection);
             mSelectedEntries = mDictionary.findSymbol(symbol);
         }
+        else if (mSymbols.getItemCount() > 0)
+        {
+        	String symbol = mSymbols.getItem(0);
+        	mSelectedEntries = mDictionary.findSymbol(symbol);
+        }
         else {
             mSelectedEntries = null;
         }
