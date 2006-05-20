@@ -5,9 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.schemeway.plugins.schemescript.SchemeScriptPlugin;
+import org.schemeway.plugins.schemescript.*;
 
 public class RemoteInterpreter extends AbstractInterpreter
 {
@@ -20,9 +18,5 @@ public class RemoteInterpreter extends AbstractInterpreter
     
     public String getConfigurationType() {
         return CONFIG_TYPE;
-    }
-    
-    public void load(IFile file) {
-        MessageDialog.openInformation(null, "Remote interpreter", "File loading not supported!");
     }
 }
