@@ -54,7 +54,7 @@ public class Comments {
         StringBuffer buffer = new StringBuffer();
         buffer.append(";;;")
               .append(lineDelimiter)
-              .append(";;;;   ")
+              .append(";;;; ")
               .append(header)
               .append(lineDelimiter)
               .append(";;;")
