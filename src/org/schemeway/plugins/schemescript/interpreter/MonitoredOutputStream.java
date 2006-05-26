@@ -12,11 +12,9 @@ import org.eclipse.debug.core.model.*;
 class MonitoredOutputStream extends OutputStream implements IStreamMonitor {
 
     private List mListeners = new LinkedList();
-    private boolean mIsStdout = false;
 	public static final String PROMPT = "> ";
 
-    public MonitoredOutputStream(boolean isStdout) {
-        mIsStdout = isStdout;
+    public MonitoredOutputStream() {
     }
 
     public void addListener(IStreamListener listener) {
@@ -25,7 +23,8 @@ class MonitoredOutputStream extends OutputStream implements IStreamMonitor {
     }
 
     public String getContents() {
-        return (mIsStdout ? MonitoredOutputStream.PROMPT : "");
+    	return null;
+        //return (mIsStdout ? MonitoredOutputStream.PROMPT : "");
     }
 
     public void removeListener(IStreamListener listener) {

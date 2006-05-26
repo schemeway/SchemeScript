@@ -35,8 +35,8 @@ import org.schemeway.plugins.schemescript.views.KawaStackTraceView;
 public class KawaProcess implements IInterpreterProcess {
     private static class KawaStreamsProxy implements IStreamsProxy {
 
-        private MonitoredOutputStream mErrorMonitor = new MonitoredOutputStream(false);
-        private MonitoredOutputStream mOutputMonitor = new MonitoredOutputStream(true);
+        private MonitoredOutputStream mErrorMonitor = new MonitoredOutputStream();
+        private MonitoredOutputStream mOutputMonitor = new MonitoredOutputStream();
 
         public KawaStreamsProxy() {
             OutPort.setOutDefault(new OutPort(new OutputStreamWriter(mOutputMonitor), false, true));

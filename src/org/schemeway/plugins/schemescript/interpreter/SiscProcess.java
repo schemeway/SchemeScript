@@ -24,8 +24,8 @@ public class SiscProcess implements IInterpreterProcess {
 
 	private static class SiscStreamsProxy implements IStreamsProxy {
 
-		private MonitoredOutputStream mErrorMonitor = new MonitoredOutputStream(false);
-		private MonitoredOutputStream mOutputMonitor = new MonitoredOutputStream(true);
+		private MonitoredOutputStream mErrorMonitor = new MonitoredOutputStream();
+		private MonitoredOutputStream mOutputMonitor = new MonitoredOutputStream();
 		private OutputStream mSiscInputStream;
 
 		public SiscStreamsProxy() {
