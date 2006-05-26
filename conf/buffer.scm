@@ -162,10 +162,6 @@
       (SchemeEditor:removeSaveHook hook)
       (error "invalid save hook: must be a symbol")))
 
-;; Clears all installed save hooks
-(define (clear-save-hooks)
-  (SchemeEditor:clearSaveHooks))
-
 ;; Returns the filename of the buffer
 (define (buffer-file-name #!optional (buffer (current-buffer)))
   (SchemeEditor:getFileName buffer))

@@ -5,14 +5,13 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
-import gnu.mapping.Procedure;
+import gnu.mapping.*;
 
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.actions.*;
@@ -27,16 +26,16 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.*;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.part.*;
+import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.debug.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.autoedits.*;
-import org.schemeway.plugins.schemescript.editor.outline.SchemeOutlinePage;
+import org.schemeway.plugins.schemescript.editor.outline.*;
 import org.schemeway.plugins.schemescript.indentation.*;
-import org.schemeway.plugins.schemescript.interpreter.KawaProxy;
+import org.schemeway.plugins.schemescript.interpreter.*;
 import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
@@ -118,7 +117,7 @@ public class SchemeEditor extends TextEditor {
 					hookProcedure.applyN(new Object[] { buffer });
 				}
 				else {
-					SchemeScriptPlugin.logException("Save hook is does not evaluate to a thunk: '" + symbol + "'", null);
+					SchemeScriptPlugin.logException("Save hook is does not evaluate to a procedure: '" + symbol + "'", null);
 				}
 			}
 			catch (Throwable exception) {
@@ -136,10 +135,6 @@ public class SchemeEditor extends TextEditor {
     
     public static void removeSaveHook(String hook) {
     	sSaveHooks.remove(hook);
-    }
-    
-    public static void clearSaveHooks() {
-    	sSaveHooks.clear();
     }
     
     public void doSaveAs() {
@@ -162,7 +157,7 @@ public class SchemeEditor extends TextEditor {
         }
     }
 
-    public void doRevertToSaved() {
+	public void doRevertToSaved() {
         super.doRevertToSaved();
         if (mOutlinePage != null) {
             mOutlinePage.update();
