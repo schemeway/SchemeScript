@@ -1,3 +1,12 @@
+*** Version 1.2.4
+
+- Fixed bug #1491978 : REPL: File loading is not working correctly with SISCweb
+- Implemented feature request #1494946 : Parse TODO in comments
+- Implemented feature request #1481354 : More levels in the outline
+- Implemented feature request #1458448 : Support for here strings
+- Support for programmatically adding markers to buffers
+- Support for save hooks
+
 *** Version 1.2.0
 
 - Bug fix related to the initialization of the user dictionary used by code assist.

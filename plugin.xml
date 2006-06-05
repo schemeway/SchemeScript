@@ -3,7 +3,7 @@
 <plugin
    id="org.schemeway.plugins.schemescript"
    name="SchemeScript Plug-in"
-   version="1.2.1"
+   version="1.2.4"
    provider-name="The SchemeWay Project"
    class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
 
@@ -12,6 +12,18 @@
          <export name="*"/>
       </library>
       <library name="lib/kawa.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/sisc.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/sisc-heap.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/sisc-lib.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/sisc-opt.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -113,7 +125,7 @@
    </extension>
    <extension
          id="error"
-         name="Error Marker"
+         name="Scheme Error"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
       <super type="org.eclipse.core.resources.textmarker"/>
@@ -978,5 +990,12 @@
             class="org.schemeway.plugins.schemescript.interpreter.SiscInterpreter"
             id="sisc"
             name="SISC interpreter"/>
+   </extension>
+   <extension
+         id="task"
+         name="Scheme Task"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.taskmarker"/>
+      <persistent value="true"/>
    </extension>
 </plugin>
