@@ -15,7 +15,7 @@
 
 
 ;;;
-;;;;   Interface to the Kawa scratchpad View
+;;;; * Interface to the Kawa scratchpad View
 ;;;
 
 ;; @function (add-scratchpad-view name factory)

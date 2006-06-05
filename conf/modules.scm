@@ -12,7 +12,7 @@
 
 
 ;;;
-;;;;   Global registry
+;;;; * Global registry
 ;;;
 
 

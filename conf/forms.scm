@@ -45,7 +45,7 @@
 
 
 ;;;
-;;;;   define
+;;;; * define
 ;;;
 
 
@@ -65,7 +65,7 @@
 
 
 ;;;
-;;;;   define-syntax, defmacro
+;;;; * define-syntax, defmacro, define-macro
 ;;;
 
 
@@ -79,20 +79,21 @@
        (add-entry! dictionary name description 'syntax resource line-number)))))
 
 
-(define-form-processor
- 'defmacro
- (lambda (dictionary form resource line-number)
-   (when (and (list? form)
-              (>= (length form) 3)
-              (symbol? (cadr form)))
-     (let* ((name        (cadr form))
-            (pattern     (caddr form))
-            (description (format #f "~a - user syntax" (cons name pattern))))
-       (add-entry! dictionary name description 'syntax resource line-number)))))
+(let ((form-processor
+       (lambda (dictionary form resource line-number)
+         (when (and (list? form)
+                    (>= (length form) 3)
+                    (symbol? (cadr form)))
+           (let* ((name        (cadr form))
+                  (pattern     (caddr form))
+                  (description (format #f "~a - user syntax" (cons name pattern))))
+             (add-entry! dictionary name description 'syntax resource line-number))))))
+  (define-form-processor 'defmacro form-processor)
+  (define-form-processor 'define-macro form-processor))
 
 
 ;;;
-;;;;   module-name
+;;;; * module-name
 ;;;
 
 
@@ -109,7 +110,7 @@
 
 
 ;;;
-;;;;   define-simple-class, define-class
+;;;; * define-simple-class, define-class
 ;;;
 
 
@@ -149,8 +150,9 @@
 
 
 ;;;
-;;;;   define-record-type
+;;;; * define-record-type
 ;;;
+
 
 (define-form-processor 
  'define-record-type
@@ -190,8 +192,9 @@
 
 
 ;;;
-;;;;   define-alias
+;;;; * define-alias
 ;;;
+
 
 (define-form-processor
  'define-alias
@@ -208,8 +211,9 @@
        (typename? (cadr form))
        (typename? (caddr form))))
 
+
 ;;;
-;;;;   define-namespace
+;;;; * define-namespace
 ;;;
 
 

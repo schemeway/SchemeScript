@@ -9,7 +9,7 @@
 
 
 ;;;
-;;;;   System initializations
+;;;; * System initializations
 ;;;
 
 ;; -- DO NOT REMOVE THE FOLLOWING LINES --
@@ -29,6 +29,6 @@
 
 ;; -- ADD YOUR OWN INITIALIZATIONS HERE
 ;;;
-;;;;   User initializations
+;;;; * User initializations
 ;;;
 
