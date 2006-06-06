@@ -22,6 +22,7 @@
 (define *severity-attr*    :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'SEVERITY))
 (define *text-attr*        :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'TEXT))
 (define *message-attr*     :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'MESSAGE))
+(define *user-editable*    :: <symbol> (static-field <org.eclipse.core.resources.IMarker> 'USER_EDITABLE))
 
 
 (define *error-marker-id* :: <symbol> 'org.schemeway.plugins.schemescript.error)
@@ -45,12 +46,14 @@
     (MarkerUtilities:createMarker file attr marker-type)))
 
 
-(define (add-task! (file :: <org.eclipse.core.resources.IResource>) (start :: <int>) (end :: <int>) message)
+(define (add-task! (file :: <org.eclipse.core.resources.IResource>) (line :: <int>)(start :: <int>) (end :: <int>) message)
   (let ((attr (Hashtable:new)))
     (Hashtable:put attr *message-attr*      (as <String> message))
     (Hashtable:put attr *text-attr*         (as <String> message))
     (Hashtable:put attr *char-start-attr*   (java.lang.Integer:new start))
     (Hashtable:put attr *char-end-attr*     (java.lang.Integer:new end))
+    (Hashtable:put attr *line-number-attr*  (java.lang.Integer:new line))
+    (Hashtable:put attr *user-editable*     (java.lang.Boolean:new #f))
     (MarkerUtilities:createMarker file attr *task-marker-id*)))
 
 
@@ -101,9 +104,13 @@
                      (matcher (Pattern:matcher *task-pattern* text)))
                 (when (*:find matcher)
                   (let ((start (*:start matcher))
-                        (end   (*:end matcher)))
-                    (add-task! file (+ offset start) (+ offset end) (*:substring text start end))))))
+                        (end   (*:end matcher))
+                        (line  (IDocument:getLineOfOffset document offset)))
+                    (add-task! file (+ line 1) (+ offset start) (+ offset end) (*:substring text start end))))))
           (loop (*:nextToken scanner)))))))
 
 
 (add-save-hook 'scan-tasks)
+
+;; TODO: machin
+;; 
