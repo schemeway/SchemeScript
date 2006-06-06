@@ -241,6 +241,8 @@ public class SchemeEditor extends TextEditor {
         final ISourceViewer viewer = getSourceViewer();
         final ITextViewerExtension2 viewer2 = (ITextViewerExtension2) viewer;
 
+        if (viewer2 == null) return;
+        
         viewer2.prependAutoEditStrategy(mMatchinDelimiterInserter, IDocument.DEFAULT_CONTENT_TYPE);
         viewer2.prependAutoEditStrategy(mQuoteInserter, SchemePartitionScanner.SCHEME_STRING);
         viewer2.prependAutoEditStrategy(mSexpDeleter, IDocument.DEFAULT_CONTENT_TYPE);
@@ -254,6 +256,8 @@ public class SchemeEditor extends TextEditor {
         createEditStrategies();
         
         ITextViewerExtension2 viewer = (ITextViewerExtension2) getSourceViewer();
+        if (viewer == null) return;
+        
         viewer.removeAutoEditStrategy(mMatchinDelimiterInserter, IDocument.DEFAULT_CONTENT_TYPE);
         viewer.removeAutoEditStrategy(mQuoteInserter, SchemePartitionScanner.SCHEME_STRING);
         viewer.removeAutoEditStrategy(mSexpDeleter, IDocument.DEFAULT_CONTENT_TYPE);
@@ -365,6 +369,11 @@ public class SchemeEditor extends TextEditor {
     //
     //// Text editing helper methods
     //
+    
+    public final ITextViewer getTextViewer() {
+    	return getSourceViewer();
+    }
+    
 
     public SexpNavigator getExplorer() {
         if (mNavigator == null) {
