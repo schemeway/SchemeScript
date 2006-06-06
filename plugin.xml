@@ -1,58 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.schemeway.plugins.schemescript"
-   name="SchemeScript Plug-in"
-   version="1.2.4"
-   provider-name="The SchemeWay Project"
-   class="org.schemeway.plugins.schemescript.SchemeScriptPlugin">
+<plugin>
 
-   <runtime>
-      <library name="schemescript.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/kawa.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/sisc.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/sisc-heap.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/sisc-lib.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/sisc-opt.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.jdt"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.jdt.debug"/>
-      <import plugin="org.eclipse.jdt.debug.ui"/>
-      <import plugin="org.eclipse.pde"/>
-      <import plugin="org.eclipse.pde.core"/>
-      <import plugin="org.eclipse.pde.ui"/>
-      <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.search"/>
-   </requires>
-   <extension-point id="interpreters" name="interpreters" schema="schema/interpreters.exsd"/>
+     <extension-point id="interpreters" name="interpreters" schema="schema/interpreters.exsd"/>
    <extension
          point="org.eclipse.core.runtime.contentTypes">
       <content-type
