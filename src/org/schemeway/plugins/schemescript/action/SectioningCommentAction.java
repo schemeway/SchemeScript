@@ -28,7 +28,7 @@ public class SectioningCommentAction extends SchemeAction {
 
         if (mSubsection) {
             editor.insertText(point, Comments.createSectionComment(newline));
-            editor.setPoint(point + 10 + newline.length());
+            editor.setPoint(point + 8 + newline.length());
         }
         else {
             editor.insertText(point, Comments.createChapterComment(newline));
