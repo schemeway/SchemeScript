@@ -19,14 +19,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -175,6 +168,11 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
                         public void run(IProgressMonitor monitor) throws InvocationTargetException,
                                 InterruptedException {
                             scanPendingChangedFiles(files, monitor);
+                            if (monitor != null && monitor.isCanceled()) {
+                            	synchronized (mPendingResources) {
+                            		mPendingResources.addAll(Arrays.asList(files));
+                            	}
+                            }
                         }
                     });
                 }
@@ -190,9 +188,11 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
     private void scanPendingChangedFiles(final IFile[] files, IProgressMonitor monitor) {
         if (monitor != null)
             monitor.beginTask("Updating dictionary:", files.length);
-        removeEntriesForFiles(files);
+        removeEntriesForFiles(files, monitor);
         for (int i = 0; i < files.length; i++) {
             IFile file = (IFile) files[i];
+            if (monitor != null && monitor.isCanceled())
+            	break;
             scanSchemeFile(file, monitor);
             if (monitor != null)
                 monitor.worked(1);
@@ -201,9 +201,12 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
             monitor.done();
     }
 
-    private void removeEntriesForFiles(IFile[] files) {
+    private void removeEntriesForFiles(IFile[] files, IProgressMonitor monitor) {
         List removedEntries = new LinkedList();
         for (Iterator entryLists = mEntries.values().iterator(); entryLists.hasNext();) {
+        	if (monitor != null && monitor.isCanceled())
+        		return;
+        	
             List entriesForName = (List) entryLists.next();
             for (Iterator entries = entriesForName.iterator(); entries.hasNext();) {
                 SymbolEntry entry = (SymbolEntry) entries.next();
@@ -224,6 +227,10 @@ public class UserDictionary extends AbstractSymbolDictionary implements IUserDic
         if (monitor != null) {
             monitor.subTask(file.getProject().getName() + " - " + file.getName());
         }
+        
+        // TODO: Put this is its own ResourceChangeListener
+        SchemeScriptPlugin.getReferencesManager().scanResourceForSymbols(file);
+        
         File scmFile = file.getRawLocation().toFile();
         InPort port = null;
         try {
