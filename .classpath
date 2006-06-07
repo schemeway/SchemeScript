@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/sisc-heap.jar"/>
 	<classpathentry kind="lib" path="lib/sisc-lib.jar"/>
 	<classpathentry kind="lib" path="lib/sisc-opt.jar"/>
+	<classpathentry kind="lib" path="lib/kawa.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
