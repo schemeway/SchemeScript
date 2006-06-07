@@ -335,6 +335,13 @@ public class SchemeEditor extends TextEditor {
         addAction(sourceMenu, "group.edit", SchemeActionConstants.COMPRESS_SPACES);
         addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_FORMAT);
         addAction(sourceMenu, "group.edit", SchemeActionConstants.SEXP_SWAP);
+        
+        MenuManager refactorMenu = new MenuManager("Refactor");
+        menu.add(refactorMenu);
+        
+        refactorMenu.add(new Separator("group.rename"));
+        addAction(refactorMenu, "group.rename", SchemeActionConstants.RENAME_SYMBOL);
+        addAction(refactorMenu, "group.rename", SchemeActionConstants.RENAME_LOCAL_SYMBOL);
 
         MenuManager evalMenu = new MenuManager("Eval");
         menu.add(evalMenu);

@@ -80,3 +80,32 @@
     (and (eq? 'ok (dialog title control-builder 300 250))
          selection)))
 
+
+(define (ask-for-symbol title label #!optional (default-value ""))
+  (let* ((symbol #f)
+         (control-builder
+          (lambda (composite is-ok? ok cancel)
+            (is-ok? (not (string=? default-value "")))
+            (Composite:setLayout composite (grid-layout columns: 2 margin-width: 0 margin-height: 0))
+            (let ((label  (new-label composite label))
+                  (viewer (new-text composite
+                                    style: (+ (SWT:.BORDER) (SWT:.SINGLE))
+                                    value: default-value
+                                    layout-data: (grid-data style: '(hfill grab-horizontal)))))
+              (Text:addKeyListener
+               viewer
+               (object (<org.eclipse.swt.events.KeyAdapter>)
+                 ((keyReleased (event :: <org.eclipse.swt.events.KeyEvent>)) :: <void>
+                  (let ((text (Text:getText viewer)))
+                    (set! symbol text)
+                    (cond ((and (= 13 (field event 'keyCode))
+                                (= 0  (field event 'stateMask))
+                                (not (string=? "" (symbol->string symbol))))
+                           (ok))
+                          (else
+                           (is-ok? (not (string=? "" (symbol->string symbol))))))))))))))
+    
+    (and (eq? 'ok (dialog title control-builder 300 90))
+         symbol)))
+
+

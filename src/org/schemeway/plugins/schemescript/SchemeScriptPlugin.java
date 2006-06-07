@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.plugin.*;
 import org.osgi.framework.*;
+import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.interpreter.*;
 import org.schemeway.plugins.schemescript.parser.*;
@@ -31,6 +32,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     
     //The shared instance.
     private static SchemeScriptPlugin plugin;
+	private static SymbolReferencesManager sReferencesManager;
     //Resource bundle.
     private ResourceBundle resourceBundle;
 
@@ -171,6 +173,12 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
         return types[0];
     }
   
+	public static SymbolReferencesManager getReferencesManager() {
+		if (sReferencesManager == null) {
+			sReferencesManager = new SymbolReferencesManager();
+		}
+		return sReferencesManager;
+	}
     
     public static void logException(String message, Throwable exception) {
         IStatus status = new Status(IStatus.ERROR, 

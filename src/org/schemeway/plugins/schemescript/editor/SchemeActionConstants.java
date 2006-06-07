@@ -48,6 +48,6 @@ public final class SchemeActionConstants {
     
     public final static String JUMP_DEF = SchemeScriptPlugin.PLUGIN_NS + ".jump.definition";
     public final static String CHOOSE_SYMBOL = SchemeScriptPlugin.PLUGIN_NS + ".dictionary.find";
-    
-    
+    public final static String RENAME_SYMBOL = SchemeScriptPlugin.PLUGIN_NS + ".code.renameSymbol";
+    public final static String RENAME_LOCAL_SYMBOL = SchemeScriptPlugin.PLUGIN_NS + ".code.renameLocalSymbol";
 }

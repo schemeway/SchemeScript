@@ -25,6 +25,7 @@
 (load-relative "modules.scm")
 (load-relative "markers.scm")
 (load-relative "scratchpad.scm")
+(load-relative "refactoring.scm")
 
 
 ;; -- ADD YOUR OWN INITIALIZATIONS HERE
