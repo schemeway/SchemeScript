@@ -97,4 +97,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.pde.ui,
  org.eclipse.ui.forms,
  org.eclipse.search
-Eclipse-LazyStart: true
+Eclipse-AutoStart: true
