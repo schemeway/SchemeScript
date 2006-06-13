@@ -73,6 +73,9 @@ public class SchemeConfiguration extends SourceViewerConfiguration {
         return assistant;
     }
     
+    public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+    	return new SchemeAnnotationHover(getEditor());
+    }
     
     public ITextHover getTextHover(ISourceViewer viewer, String contentType) {
         return new SchemeTextHover(getEditor());
