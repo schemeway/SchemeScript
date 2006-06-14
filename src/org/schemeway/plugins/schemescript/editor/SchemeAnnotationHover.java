@@ -3,51 +3,58 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.*;
+
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.ui.texteditor.*;
 
 /**
  * @author SchemeWay Project.
- *
+ * 
+ * TODO: use annotations instead of markers....
  */
 public class SchemeAnnotationHover implements IAnnotationHover {
 
-	private SchemeEditor mEditor;
-	
 	/**
 	 * @param editor
 	 */
-	public SchemeAnnotationHover(SchemeEditor editor) {
-		mEditor = editor;
-	}
-
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		String hoverInfo = null;
-		
-		int effectiveLineNumber = lineNumber + 1;
+
+		IAnnotationModel annotationModel = sourceViewer.getAnnotationModel();
+		IDocument document = sourceViewer.getDocument();
+
 		try {
-			IMarker[] markers = mEditor.getFile().findMarkers(IMarker.MARKER, true, 0);
+			Iterator annotationIterator = annotationModel.getAnnotationIterator();
 			StringBuffer info = new StringBuffer();
-			
-			for (int i = 0; i < markers.length; i++) {
-				IMarker marker = markers[i];
-				
-				String message = (String) marker.getAttribute(IMarker.MESSAGE);
-				Integer line = (Integer) marker.getAttribute(IMarker.LINE_NUMBER);
-				if (message != null && line != null && line.intValue() == effectiveLineNumber)
-				{
+
+			while (annotationIterator.hasNext()) {
+				Annotation annotation = (Annotation) annotationIterator.next();
+				Position position = annotationModel.getPosition(annotation);
+
+				if (isMarkerAnnotation(annotation) && isPositionSpansLine(lineNumber, document, position)) {
 					if (info.length() > 0)
 						info.append('\n');
-					info.append(message);
+					info.append(annotation.getText());
 				}
 			}
-			
+
 			hoverInfo = info.toString();
 		}
-		catch (CoreException e) {
+		catch (BadLocationException e) {
 		}
-		
+
 		return hoverInfo;
+	}
+
+	private boolean isMarkerAnnotation(Annotation annotation) {
+		return annotation instanceof MarkerAnnotation;
+	}
+
+	private boolean isPositionSpansLine(int lineNumber, IDocument document, Position position)
+			throws BadLocationException {
+		return document.getLineOfOffset(position.offset) <= lineNumber
+				&& lineNumber <= document.getLineOfOffset(position.offset + position.length);
 	}
 }
