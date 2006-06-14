@@ -11,8 +11,6 @@ import org.eclipse.ui.texteditor.*;
 
 /**
  * @author SchemeWay Project.
- * 
- * TODO: use annotations instead of markers....
  */
 public class SchemeAnnotationHover implements IAnnotationHover {
 
