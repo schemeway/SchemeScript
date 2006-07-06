@@ -90,6 +90,8 @@ public class SchemeColoringScanner implements ITokenScanner {
             case SchemeToken.LPAREN:
             case SchemeToken.RPAREN:
                 return parenToken;
+            case SchemeToken.EXPR_COMMENT_PREFIX:
+            	return errorToken;
             case SchemeToken.SYMBOL:
             {
                 String text = mScanner.getText(mOffset, mLength);

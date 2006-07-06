@@ -30,7 +30,7 @@ public class SchemeScanner {
     }
 
     /*
-     * TODO - support quote, unquote, quasiquote, unquote-splicing, constant, vectors 
+     * TODO - support constants 
      * TODO - support #e..., #i..., #o..., #b..., #d....
      */
     public SchemeToken nextToken() {
@@ -72,7 +72,7 @@ public class SchemeScanner {
                 }
                 case '#':
                 {
-                    return parseDashPrefixedToken();
+                    return parsePoundPrefixedToken();
                 }
                 case ';':
                 {
@@ -127,7 +127,10 @@ public class SchemeScanner {
                 consume();
                 ch = lookahead();
             }
-            return SchemeToken.createSymbol(getTokenOffset(), getTokenLength());
+            if (getTokenLength() == 1 && mDocument.getChar(mTokenStart) == '.')
+            	return SchemeToken.createDot(getTokenOffset());
+            else
+            	return SchemeToken.createSymbol(getTokenOffset(), getTokenLength());
         }
         else {
             consume();
@@ -201,7 +204,7 @@ public class SchemeScanner {
     }
 
 
-    private SchemeToken parseDashPrefixedToken() throws BadLocationException {
+    private SchemeToken parsePoundPrefixedToken() throws BadLocationException {
         char ch;
         consume();
         ch = lookahead();
@@ -211,6 +214,11 @@ public class SchemeScanner {
             {
                 consume();
                 return SchemeToken.createConstant(getTokenOffset(), getTokenLength());
+            }
+            case ';': 
+            {
+            	consume();
+            	return SchemeToken.createSexprCommentPrefix(getTokenOffset());
             }
             case '!':
             {

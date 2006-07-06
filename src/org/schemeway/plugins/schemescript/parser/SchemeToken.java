@@ -22,6 +22,8 @@ public final class SchemeToken {
     public final static int UNQUOTE = 12;
     public final static int UNQUOTE_SPLICING = 13;
     public final static int COMMENT = 14;
+    public final static int DOT = 15;
+    public final static int EXPR_COMMENT_PREFIX = 16;
 
     public final static SchemeToken EOF = new SchemeToken(EOFTOK, -1, -1);
 
@@ -78,7 +80,7 @@ public final class SchemeToken {
     }
 
     public static SchemeToken createBackquote(int offset) {
-        return new SchemeToken(QUOTE, offset, 1);
+        return new SchemeToken(BACKQUOTE, offset, 1);
     }
 
     public static SchemeToken createUnquote(int offset) {
@@ -87,6 +89,10 @@ public final class SchemeToken {
 
     public static SchemeToken createUnquoteSplicing(int offset) {
         return new SchemeToken(UNQUOTE_SPLICING, offset, 2);
+    }
+    
+    public static SchemeToken createDot(int offset) {
+    	return new SchemeToken(DOT, offset, 1);
     }
 
     public static SchemeToken createDefault(int offset, int length) {
@@ -107,6 +113,10 @@ public final class SchemeToken {
     
     public static SchemeToken createComment(int offset, int length) {
         return new SchemeToken(COMMENT, offset, length);
+    }
+    
+    public static SchemeToken createSexprCommentPrefix(int offset) {
+    	return new SchemeToken(EXPR_COMMENT_PREFIX, offset, 2);
     }
 
     public String toString() {
