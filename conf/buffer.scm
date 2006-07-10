@@ -7,6 +7,7 @@
 ;; @copyright "NuEcho Inc."
 ;;
 
+
 (define (current-buffer)
   (let ((page (org.eclipse.ui.IWorkbenchWindow:getActivePage
                (org.eclipse.ui.IWorkbench:getActiveWorkbenchWindow
@@ -40,11 +41,38 @@
         (values #f #f))))
 
 
+(define (with-forward-sexp offset buffer proc)
+  (let-values (((start end) (%forward-sexp offset buffer)))
+    (if (and start end)
+        (proc start end))))
+
+
 (define (%backward-sexp #!optional (offset (point)) (buffer (current-buffer)))
   (let ((navigator (SchemeEditor:getExplorer buffer)))
     (if (SexpNavigator:backwardSexpression navigator offset)
         (values (SexpNavigator:getSexpStart navigator) (SexpNavigator:getSexpEnd navigator))
         (values #f #f))))
+
+
+(define (with-backward-sexp offset buffer proc)
+  (let-values (((start end) (%backward-sexp offset buffer)))
+    (if (and start end)
+        (proc start end))))
+
+
+(define (%up-sexp #!optional (offset (point)) (buffer (current-buffer)))
+  (let ((navigator (SchemeEditor:getExplorer buffer)))
+    (and (SexpNavigator:upSexpression navigator offset)
+         (SexpNavigator:getSexpStart navigator))))
+
+
+(define (with-up-sexp offset buffer proc)
+  (let ((start (%up-sexp offset buffer)))
+    (if start
+        (with-forward-sexp start buffer proc))))
+
+
+
 
 
 (define (sexp-type #!optional (offset (point)) (buffer (current-buffer)))
