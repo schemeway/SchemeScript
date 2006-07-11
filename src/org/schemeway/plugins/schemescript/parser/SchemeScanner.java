@@ -204,6 +204,47 @@ public class SchemeScanner {
     }
 
 
+	private SchemeToken parseHereString() throws BadLocationException {
+		consume();
+		if (lookahead() == '<') {
+			consume();
+			String tag = readToEndOfLine();
+			String nextLine = readToEndOfLine();
+			while (nextLine != null && !nextLine.equals(tag)) {
+				nextLine = readToEndOfLine();
+			}
+
+			return SchemeToken.createString(getTokenOffset(), getTokenLength());
+		}
+		else {
+			return SchemeToken.createError(getTokenOffset(), getTokenLength());
+		}
+	}
+
+	
+	private String readToEndOfLine() {
+		int startPosition = getPosition();
+		if (isEndPosition(startPosition)) {
+			return null;
+		}
+		try {
+			IRegion lineInfo = mDocument.getLineInformationOfOffset(startPosition);
+			int length = lineInfo.getLength() - (startPosition - lineInfo.getOffset());
+			mTokenEnd = startPosition + length;
+			char ch = lookahead();
+			while (ch == '\n' || ch == '\r') {
+				consume();
+				ch = lookahead();
+			}
+			return mDocument.get(startPosition, length);
+
+		}
+		catch (BadLocationException e) {
+			return null;
+		}
+
+	}
+
     private SchemeToken parsePoundPrefixedToken() throws BadLocationException {
         char ch;
         consume();
@@ -232,6 +273,10 @@ public class SchemeScanner {
             {
                 return SchemeToken.createVectorPrefix(getTokenOffset());
             }
+            case '<':
+            {
+            	return parseHereString();
+            }
             case '|':
             {
                 consume();
@@ -239,7 +284,6 @@ public class SchemeScanner {
             }
             default:
                 return parseDefaultToken(ch);
-        //return SchemeToken.createError(getTokenOffset(), getTokenLength());
         }
     }
     
@@ -285,6 +329,15 @@ public class SchemeScanner {
     private final char lookahead() throws BadLocationException {
         return (mTokenEnd < mRangeEnd) ? mDocument.getChar(mTokenEnd) : EOR;
     }
+
+    private int getPosition() {
+		return mTokenEnd;
+	}
+
+	private boolean isEndPosition(int position) {
+		return position >= mRangeEnd;
+	}
+
 
     public String getText(int offset, int length) {
         try {
