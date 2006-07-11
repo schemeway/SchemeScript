@@ -22,6 +22,13 @@ public final class SchemeProcedureAction extends Action implements IWorkbenchWin
     private Procedure mCachedProcedure = null;
     private String    mProcedureName;
 
+	public SchemeProcedureAction() {
+	}
+	
+	public SchemeProcedureAction(String procedureName) {
+		mProcedureName = procedureName;
+	}
+    
     public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
             throws CoreException {
         
