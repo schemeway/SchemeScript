@@ -24,7 +24,8 @@
              (run-compound-change ;; make sure undo does the right thing
               (lambda ()
                 (delete-text (- end-outer start-outer) start-outer buffer)
-                (insert-text sexp start-outer buffer))
+                (insert-text sexp start-outer buffer)
+                (set-point start-outer buffer))
               buffer)))))))))
 
 
@@ -124,8 +125,7 @@
 (define (kill-next-sexp)
   (let ((buffer (current-buffer))
         (point (point)))
-    (with-forward-sexp 
-     point buffer
+    (with-forward-sexp point buffer
      (lambda (start end)
        (run-compound-change
         (lambda ()
@@ -137,12 +137,24 @@
 (define (kill-previous-sexp)
   (let ((buffer (current-buffer))
         (point (point)))
-    (with-backward-sexp
-     point buffer
+    (with-backward-sexp point buffer
      (lambda (start end)
        (run-compound-change
         (lambda ()
           (delete-text (- point start) start buffer)
           (set-point start))
         buffer)))))
+
+
+(define (comment-selection)
+  (let ((buffer (current-buffer)))
+    (with-selection
+     (lambda (start end)
+       (when (not (= start end))
+         (run-compound-change 
+          (lambda ()
+            (insert-text "|#" end buffer)
+            (insert-text "#|" start buffer))
+          buffer)))
+     buffer)))
 
