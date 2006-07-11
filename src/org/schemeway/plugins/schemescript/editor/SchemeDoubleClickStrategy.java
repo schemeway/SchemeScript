@@ -10,7 +10,7 @@ import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.parser.*;
 
 public class SchemeDoubleClickStrategy implements ITextDoubleClickStrategy {
-    private SexpNavigator mExplorer;
+    private SexpNavigator mExpressionNavigator;
     private ITextViewer mText;
 
     public void doubleClicked(ITextViewer part) {
@@ -22,46 +22,40 @@ public class SchemeDoubleClickStrategy implements ITextDoubleClickStrategy {
         if (pos < 0)
             return;
 
-        boolean done = selectComment(pos) || selectString(pos) || selectSpaces(pos) || selectSExpression(pos);
+        if (! (selectComment(pos) || selectString(pos) || selectSpaces(pos))) {
+        	selectSExpression(pos);
+        }
     }
 
     private void createExplorer(ITextViewer part) {
-        if (mExplorer == null || mExplorer.getDocument() != part.getDocument()) {
-            if (mExplorer != null)
-                mExplorer.dispose();
-            mExplorer = new SexpNavigator(part.getDocument());
+        if (mExpressionNavigator == null || mExpressionNavigator.getDocument() != part.getDocument()) {
+            if (mExpressionNavigator != null)
+                mExpressionNavigator.dispose();
+            mExpressionNavigator = new SexpNavigator(part.getDocument());
         }
     }
 
     protected boolean selectComment(int caretPos) {
-        try {
-            ITypedRegion partition = mExplorer.getDocument().getPartition(caretPos);
-            if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
-                selectRange(partition.getOffset(), partition.getOffset() + partition.getLength());
-                return true;
-            }
-        }
-        catch (BadLocationException exception) {
-        }
+        ITypedRegion partition = SchemeTextUtilities.getPartition(mExpressionNavigator.getDocument(), caretPos);
+		if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
+		    selectRange(partition.getOffset(), partition.getOffset() + partition.getLength());
+		    return true;
+		}
         return false;
     }
 
     protected boolean selectString(int caretPos) {
-        try {
-            ITypedRegion partition = mExplorer.getDocument().getPartition(caretPos);
-            if (SchemePartitionScanner.isStringPartition(partition.getType())) {
-                selectRange(partition.getOffset(), partition.getOffset() + partition.getLength());
-                return true;
-            }
-        }
-        catch (BadLocationException exception) {
-        }
+        ITypedRegion partition = SchemeTextUtilities.getPartition(mExpressionNavigator.getDocument(), caretPos);
+		if (SchemePartitionScanner.isStringPartition(partition.getType())) {
+		    selectRange(partition.getOffset(), partition.getOffset() + partition.getLength());
+		    return true;
+		}
         return false;
     }
 
     protected boolean selectSpaces(int caretPos) {
         try {
-            IDocument document = mExplorer.getDocument();
+            IDocument document = mExpressionNavigator.getDocument();
             int length = document.getLength();
             if (caretPos > 0 && caretPos < length) {
                 char chAfter = document.getChar(caretPos);
@@ -92,11 +86,11 @@ public class SchemeDoubleClickStrategy implements ITextDoubleClickStrategy {
 
     protected boolean selectSExpression(int caretPos) {
         try {
-            IDocument document = mExplorer.getDocument();
+            IDocument document = mExpressionNavigator.getDocument();
             char ch = document.getChar(caretPos);
             if (ch == '(') {
-                if (mExplorer.forwardSexpression(caretPos)) {
-                    selectRange(mExplorer.getSexpStart(), mExplorer.getSexpEnd());
+                if (mExpressionNavigator.forwardSexpression(caretPos)) {
+                    selectRange(mExpressionNavigator.getSexpStart(), mExpressionNavigator.getSexpEnd());
                     return true;
                 }
                 else
@@ -104,9 +98,9 @@ public class SchemeDoubleClickStrategy implements ITextDoubleClickStrategy {
             }
             else
                 if (ch != ')' && !SchemeScannerUtilities.isWhitespaceChar(ch)) {
-                    if (mExplorer.forwardSexpression(caretPos)) {
-                        mExplorer.backwardSexpression(mExplorer.getSexpEnd());
-                        selectRange(mExplorer.getSexpStart(), mExplorer.getSexpEnd());
+                    if (mExpressionNavigator.forwardSexpression(caretPos)) {
+                        mExpressionNavigator.backwardSexpression(mExpressionNavigator.getSexpEnd());
+                        selectRange(mExpressionNavigator.getSexpStart(), mExpressionNavigator.getSexpEnd());
                         return true;
                     }
                     else
@@ -119,8 +113,8 @@ public class SchemeDoubleClickStrategy implements ITextDoubleClickStrategy {
                 return false;
 
             if (ch == ')') {
-                if (mExplorer.backwardSexpression(caretPos)) {
-                    selectRange(mExplorer.getSexpStart(), mExplorer.getSexpEnd());
+                if (mExpressionNavigator.backwardSexpression(caretPos)) {
+                    selectRange(mExpressionNavigator.getSexpStart(), mExpressionNavigator.getSexpEnd());
                     return true;
                 }
             }

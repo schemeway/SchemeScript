@@ -57,48 +57,43 @@ public final class SexpUtils {
     }
 
     public static IRegion findEnclosingSexpressions(IDocument document, int start, int end) {
-        try {
-            SexpNavigator navigator = new SexpNavigator(document);
+        SexpNavigator navigator = new SexpNavigator(document);
 
-            ITypedRegion partition = document.getPartition(start);
-            while (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
-                start = partition.getOffset() + partition.getLength();
-                partition = document.getPartition(start);
-            }
+		ITypedRegion partition = SchemeTextUtilities.getPartition(document, start);
+		while (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
+		    start = partition.getOffset() + partition.getLength();
+		    partition = SchemeTextUtilities.getPartition(document, start);
+		}
 
-            partition = document.getPartition(end);
-            while (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
-                end = partition.getOffset() - 1;
-                partition = document.getPartition(end);
-            }
-            if (start >= end)
-                return null;
+		partition = SchemeTextUtilities.getPartition(document, end);
+		while (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
+		    end = partition.getOffset() - 1;
+		    partition = SchemeTextUtilities.getPartition(document, end);
+		}
+		if (start >= end)
+		    return null;
 
-            int index = end;
-            while (navigator.upSexpression(index) && navigator.getSexpStart() >= start) {
-                if (!navigator.forwardSexpression(navigator.getSexpStart())) {
-                    return null;
-                }
-                index = navigator.getSexpEnd();
-            }
-            if (end == index && navigator.forwardSexpression(end) && navigator.getSexpStart() < end) {
-                end = index = navigator.getSexpEnd();
-            }
-            end = index;
+		int index = end;
+		while (navigator.upSexpression(index) && navigator.getSexpStart() >= start) {
+		    if (!navigator.forwardSexpression(navigator.getSexpStart())) {
+		        return null;
+		    }
+		    index = navigator.getSexpEnd();
+		}
+		if (end == index && navigator.forwardSexpression(end) && navigator.getSexpStart() < end) {
+		    end = index = navigator.getSexpEnd();
+		}
+		end = index;
 
-            while (index > start) {
-                if (navigator.backwardSexpression(index) && navigator.getSexpEnd() > start)
-                    index = navigator.getSexpStart();
-                else
-                    break;
-            }
-            start = index;
+		while (index > start) {
+		    if (navigator.backwardSexpression(index) && navigator.getSexpEnd() > start)
+		        index = navigator.getSexpStart();
+		    else
+		        break;
+		}
+		start = index;
 
-            return new Region(start, end - start);
-        }
-        catch (BadLocationException e) {
-            return null;
-        }
+		return new Region(start, end - start);
     }
 
     public static void deleteBackwardSexp(IDocument document, DocumentCommand command) throws BadLocationException {
@@ -119,7 +114,7 @@ public final class SexpUtils {
 
             // if the start of the region is inside a comment, go to the start
             // of the comment partition
-            partition = document.getPartition(startOffset);
+            partition = SchemeTextUtilities.getPartition(document, startOffset);
             if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT && partition.getOffset() < startOffset) {
                 startOffset = partition.getOffset();
             }
@@ -130,7 +125,7 @@ public final class SexpUtils {
 
             // if the end of the region is inside a comment, move the end just
             // before the comment partition
-            partition = document.getPartition(endOffset);
+            partition = SchemeTextUtilities.getPartition(document, endOffset);
             if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT && endOffset > partition.getOffset()) {
                 endOffset = partition.getOffset();
             }

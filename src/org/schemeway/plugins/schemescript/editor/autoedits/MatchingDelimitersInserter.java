@@ -25,7 +25,7 @@ public class MatchingDelimitersInserter implements IAutoEditStrategy {
 
             switch (insertedChar) {
                 case '"':
-                    if (document.getChar(command.offset - 1) == '"') {
+                    if (command.offset > 0 && document.getChar(command.offset - 1) == '"') {
                         command.doit = false;
                     }
                     if (command.offset >= 2

@@ -11,6 +11,8 @@ import org.eclipse.jface.text.rules.*;
 
 public class SchemeDocumentSetupParticipant implements IDocumentSetupParticipant {
 
+	public static final String SCHEME_PARTITIONING = "___scheme_partitioning_";
+	
     public SchemeDocumentSetupParticipant() {
     }
 
@@ -21,7 +23,8 @@ public class SchemeDocumentSetupParticipant implements IDocumentSetupParticipant
         };
 
         IDocumentPartitioner partitioner = new FastPartitioner(new SchemePartitionScanner(), partitions);
+        IDocumentExtension3 documentExtension3 = (IDocumentExtension3) document;
+        documentExtension3.setDocumentPartitioner(SCHEME_PARTITIONING, partitioner);
         partitioner.connect(document);
-        document.setDocumentPartitioner(partitioner);
     }
 }

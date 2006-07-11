@@ -6,8 +6,8 @@
 package org.schemeway.plugins.schemescript;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.graphics.*;
 
 public final class SchemeScriptImageRegistry {
 
@@ -24,6 +24,6 @@ public final class SchemeScriptImageRegistry {
     }
 
     public static ImageDescriptor getImageDescriptor(String relativePath) {
-        return ImageDescriptor.createFromURL(SchemeScriptPlugin.getDefault().find(new Path(relativePath)));
+        return ImageDescriptor.createFromURL(SchemeScriptPlugin.findFile(new Path(relativePath)));
     }
 }

@@ -10,7 +10,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
-import org.schemeway.plugins.schemescript.editor.SchemeEditor;
+import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.indentation.SchemeIndentationContext;
 import org.schemeway.plugins.schemescript.indentation.SchemeIndentationStrategy;
 import org.schemeway.plugins.schemescript.parser.SexpNavigator;
@@ -68,7 +68,7 @@ public class FormatAction extends SchemeAction {
         int lineOffset = lineInfo.getOffset();
         int lineEnd = lineInfo.getLength() + lineOffset;
         
-        ITypedRegion partition = document.getPartition(lineOffset);
+        ITypedRegion partition = SchemeTextUtilities.getPartition(document, lineOffset);
         context.setOffset(lineOffset);
 
         // re-indent line
@@ -92,7 +92,7 @@ public class FormatAction extends SchemeAction {
         ITypedRegion partition;
         
         int index = lineLastChar;
-        partition = document.getPartition(index);
+        partition = SchemeTextUtilities.getPartition(document, index);
         if (partition.getType() == IDocument.DEFAULT_CONTENT_TYPE) {
         	char c = document.getChar(index);
             while (Character.isWhitespace(c) && !(c == '\n' || c == '\r')) {

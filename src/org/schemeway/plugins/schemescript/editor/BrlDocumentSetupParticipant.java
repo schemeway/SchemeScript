@@ -23,7 +23,8 @@ public class BrlDocumentSetupParticipant implements IDocumentSetupParticipant {
         };
 
         IDocumentPartitioner partitioner = new FastPartitioner(new BrlPartitionScanner(), partitions);
+        IDocumentExtension3 documentExtension3 = (IDocumentExtension3) document;
+        documentExtension3.setDocumentPartitioner(SchemeDocumentSetupParticipant.SCHEME_PARTITIONING, partitioner);
         partitioner.connect(document);
-        document.setDocumentPartitioner(partitioner);
-    }
+   }
 }

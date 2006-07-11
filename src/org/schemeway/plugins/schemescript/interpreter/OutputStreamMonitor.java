@@ -17,8 +17,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IFlushableStreamMonitor;
@@ -273,7 +272,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
             Object[] copiedListeners= fListeners.toArray();
             for (int i= 0; i < copiedListeners.length; i++) {
                 fListener = (IStreamListener) copiedListeners[i];
-                Platform.run(this);
+                SafeRunner.run(this);
             }
             fListener = null;
             fText = null;       

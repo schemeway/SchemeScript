@@ -59,55 +59,56 @@ public class ForwardTokenIterator implements ISchemeTokenIterator {
     }
 
     public void setPosition(int position) {
-        try {
-            if (position < mDocument.getLength()) {
-                mCurrentPartition = mDocument.getPartition(position);
-                if (SchemePartitionScanner.isStringPartition(mCurrentPartition.getType())) {
-                    mPosition = mCurrentPartition.getOffset();
-                    mEnd = mPosition + mCurrentPartition.getLength();
-                }
-                else
-                    if (mCurrentPartition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
-                        mPosition = mCurrentPartition.getOffset();
-                        mEnd = mPosition + mCurrentPartition.getLength();
-                    }
-                    else {
-                        mPosition = position;
-                        mEnd = mCurrentPartition.getOffset() + mCurrentPartition.getLength();
-                        mScanner.setRange(mDocument,
-                                          position,
-                                          (mCurrentPartition.getOffset() + mCurrentPartition.getLength()) - mPosition);
-                    }
-            }
-            else {
-                mPosition = mEnd = position;
-                mCurrentPartition = null;
-            }
-        }
-        catch (BadLocationException exception) {
-            mCurrentPartition = null;
-        }
+        if (position < mDocument.getLength()) {
+		    mCurrentPartition = SchemeTextUtilities.getPartition(mDocument, position);
+		    if (SchemePartitionScanner.isStringPartition(mCurrentPartition.getType())) {
+		        mPosition = mCurrentPartition.getOffset();
+		        mEnd = mPosition + mCurrentPartition.getLength();
+		    }
+		    else
+		        if (mCurrentPartition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
+		            mPosition = mCurrentPartition.getOffset();
+		            mEnd = mPosition + mCurrentPartition.getLength();
+		        }
+		        else {
+		            mPosition = position;
+		            mEnd = mCurrentPartition.getOffset() + mCurrentPartition.getLength();
+		            mScanner.setRange(mDocument,
+		                              position,
+		                              (mCurrentPartition.getOffset() + mCurrentPartition.getLength()) - mPosition);
+		        }
+		}
+		else {
+		    mPosition = mEnd = position;
+		    mCurrentPartition = null;
+		}
     }
 
+	private ITypedRegion getCurrentPartition() {
+		return SchemeTextUtilities.getPartition(mDocument, mPosition);
+	}
+
     private void fetchNextPartition() {
-        try {
-            // skip over comment partitions...
-            if (mPosition < mDocument.getLength()) {
-                mCurrentPartition = mDocument.getPartition(mPosition);
-                while (mCurrentPartition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
-                    mPosition = mCurrentPartition.getOffset() + mCurrentPartition.getLength();
-                    mCurrentPartition = mDocument.getPartition(mPosition);
-                }
-                mPosition = mCurrentPartition.getOffset();
-                mEnd = mPosition + mCurrentPartition.getLength();
-                if (!SchemePartitionScanner.isStringPartition(mCurrentPartition.getType()))
-                    mScanner.setRange(mDocument, mPosition, mEnd - mPosition);
-            }
-            else
-                mCurrentPartition = null;
-        }
-        catch (BadLocationException exception) {
-            mCurrentPartition = null;
-        }
+        // skip over comment partitions...
+		if (mPosition < mDocument.getLength()) {
+		    mCurrentPartition = getCurrentPartition();
+		    if (mCurrentPartition == null)
+		    	return;
+		    
+		    while (mCurrentPartition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
+		        mPosition = mCurrentPartition.getOffset() + mCurrentPartition.getLength();
+		        ITypedRegion partition = getCurrentPartition();
+		        if (partition == null)
+		        	break;
+		        
+		        mCurrentPartition = partition;
+		    }
+		    mPosition = mCurrentPartition.getOffset();
+		    mEnd = mPosition + mCurrentPartition.getLength();
+		    if (!SchemePartitionScanner.isStringPartition(mCurrentPartition.getType()))
+		        mScanner.setRange(mDocument, mPosition, mEnd - mPosition);
+		}
+		else
+		    mCurrentPartition = null;
     }
 }

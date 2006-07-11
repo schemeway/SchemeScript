@@ -36,7 +36,7 @@ public class SiscProcess implements IInterpreterProcess {
 
 				final AppContext appContext = new AppContext();
 				Context.setDefaultAppContext(appContext);
-				URL heapUrl = SchemeScriptPlugin.getDefault().find(new Path("/lib/sisc.shp"));
+				URL heapUrl = SchemeScriptPlugin.findFile(new Path("/lib/sisc.shp"));
 				appContext.addHeap(AppContext.openHeap(heapUrl));
 				
 				final DynamicEnvironment env = new DynamicEnvironment(appContext, inputStream,

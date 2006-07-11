@@ -17,7 +17,7 @@ public class StringDeleter implements IAutoEditStrategy {
     public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
         try {
             if (command.length == 1 && command.text.length() == 0) {
-                ITypedRegion partition = document.getPartition(command.offset);
+                ITypedRegion partition = SchemeTextUtilities.getPartition(document, command.offset);
 
                 if (partition.getType() == SchemePartitionScanner.SCHEME_STRING) {
                     if (command.offset == partition.getOffset()
@@ -42,7 +42,7 @@ public class StringDeleter implements IAutoEditStrategy {
                 }
             }
             else if (command.length > 1 && command.text.length() == 0) {
-                ITypedRegion partition = document.getPartition(command.offset);
+                ITypedRegion partition = SchemeTextUtilities.getPartition(document, command.offset);
                 
                 if (partition.getType() == SchemePartitionScanner.SCHEME_STRING
                         && (command.offset + command.length) > (partition.getOffset() + partition.getLength()))

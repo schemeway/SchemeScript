@@ -166,14 +166,14 @@ public final void paint(final int reason) {
             
             if (selection.x > 0
                 && SchemeScannerUtilities.isClosingParenthesis(previousChar)
-                && document.getPartition(selection.x - 1).getType() == IDocument.DEFAULT_CONTENT_TYPE) {
+                && SchemeTextUtilities.getPartition(document, selection.x - 1).getType() == IDocument.DEFAULT_CONTENT_TYPE) {
                 closeToParen = true;
             }
             else {
                 nextChar = document.getChar(selection.x);
                 if (selection.x < document.getLength() - 1
                     && SchemeScannerUtilities.isOpeningParenthesis(nextChar)
-                    && document.getPartition(selection.x).getType() == IDocument.DEFAULT_CONTENT_TYPE) {
+                    && SchemeTextUtilities.getPartition(document, selection.x).getType() == IDocument.DEFAULT_CONTENT_TYPE) {
                     closeToParen = true;
                     backward = false;
                 }

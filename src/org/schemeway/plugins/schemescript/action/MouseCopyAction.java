@@ -39,7 +39,7 @@ public class MouseCopyAction extends SchemeAction implements MouseMoveListener {
             IRegion lineInfo = document.getLineInformationOfOffset(mouseOffset);
             int lineStart = lineInfo.getOffset();
 
-            if (document.getPartition(mouseOffset).getType() == SchemePartitionScanner.SCHEME_COMMENT)
+            if (SchemeTextUtilities.getPartition(document, mouseOffset).getType() == SchemePartitionScanner.SCHEME_COMMENT)
                 return;
 
             if (mouseOffset >= 0 && mouseOffset < editor.getDocument().getLength()) {

@@ -58,13 +58,8 @@ public class SchemeDefaultScanner implements ITokenScanner {
     }
 
     public void setRange(IDocument document, int offset, int length) {
-        try {
-            ITypedRegion partition = document.getPartition(offset);
-            mCurrentOffset = partition.getOffset();
-            mCurrentLength = partition.getLength();
-            mEmpty = false;
-        }
-        catch (BadLocationException exception) {
-        }
+        mCurrentOffset = offset;
+		mCurrentLength = length;
+		mEmpty = false;
     }
 }

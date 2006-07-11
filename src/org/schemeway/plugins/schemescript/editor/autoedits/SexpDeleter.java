@@ -37,7 +37,7 @@ public class SexpDeleter implements IAutoEditStrategy {
                 }
             }
             else if (command.text.length() == 0 && command.length > 1) {
-                ITypedRegion startPartition = document.getPartition(command.offset);
+                ITypedRegion startPartition = SchemeTextUtilities.getPartition(document, command.offset);
                 // FIXME - This is a hack to prevent already deleted characters from CommentDeleter
                 // to be reinserted...
                 if (startPartition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {

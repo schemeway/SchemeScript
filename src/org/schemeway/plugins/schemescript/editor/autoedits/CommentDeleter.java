@@ -20,7 +20,7 @@ public class CommentDeleter implements IAutoEditStrategy {
             return;
 
         try {
-            ITypedRegion partition = document.getPartition(command.offset);
+            ITypedRegion partition = SchemeTextUtilities.getPartition(document, command.offset);
             if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
                 if (command.offset == partition.getOffset() && document.getChar(command.offset) != ';') {
                     command.text = "";

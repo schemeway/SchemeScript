@@ -9,8 +9,10 @@ import java.util.regex.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.debug.ui.console.*;
+import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.*;
+import org.eclipse.ui.console.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
@@ -83,7 +85,7 @@ public class SchemeErrorLineTracker implements IConsoleLineTracker, IPropertyCha
                 
                 IFile file = findFile(filename);
                 if (file != null) {
-                    mConsole.addLink(new FileLink(file, null, -1, -1, lineno), linkOffset, linkLength);
+                    mConsole.addLink((IHyperlink) new FileLink(file, null, -1, -1, lineno), linkOffset, linkLength);
                 }
             }
         }

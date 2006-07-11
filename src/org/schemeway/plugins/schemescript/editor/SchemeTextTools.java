@@ -101,6 +101,7 @@ public class SchemeTextTools {
 
     public IPresentationReconciler getPresentationReconciler() {
         PresentationReconciler reconciler = new PresentationReconciler();
+        reconciler.setDocumentPartitioning(SchemeDocumentSetupParticipant.SCHEME_PARTITIONING);
 
         DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getSchemeColoringScanner());
         reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);

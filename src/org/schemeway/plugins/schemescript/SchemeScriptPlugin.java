@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript;
 
+import java.net.*;
 import java.util.*;
 
 import kawa.standard.*;
@@ -83,8 +84,12 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     
     protected void loadConfigFile(String filename) {
     	if (filename != null) {
-    		KawaProxy.loadFile(find (new Path(filename)). toString());
+    		KawaProxy.loadFile(findFile(new Path(filename)).toString());
     	}
+    }
+    
+    public static URL findFile(IPath path) {
+    	return FileLocator.find(getDefault().getBundle(), path, null);
     }
     
     /**
@@ -137,7 +142,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     }
     
     public void setInterpreter(InterpreterType type) {
-        Assert.isNotNull(type);
+        
         mCurrentInterpreter = type;
         getPreferenceStore().setValue(INTERNAL_INTERPRETER_PREF, type.getID());
     }

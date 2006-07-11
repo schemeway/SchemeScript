@@ -19,9 +19,9 @@ public final class SchemeOutlineImageProvider {
     
     static {
         try {
-            CHAPTER_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/chapter.gif")).openStream());
-            SECTION_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/section.gif")).openStream());
-            DEFINITION_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.getDefault().find(new Path("icons/definition.gif")).openStream());
+            CHAPTER_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.findFile(new Path("icons/chapter.gif")).openStream());
+            SECTION_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.findFile(new Path("icons/section.gif")).openStream());
+            DEFINITION_IMAGE = new Image(Display.getDefault(), SchemeScriptPlugin.findFile(new Path("icons/definition.gif")).openStream());
         }
         catch (Throwable exception) {
             CHAPTER_IMAGE = null;

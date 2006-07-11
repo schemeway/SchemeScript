@@ -56,7 +56,7 @@ public class SchemeEditor extends TextEditor {
     private IAutoEditStrategy mStringDeleter;
     private IAutoEditStrategy mCommentDeleter;
     
-    private static List sSaveHooks = new ArrayList(); 
+    private static List sSaveHooks = new ArrayList();
 
     public SchemeEditor() {
         super();
@@ -289,17 +289,14 @@ public class SchemeEditor extends TextEditor {
 
     public static ISymbolDictionary getSchemeSymbolDictionary() {
         if (mDictionary == null) {
-            URL url = SchemeScriptPlugin.getDefault().find(new Path("conf/forms.scm"));
+            URL url = SchemeScriptPlugin.findFile(new Path("conf/forms.scm"));
             mDictionary = UserDictionary.createInstance(KawaDictionary.getInstance(), "scm,ss,sch,brl,krl", url);
         }
         return mDictionary;
     }
 
     protected void initializeKeyBindingScopes() {
-        setKeyBindingScopes(new String[]
-        {
-            "Scheme Editing", "Edit"
-        });
+        setKeyBindingScopes(new String[] {"Scheme Editing"});
     }
 
     //

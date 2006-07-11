@@ -86,7 +86,7 @@ public final class ContentUtilities {
 	    int offset = 0;
 	    int documentLength = document.getLength();
 	    while (offset < documentLength) {
-	        ITypedRegion partition = document.getPartition(offset);
+	        ITypedRegion partition = SchemeTextUtilities.getPartition(document, offset);
 	        if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
 	            String text = document.get(partition.getOffset(), partition.getLength());
 	            text = text.trim();
