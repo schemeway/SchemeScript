@@ -12,7 +12,6 @@
 (define-namespace SymbolReferencesManager "class:org.schemeway.plugins.schemescript.dictionary.SymbolReferencesManager")
 (define-namespace SymbolReferencesTable "class:org.schemeway.plugins.schemescript.dictionary.SymbolReferencesTable")
 (define-namespace Reference "class:org.schemeway.plugins.schemescript.dictionary.Reference")
-(define-namespace ModelWithExitHook "class:org.schemeway.plugins.schemescript.dictionary.LinkedModeModelWithExitHook")
 
 (define-namespace LinkedModeModel "class:org.eclipse.jface.text.link.LinkedModeModel")
 (define-namespace LinkedPositionGroup "class:org.eclipse.jface.text.link.LinkedPositionGroup")
@@ -44,14 +43,24 @@
 ;;;
 
 
-(define (rename-scheme-symbol offset len name #!optional (resource #f))
-  
+(define (make-model-linking-listener thunk)
+  (object (<org.eclipse.jface.text.link.ILinkedModeListener> <Object>)
+    ((left (model :: <org.eclipse.jface.text.link.LinkedModeModel>) (flags :: <int>)) :: <void>
+     (thunk))
+    ((suspend (model :: <org.eclipse.jface.text.link.LinkedModeModel>)) :: <void>
+     #!void)
+    ((resume (model :: <org.eclipse.jface.text.link.LinkedModeModel>) (flags :: <int>)) :: <void>
+     #!void)))
+
+
+
+(define (rename-symbol offset len name #!optional (resource #f))
+
   (define buffer-manager     (FileBuffers:getTextFileBufferManager))
   (define references-manager (SchemeScriptPlugin:getReferencesManager))
   (define references-table   (SymbolReferencesManager:getSymbolReferencesTable references-manager))
-  
+
   (define all-resources '())
-  
   
   (define (ref->document reference)
     (let ((resource (Reference:.resource reference)))
@@ -65,7 +74,8 @@
                (let ((buffer (ITextFileBufferManager:getTextFileBuffer buffer-manager path)))
                  (set! all-resources (cons (cons resource buffer) all-resources))
                  (ITextFileBuffer:getDocument buffer)))))))
-  
+
+
   
   (define (close-non-shared-documents)
     (for-each (lambda (resource/buffer)
@@ -77,22 +87,24 @@
                   (SymbolReferencesManager:scanResourceForSymbols references-manager resource)))
               all-resources)
     (set! all-resources '()))
-  
-  
+
+
   (define (all-documents-open)
     (every (lambda (resource/buffer)
              (IFileBuffer:isShared (cdr resource/buffer)))
            all-resources))
-  
-  
-  (define (ui-rename model buffer)
+
+
+  (define (rename/ui model buffer)
     (if (LinkedModeModel:tryInstall model)
-        (let ((ui (LinkedModeUI:new model (SchemeEditor:getTextViewer buffer))))
+        (let* ((viewer :: <org.eclipse.jface.text.ITextViewer> (SchemeEditor:getTextViewer buffer))
+               (ui (LinkedModeUI:new model viewer)))
+          (LinkedModeUI:setCyclingMode ui (LinkedModeUI:.CYCLE_ALWAYS))
           (LinkedModeUI:enter ui))
         (message-box "Renaming problem" "Unable to create linked mode model.")))
-  
-  
-  (define (global-rename model buffer)
+
+
+  (define (rename/globally model buffer)
     (if (LinkedModeModel:tryInstall model)
         (let ((new-name (ask-for-symbol "Rename Symbol Globally" "New name:" name)))
           (when new-name
@@ -101,31 +113,34 @@
           (LinkedModeModel:exit model 1))
         (message-box "Renaming problem" "Unable to create linked mode model.")))
 
-  
+
   (define (get-references)
-    (if resource
-        (array->list (SymbolReferencesTable:getReferences references-table name resource))
-        (array->list (SymbolReferencesTable:getReferences references-table name))))
-  
-  
+    (array->list
+     (if resource
+         (SymbolReferencesTable:getReferences references-table name resource)
+         (SymbolReferencesTable:getReferences references-table name))))
+
+
   (define (create-and-populate-linked-mode-model buffer)
-    (let* ((model (ModelWithExitHook:new close-non-shared-documents))
+    (let* ((model (LinkedModeModel:new))
            (group (LinkedPositionGroup:new)))
       (for-each (lambda (ref)
                   (let ((position (LinkedPosition:new (ref->document ref) (Reference:.offset ref) (Reference:.length ref) 0)))
                     (LinkedPositionGroup:addPosition group position)))
                 (get-references))
+      
       (LinkedModeModel:addGroup model group)
+      (LinkedModeModel:addLinkingListener model (make-model-linking-listener close-non-shared-documents))
       model))
-  
+
 
   (let ((buffer (current-buffer)))
     (scan-references buffer)
     (let ((model (create-and-populate-linked-mode-model buffer)))
       (if (= 1 (length all-resources))
-          (ui-rename model buffer)
+          (rename/ui model buffer)
           (try-finally
-              (global-rename model buffer)
+              (rename/globally model buffer)
             (close-non-shared-documents))))))
 
 
@@ -135,7 +150,7 @@
       (with-buffer-text
        start end
        (lambda (text)
-         (rename-scheme-symbol start (- end start) text))))))
+         (rename-symbol start (- end start) text))))))
 
 
 (define (interactive-rename-symbol-locally)
@@ -144,5 +159,5 @@
       (with-buffer-text
        start end
        (lambda (text)
-         (rename-scheme-symbol start (- end start) text (buffer-file (current-buffer))))))))
+         (rename-symbol start (- end start) text (buffer-file (current-buffer))))))))
 
