@@ -28,7 +28,7 @@ public class CommentAction extends SchemeAction {
 
 			final int startLine = document.getLineOfOffset(selection.getOffset());
 			final int endLine = document.getLineOfOffset(selection.getOffset() + selection.getLength());
-			if (!(document.getPartition(selection.getOffset()).getType() == SchemePartitionScanner.SCHEME_COMMENT)
+			if (!(SchemeTextUtilities.getPartition(document, selection.getOffset()).getType() == SchemePartitionScanner.SCHEME_COMMENT)
 					|| (selection.getLength() != 0)) {
 				editor.runCompoundChange(new Runnable() {
 					public void run() {
@@ -50,7 +50,7 @@ public class CommentAction extends SchemeAction {
 
 	private void removeCommentFromPartition(IDocument document, int offset) {
 		try {
-			ITypedRegion partition = document.getPartition(offset);
+			ITypedRegion partition = SchemeTextUtilities.getPartition(document, offset);
 			
 			if (partition.getType() == SchemePartitionScanner.SCHEME_COMMENT) {
 				int partitionOffset = partition.getOffset();
