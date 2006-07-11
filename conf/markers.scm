@@ -45,6 +45,17 @@
     (Hashtable:put attr *line-number-attr*  (java.lang.Integer:new line))
     (MarkerUtilities:createMarker file attr marker-type)))
 
+(define (add-marker/offset! level (file :: <org.eclipse.core.resources.IResource>) (line :: <int>) (start :: <int>) (end :: <int>) message)
+  (let ((attr (Hashtable:new)))
+    (Hashtable:put attr *message-attr*      (as <String> message))
+    (Hashtable:put attr *text-attr*         (as <String> message))
+    (Hashtable:put attr *severity-attr*     (let ((type :: <int> (level->marker-type level)))
+                                              (java.lang.Integer:new type)))
+    (Hashtable:put attr *line-number-attr*  (java.lang.Integer:new line))
+    (Hashtable:put attr *char-start-attr*   (java.lang.Integer:new start))
+    (Hashtable:put attr *char-end-attr*     (java.lang.Integer:new end))
+    (MarkerUtilities:createMarker file attr *error-marker-id*)))
+
 
 (define (add-task! (file :: <org.eclipse.core.resources.IResource>) (line :: <int>)(start :: <int>) (end :: <int>) message)
   (let ((attr (Hashtable:new)))
