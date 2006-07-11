@@ -8,58 +8,113 @@ package org.schemeway.plugins.schemescript.editor;
 import java.util.*;
 
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.ui.texteditor.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
 
 public class SchemeTextHover implements ITextHover {
-    private SchemeEditor mEditor;
-    
-    
-    public SchemeTextHover(SchemeEditor editor) {
-        super();
-        mEditor = editor;
-    }
-    
-    protected SchemeEditor getEditor() {
-        return mEditor;
-    }
+	private SchemeEditor mEditor;
 
-    public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-        if (hoverRegion == null)
-            return null;
-        
-        try {
-            String symbol = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
-            SymbolEntry[] entries = getEditor().getSymbolDictionary().findSymbol(symbol);
-            if (entries.length == 0) {
-                return null;
-            }
-            Set descriptionSet = new HashSet();
-            
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(entries[0].getDescription());
-            descriptionSet.add(entries[0].getDescription());
-            for (int i=1; i<entries.length; i++) {
-                String description = entries[i].getDescription();
-                if (!descriptionSet.contains(description)) {
-                    buffer.append('\n');
-                    buffer.append(description);
-                    descriptionSet.add(description);
-                }
-            }
-            return buffer.toString();
-        }
-        catch (BadLocationException exception) {
-            return null;
-        }
-        
-    }
+	public SchemeTextHover(SchemeEditor editor) {
+		super();
+		mEditor = editor;
+	}
 
-    public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-        try {
-            return SchemeTextUtilities.findSymbolRegionAroundPoint(textViewer.getDocument(), offset);
-        }
-        catch (BadLocationException exception) {
-            return null;
-        }
-    }
+	protected SchemeEditor getEditor() {
+		return mEditor;
+	}
+
+	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
+		if (hoverRegion == null)
+			return null;
+
+		String[] infoMessages = findDefinitions(textViewer.getDocument(), getEditor().getSymbolDictionary(),
+				hoverRegion);
+
+		if (infoMessages == null || infoMessages.length == 0) {
+			infoMessages = findAnnotations(textViewer, hoverRegion);
+		}
+		if (infoMessages == null || infoMessages.length == 0) {
+			return null;
+		}
+
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < infoMessages.length; i++) {
+			if (i > 0)
+				buffer.append('\n');
+			buffer.append(infoMessages[i]);
+		}
+		return buffer.toString();
+	}
+
+	private String[] findDefinitions(IDocument document, ISymbolDictionary dictionary, IRegion hoverRegion) {
+		List defs = new ArrayList();
+
+		try {
+			String symbol = document.get(hoverRegion.getOffset(), hoverRegion.getLength());
+			SymbolEntry[] entries = getEditor().getSymbolDictionary().findSymbol(symbol);
+
+			for (int i = 0; i < entries.length; i++) {
+				String description = entries[i].getDescription();
+				if (!defs.contains(description)) {
+					defs.add(description);
+				}
+			}
+		}
+		catch (BadLocationException e) {
+		}
+
+		return (String[]) defs.toArray(new String[defs.size()]);
+	}
+
+	private String[] findAnnotations(ITextViewer textViewer, IRegion hoverRegion) {
+		List messages = new ArrayList();
+		
+		if (textViewer instanceof ISourceViewer) {
+			ISourceViewer sourceViewer = (ISourceViewer) textViewer;
+			IAnnotationModel model = sourceViewer.getAnnotationModel();
+			Iterator iterator = model.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				Annotation annotation = (Annotation) iterator.next();
+				Position position = model.getPosition(annotation);
+				if (position.offset <= hoverRegion.getOffset()
+						&& hoverRegion.getOffset() <= position.offset + position.length
+						&& annotation instanceof MarkerAnnotation) {
+					messages.add(annotation.getText());
+				}
+			}
+		}
+		return (String[]) messages.toArray(new String[messages.size()]);
+	}
+
+	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
+		try {
+			IRegion result = SchemeTextUtilities.findSymbolRegionAroundPoint(textViewer.getDocument(), offset);
+			if (result == null) {
+				result = findAnnotationRegion(textViewer, offset);
+			}
+
+			return result;
+		}
+		catch (BadLocationException exception) {
+			return null;
+		}
+	}
+
+	private IRegion findAnnotationRegion(ITextViewer textViewer, int offset) {
+		if (textViewer instanceof ISourceViewer) {
+			ISourceViewer sourceViewer = (ISourceViewer) textViewer;
+			IAnnotationModel model = sourceViewer.getAnnotationModel();
+			Iterator iterator = model.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				Annotation annotation = (Annotation) iterator.next();
+				Position position = model.getPosition(annotation);
+				if (position.offset <= offset && offset <= position.offset + position.length) {
+					return new Region(position.offset, position.length);
+				}
+			}
+		}
+		return null;
+	}
+
 }
