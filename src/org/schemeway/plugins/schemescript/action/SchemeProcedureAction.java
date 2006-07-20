@@ -10,6 +10,7 @@ import gnu.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.interpreter.*;
@@ -44,6 +45,11 @@ public final class SchemeProcedureAction extends Action implements IWorkbenchWin
     public void init(IWorkbenchWindow window) {
     }
 
+    public void runWithEvent(Event event) {
+    	super.runWithEvent(event);
+    	run(null);
+    }
+    
     public void run(IAction action) {
         Procedure proc = getProcedure(mProcedureName);
         
