@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SchemeScript Plug-in
 Bundle-SymbolicName: org.schemeway.plugins.schemescript; singleton:=true
-Bundle-Version: 1.2.4
+Bundle-Version: 1.2.12
 Bundle-ClassPath: schemescript.jar,
  lib/kawa.jar,
  lib/sisc.jar,
@@ -75,8 +75,8 @@ Export-Package: .,
  sisc.reader,
  sisc.ser,
  sisc.util
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.editors,
  org.eclipse.core.resources,
@@ -96,5 +96,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.pde.core,
  org.eclipse.pde.ui,
  org.eclipse.ui.forms,
- org.eclipse.search
-Eclipse-AutoStart: true
+ org.eclipse.search,
+ org.eclipse.core.variables
+Eclipse-LazyStart: true
