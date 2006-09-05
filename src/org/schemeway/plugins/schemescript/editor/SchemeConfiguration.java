@@ -32,6 +32,10 @@ public class SchemeConfiguration extends SourceViewerConfiguration {
     public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
         return mTextTools.getContentTypes();
     }
+    
+    public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+    	return SchemeDocumentSetupParticipant.SCHEME_PARTITIONING;
+    }
 
     public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
         return mTextTools.getDoubleClickStrategy(contentType);
