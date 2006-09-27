@@ -10,7 +10,7 @@
 ;; Note that the performance is not good as in Kawa.
 
 
-(load "scratchpad-sisc.scm")
+(load "scratchpad.scm")
 
 
 ;;;
@@ -200,5 +200,4 @@
     (make <triangle-viewer> parent))))
 
 
-(make <triangle-viewer> #f)
 
