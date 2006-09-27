@@ -117,7 +117,22 @@ public final class SchemeEditorActionsFactory {
         action = new JumpToDefinitionAction(editor);
         action.setActionDefinitionId(SchemeActionConstants.JUMP_DEF);
         editor.setAction(SchemeActionConstants.JUMP_DEF, action);
-
+        
+        addSchemeAction(editor, "sexp.kill-next", "kill-next-sexp");
+        addSchemeAction(editor, "sexp.kill-previous", "kill-previous-sexp");
+        addSchemeAction(editor, "sexp.raise", "raise-sexp");
+        addSchemeAction(editor, "sexp.split", "split-sexp");
+        addSchemeAction(editor, "sexp.join", "join-sexp");
+        addSchemeAction(editor, "sexp.wrap", "wrap-sexp");
+        addSchemeAction(editor, "sexp.splice", "splice-sexp");
+        addSchemeAction(editor, "sexp.slurp-forward", "forward-slurp-sexp");
+        addSchemeAction(editor, "sexp.slurp-backward", "backward-slurp-sexp");
+        addSchemeAction(editor, "comment.multiline", "comment-selection");
+        addSchemeAction(editor, "code.expandPackage", "expand-package");
+        addSchemeAction(editor, "code.expandNamespace", "expand-namespace");
+        addSchemeAction(editor, "code.expandTypename", "expand-typename");
+        addSchemeAction(editor, "code.addRequire", "add-require-clause");
+        
         action = new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(),
                                          "ContentAssistProposal.", editor, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
@@ -127,6 +142,12 @@ public final class SchemeEditorActionsFactory {
                                          "ContentAssistTip.", editor, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
         editor.setAction("ContentAssistTip", action);
-        
+    }
+    
+    private static void addSchemeAction(SchemeEditor editor, String idSuffix, String procedureName) {
+    	IAction action = new SchemeProcedureAction(procedureName);
+    	String id = SchemeScriptPlugin.PLUGIN_NS + "." + idSuffix;
+    	action.setActionDefinitionId(id);
+    	editor.setAction(id, action);
     }
 }
