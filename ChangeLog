@@ -1,3 +1,11 @@
+*** Version 1.2.12
+
+- Port to Eclipse 3.2
+- Implemented feature request #1325814 : Support for SRFI-62
+- examples/scm2html.scm: a script to format a Scheme expression into HTML
+- Support for more S-expression-based commands (inspired by paredit.el).
+- Ctrl-/ can now uncomment a line or region if the cursor is in a line/multiline/expression comment.
+
 *** Version 1.2.4
 
 - Fixed bug #1491978 : REPL: File loading is not working correctly with SISCweb

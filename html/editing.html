@@ -101,16 +101,38 @@ the editor's context menu):
 		<td class="key">ALT-CTRL-X</td>
 	</tr>
 
-	<tr><td class="command">Extent S-expression on left</td>
-		<td>If the cursor is positioned in front of an opening parenthesis, the
-		    parenthesis is moved before the S-expression that precedes it, if
-		    any.</td>
+	<tr><td class="command">Backward Slurp S-expression</td>
+		<td>Move the opening parenthesis of the surrounding S-expression one expression to the left.</td>
+		<td class="key">ALT-SHIFT-B, S</td></tr>
+	<tr><td class="command">Forward Slurp S-expression</td>
+		<td>Move the closing parenthesis of the surrounding S-expression one expression to the right.</td>
+		<td class="key">ALT-SHIFT-F, S</td></tr>
+
+	<tr><td class="command">Split S-expression</td>
+		<td>If the cursor is positioned inside a list, the list is
+		    split into two lists.</td>
+		<td class="key">ALT-SHIFT-S</td></tr>
+	<tr><td class="command">Join S-expressions</td>
+		<td>If the cursor is positioned between two lists, the two lists are merged to form 
+		    a single list</td>
+		<td class="key">ALT-SHIFT-J</td></tr>
+	<tr><td class="command">Raise S-expression</td>
+		<td>Replace the surrounding S-expression by the S-expression on the right of the cursor.</td>
+		<td class="key">ALT-CTRL-SHIFT-R</td></tr>
+	<tr><td class="command">Splice S-expression</td>
+		<td>If the cursor is positioned inside a list, the list's parentheses are removed.</td>
 		<td class="key">CTRL-(</td></tr>
-	<tr><td class="command">Extent S-expression on right</td>
-		<td>If the cursor is positioned in front of closing parenthesis, the
-		    parenthesis is moved right after the S-expression that follows it, if
-		    any.</td>
-		<td class="key">CTRL-)</td></tr>
+	<tr><td class="command">Wrap S-expression</td>
+		<td>Adds parentheses around the S-expression on the right of the cursor.</td>
+		<td class="key">CTRL-(</td></tr>
+
+	<tr><td class="command">Kill next S-expression</td>
+		<td>Removes the S-expression on the right of the cursor.</td>
+		<td class="key">CTRL-K</td></tr>
+	<tr><td class="command">Kill previous S-expression</td>
+		<td>Removes the S-expression on the left of the cursor.</td>
+		<td class="key">CTRL-SHIFT-K</td></tr>
+	
 	
 	<!-- Comments -->
 	<tr class="keycategory"><td colspan="3" align="center" bgcolor="#dddddd"><b>Comments</b></td></tr>
@@ -193,13 +215,14 @@ the editor's context menu):
 <p>
 	Mouse copy is a command used to copy S-expressions using the mouse and a key sequence. To "mouse copy" an
 	S-expression, you must:
-	<ul>
-		<li>put the cursor where the S-expression should be copied (or select some text), </li>
-		<li>move the mouse over the start or end of the desired S-expression (or simply 
-			over it in the case of a string, symbol, constant, etc),</li>
-		<li>run either the <b>Mouse Copy</b> or <b>Extended Mouse Copy</b> command (see above).</li>
-	</ul>
 </p>
+<ul>
+	<li>put the cursor where the S-expression should be copied (or select some text), </li>
+	<li>move the mouse over the start or end of the desired S-expression (or simply 
+		over it in the case of a string, symbol, constant, etc),</li>
+	<li>run either the <b>Mouse Copy</b> or <b>Extended Mouse Copy</b> command (see above).</li>
+</ul>
+
 
 <hr/>
 <p>

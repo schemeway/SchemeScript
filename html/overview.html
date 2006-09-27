@@ -29,6 +29,7 @@
 	must make Scheme programming fun, not tedious. Since Scheme source code is exclusively 
 	made of S-expressions, it must be optimized for the editing and handling of S-expressions.
 	The main ingredients are thus:
+</p>
 	<ul>
 		<li>Parenthesis matching (of course) to highlight the corresponding 
 			closing/opening parenthesis;</li>
@@ -37,7 +38,6 @@
 		<li>Code completion;</li>
 		<li>interaction with an interpreter.</li>
 	</ul>
-</p>
 <p> 
 	SchemeScript provides all this, and more. Also, almost all features are fully
 	configurable, so one can adapt SchemeScript to its particular needs.
@@ -54,26 +54,25 @@
 <p>
 	All key sequences described in this document are fully configurable. To change 
 	a key configuration:
-	<ul>
-		<li>open the Preferences page,</li>
-		<li>select the Workbench/Keys section,</li>
-		<li>select the "Scheme Editing" category in the "Command" section,</li>
-		<li>choose the command name,</li>
-		<li>add or remove key sequences.</li>
-	</ul> 
 </p>
+<ul>
+	<li>open the Preferences page,</li>
+	<li>select the Workbench/Keys section,</li>
+	<li>select the "Scheme Editing" category in the "Command" section,</li>
+	<li>choose the command name,</li>
+	<li>add or remove key sequences.</li>
+</ul>
 
 <h2>Recent Changes</h2>
 
 <ul>
-    <li><b>Version 1.2.4</b>
+    <li><b>Version 1.2.15</b>
     	<ul>
-			<li>Fixed bug #1491978 : REPL: File loading is not working correctly with SISCweb</li>
-			<li>Implemented feature request #1494946 : Parse TODO in comments</li>
-			<li>Implemented feature request #1481354 : More levels in the outline</li>
-			<li>Implemented feature request #1458448 : Support for here strings</li>
-			<li>Support for programmatically adding markers to buffers</li>
-			<li>Support for save hooks</li>
+			<li>Port to Eclipse 3.2</li>
+			<li>Implemented feature request #1325814 : Support for SRFI-62</li>
+			<li>examples/scm2html.scm: a script to format a Scheme expression into HTML</li>
+			<li>Support for more S-expression-based commands (inspired by paredit.el).</li>
+			<li>Ctrl-/ can now uncomment a line or region if the cursor is in a line/multiline/expression comment.</li>
 		</ul>
 	</li>
 </ul>
