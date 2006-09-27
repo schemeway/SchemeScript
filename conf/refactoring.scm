@@ -97,10 +97,11 @@
 
   (define (rename/ui model buffer)
     (if (LinkedModeModel:tryInstall model)
-        (let* ((viewer :: <org.eclipse.jface.text.ITextViewer> (SchemeEditor:getTextViewer buffer))
-               (ui (LinkedModeUI:new model viewer)))
-          (LinkedModeUI:setCyclingMode ui (LinkedModeUI:.CYCLE_ALWAYS))
-          (LinkedModeUI:enter ui))
+        (let* ((viewer (SchemeEditor:getTextViewer buffer)))
+          (let ((ui (LinkedModeUI:new (as <org.eclipse.jface.text.link.LinkedModeModel> model)
+                                      (as <org.eclipse.jface.text.ITextViewer> viewer))))
+            (LinkedModeUI:setCyclingMode ui (LinkedModeUI:.CYCLE_ALWAYS))
+            (LinkedModeUI:enter ui)))
         (message-box "Renaming problem" "Unable to create linked mode model.")))
 
 
