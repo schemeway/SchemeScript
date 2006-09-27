@@ -22,6 +22,8 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -296,7 +298,7 @@ public class SchemeEditor extends TextEditor {
     }
 
     protected void initializeKeyBindingScopes() {
-        setKeyBindingScopes(new String[] {"Scheme Editing"});
+        setKeyBindingScopes(new String[] {"org.schemeway.plugins.schemescript.schemeEditorScope"});
     }
 
     //
