@@ -23,6 +23,14 @@
   (SchemeEditor:setPoint buffer point))
 
 
+(define (char-at point #!optional (buffer (current-buffer)))
+  (SchemeEditor:getChar buffer point))
+
+
+(define (point-max #!optional (buffer (current-buffer)))
+  (IDocument:getLength (SchemeEditor:getDocument buffer)))
+
+
 (define (set-selection point-min point-max #!optional (buffer (current-buffer)))
   (SchemeEditor:setSelection buffer point-min point-max))
 
