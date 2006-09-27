@@ -62,8 +62,7 @@
      (lambda _ 
        (run-compound-change
         (lambda ()
-          (when (looking-at " " point buffer)
-            (delete-text 1 point buffer))
+          (remove-whitespaces)
           (insert-text ") (" point buffer)
           (set-point (+ point 1) buffer))
         buffer)))))
@@ -114,14 +113,6 @@
            buffer)))))))
 
 
-;;(define (backward-barf-sexp)
-;;  )
-
-
-;;(define (forward-barf-sexp)
-;;  )
-
-
 (define (kill-next-sexp)
   (let ((buffer (current-buffer))
         (point (point)))
@@ -130,7 +121,8 @@
        (run-compound-change
         (lambda ()
           (delete-text (- end point) point buffer)
-          (set-point point))
+          (set-point point)
+          (remove-whitespaces))
         buffer)))))
 
 
@@ -157,4 +149,15 @@
             (insert-text "#|" start buffer))
           buffer)))
      buffer)))
+
+
+(define (remove-whitespaces)
+  (let ((buffer (current-buffer))
+        (start  (point)))
+    (let loop ((point start))
+      (if (and (< point (point-max buffer))
+               (char-whitespace? (char-at point buffer)))
+          (loop (+ point 1))
+          (if (> point start)
+              (delete-text (- point start) start buffer))))))
 
