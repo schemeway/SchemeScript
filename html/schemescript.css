@@ -18,6 +18,10 @@ img {
 }
 .command {
   font-weight: bold;
+  padding: 3px;
+  border: 1px solid grey;
+  text-align: center;
+  vertical-align: center;
 }
 
 th {
