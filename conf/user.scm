@@ -19,12 +19,15 @@
 (load-relative "bundles.scm")
 (load-relative "constants.scm")
 (load-relative "buffer.scm")
+(load-relative "commands.scm")
 (load-relative "widgets.scm")
 (load-relative "dialogs.scm")
 (load-relative "namespaces.scm")
 (load-relative "modules.scm")
 (load-relative "markers.scm")
 (load-relative "scratchpad.scm")
+(load-relative "reader.scm")
+(load-relative "codewalkers.scm")
 (load-relative "refactoring.scm")
 
 
