@@ -46,8 +46,9 @@ public class MatchingDelimitersInserter implements IAutoEditStrategy {
                     command.doit = false;
                     break;
                 case '[':
-                    document.replace(command.offset, 0, "]");
+                    document.replace(command.offset + command.length, 0, "]");
                     viewer.setSelectedRange(command.offset + 1, 0);
+                    command.length = 0;
                     command.doit = false;
                     break;
                 case ']':
