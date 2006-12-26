@@ -8,10 +8,6 @@
 ;;
 
 
-;;(module-name <org.schemeway.schemescript.macros>)
-;;(module-static #t)
-
-
 (define-syntax while
   (syntax-rules ()
     ((while expr body ...)
