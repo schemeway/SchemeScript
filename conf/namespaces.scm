@@ -105,7 +105,9 @@
                (run-compound-change
                 (lambda ()
                   (delete-text (- end start))
-                  (insert-text clause)))))))))))
+                  (insert-text clause)
+                  (set-point (point))
+                  (forward-sexp)))))))))))
 
 
 (define-constant expand-namespace (make-symbol-expander namespace-expander))
