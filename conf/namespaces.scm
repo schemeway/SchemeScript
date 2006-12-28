@@ -56,7 +56,7 @@
     (if (pair? types)
         (let ((choosen-type-name (choose-type types)))
           (and choosen-type-name
-               (format #f "(define-namespace ~a \"class:~a\")~%" symbol choosen-type-name)))
+               (format #f "(define-namespace ~a <~a>)~%" symbol choosen-type-name)))
         #f)))
 
 
@@ -75,7 +75,7 @@
          (call-with-output-string
           (lambda (port)
             (for-each (lambda (type)
-                        (format port "(define-namespace ~a \"class:~a\")~%" 
+                        (format port "(define-namespace ~a <~a>)~%" 
                                 (IType:getElementName type)
                                 (IType:getFullyQualifiedName type)))
                       types))))))
