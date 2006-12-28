@@ -14,6 +14,9 @@
                 (org.eclipse.ui.PlatformUI:getWorkbench)))))
     (org.eclipse.ui.IWorkbenchPage:getActiveEditor page)))
 
+(define (buffer-document #!optional (buffer (current-buffer)))
+  (SchemeEditor:getDocument buffer))
+
 
 (define (point #!optional (buffer (current-buffer)))
   (SchemeEditor:getPoint buffer))
@@ -79,6 +82,16 @@
     (if start
         (with-forward-sexp start buffer proc))))
 
+
+(define (with-top-sexp proc #!optional (offset (point)) (buffer (current-buffer)))
+  (let loop ((top-offset offset))
+    (let ((up-offset (%up-sexp top-offset buffer)))
+      (if up-offset
+          (loop up-offset)
+          (let-values (((top-start top-end) (%forward-sexp top-offset buffer)))
+            (if (and top-start top-end)
+                (proc top-start top-end)
+                #f))))))
 
 
 
@@ -206,4 +219,14 @@
 ;; Returns the file corresponding to the buffer
 (define (buffer-file #!optional (buffer (current-buffer)))
   (SchemeEditor:getFile buffer))
+
+
+(define (with-document-from-file (ifile :: <org.eclipse.core.resources.IFile>) proc)
+  (let ((buffer-manager (FileBuffers:getTextFileBufferManager))
+        (path           (*:getFullPath ifile)))
+    (try-finally
+        (begin
+          (ITextFileBufferManager:connect buffer-manager path #!null)
+          (proc (*:getDocument (ITextFileBufferManager:getTextFileBuffer buffer-manager path))))
+      (ITextFileBufferManager:disconnect buffer-manager path #!null))))
 
