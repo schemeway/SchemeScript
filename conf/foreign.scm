@@ -90,3 +90,7 @@
 (define-namespace Document "class:org.eclipse.jface.text.Document")
 
 (define-namespace MarkerUtilities "class:org.eclipse.ui.texteditor.MarkerUtilities")
+
+
+(define-namespace FileBuffers "class:org.eclipse.core.filebuffers.FileBuffers")
+(define-namespace ITextFileBufferManager "class:org.eclipse.core.filebuffers.ITextFileBufferManager")
