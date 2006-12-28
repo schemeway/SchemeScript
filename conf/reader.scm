@@ -36,7 +36,7 @@
        (eq? 'special (stx-object-type stx-obj))))
 
 
-(define (stx-read document start-offset)
+(define (stx-read document start-offset error-handler)
   (define scanner (SchemeScanner:new))
   
   (define (init)
@@ -91,7 +91,7 @@
             (let ((len (+ (- token-offset offset) token-length)))
               (consume)
               (make-syntax-object 'list offset len elements))
-            (throw 'syntax-error "Missing closing parenthesis" offset len)))))
+            (error-handler "Missing closing parenthesis" offset len)))))
   
 
   (define (read-vector)
@@ -106,7 +106,7 @@
             (let ((len (+ (- token-offset offset) token-length)))
               (consume)
               (make-syntax-object 'vector offset len (list->vector elements)))
-            (throw 'syntax-error "Missing closing parenthesis" offset len)))))
+            (error-handler "Missing closing parenthesis" offset len)))))
   
   
   (define (read-string)
@@ -134,7 +134,7 @@
                (reverse elements))
               ((equal? token (SchemeToken:.DOT))
                (if (or proper? (= (length elements) 0))
-                   (throw 'syntax-error "Misplaced '.'" token-offset token-length)
+                   (error-handler "Misplaced '.'" token-offset token-length)
                    (let ((element (begin (consume) (read1))))
                      (append (reverse elements) element))))
               (else
@@ -156,7 +156,7 @@
 
             ;; -- right parenthesis (error case)
             ((equal? token (SchemeToken:.RPAREN))
-             (throw 'syntax-error "Misplaced closing parenthesis" token-offset token-length))
+             (error-handler "Misplaced closing parenthesis" token-offset token-length))
 
             ((equal? token (SchemeToken:.CONSTANT))
              (read-constant))
@@ -200,13 +200,16 @@
   (read1))
 
 
-(define (stx-read-all document #!optional (stx-processor #f))
-  (let loop ((offset 0) (objs '()))
-    (let ((obj (stx-read document offset)))
+(define (stx-read-all document #!optional (stx-processor #f) (error-handler #f))
+  (let ((error-handler (or error-handler
+                           (lambda (message offset length)
+                             (throw 'syntax-error message offset length)))))
+   (let loop ((offset 0) (objs '()))
+    (let ((obj (stx-read document offset error-handler)))
       (when stx-processor
         (stx-processor obj))
       (if obj
           (loop (+ (stx-object-offset obj) (stx-object-length obj))
                 (cons obj objs))
-          (reverse objs)))))
+          (reverse objs))))))
 
