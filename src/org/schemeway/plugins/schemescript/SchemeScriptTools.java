@@ -16,53 +16,78 @@ import org.schemeway.plugins.schemescript.editor.*;
 
 public final class SchemeScriptTools {
 
-    private SchemeScriptTools() {
-        // prevent instantiation
-    }
+	private SchemeScriptTools() {
+		// prevent instantiation
+	}
 
-    public static IFile findFile(String filename, String baseDirectory) {
-        if (filename != null && !filename.equals("")) {
-            File file = new File(filename);
-            if (!file.isAbsolute()) {
-                if (baseDirectory == null)
-                    return null;
-                File directory = new File(baseDirectory);
-                try {
-                    filename = (new File(directory, filename).getCanonicalPath());
-                }
-                catch (IOException exception) {
-                    return null;
-                }
-            }
-            IWorkspace ws = ResourcesPlugin.getWorkspace();
-            IWorkspaceRoot root = ws.getRoot();
-            return root.getFileForLocation(new Path(filename));
-        }
-        return null;
-    }
+	public static IFile findFile(String filename, String baseDirectory) {
+		if (filename != null && !filename.equals("")) {
+			File file = new File(filename);
+			if (!file.isAbsolute()) {
+				if (baseDirectory == null)
+					return null;
+				File directory = new File(baseDirectory);
+				try {
+					filename = (new File(directory, filename).getCanonicalPath());
+				}
+				catch (IOException exception) {
+					return null;
+				}
+			}
+			IWorkspace ws = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = ws.getRoot();
+			return root.getFileForLocation(new Path(filename));
+		}
+		return null;
+	}
 
-    public static void openEditor(IFile file, int linenumber) {
-        try {
-            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            IEditorPart editor;
-            editor = IDE.openEditor(page, file, true);
-            if (editor == null) {
-                return;
-            }
+	public static void openEditor(IFile file, int linenumber) {
+		try {
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			IEditorPart editor;
+			editor = IDE.openEditor(page, file, true);
+			if (editor == null) {
+				return;
+			}
 
-            if (editor instanceof SchemeEditor) {
-                SchemeEditor schemeEditor = (SchemeEditor) editor;
-                try {
-                    int lineStart = schemeEditor.getDocument().getLineOffset(linenumber);
-                    int lineEnd = lineStart + schemeEditor.getDocument().getLineLength(linenumber);
-                    schemeEditor.setSelection(lineStart, lineEnd);
-                }
-                catch (BadLocationException exception) {
-                }
-            }
-        }
-        catch (PartInitException e) {
-            SchemeScriptPlugin.logException("Unable to open editor", e);
-        }
-    }
+			if (editor instanceof SchemeEditor) {
+				SchemeEditor schemeEditor = (SchemeEditor) editor;
+				try {
+					int lineStart = schemeEditor.getDocument().getLineOffset(linenumber);
+					int lineEnd = lineStart + schemeEditor.getDocument().getLineLength(linenumber);
+					schemeEditor.setSelection(lineStart, lineEnd);
+				}
+				catch (BadLocationException exception) {
+				}
+			}
+		}
+		catch (PartInitException e) {
+			SchemeScriptPlugin.logException("Unable to open editor", e);
+		}
+	}
+
+	public static void openEditor(IFile file, int offset, int length) {
+		try {
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			IEditorPart editor;
+			editor = IDE.openEditor(page, file, true);
+			if (editor == null) {
+				return;
+			}
+
+			if (editor instanceof SchemeEditor) {
+				SchemeEditor schemeEditor = (SchemeEditor) editor;
+				if (length >= 0) {
+					schemeEditor.setSelection(offset, offset + length);
+				}
+				else {
+					schemeEditor.setSelection(offset, offset);
+				}
+			}
+		}
+		catch (PartInitException e) {
+			SchemeScriptPlugin.logException("Unable to open editor", e);
+		}
+
+	}
 }
