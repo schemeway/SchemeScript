@@ -6,11 +6,6 @@
 ;;
 
 
-(require 'srfi-69)
-
-(define-namespace SymbolEntry "class:org.schemeway.plugins.schemescript.dictionary.SymbolEntry")
-
-
 ;;;
 ;;;; --
 ;;;; Default dictionaries
