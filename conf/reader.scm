@@ -8,12 +8,18 @@
 
 
 (define-record-type <StxObject>
-  (make-syntax-object type offset length data)
+  (make-syntax-object type offset length data parent annotations)
   stx-object?
   (type   stx-object-type)    ; type is one of '(list vector symbol constant special)
   (offset stx-object-offset)  ; offset is an integer
   (length stx-object-length)  ; length is an integer
-  (data   stx-object-data))   ; data is some type-specific information
+  (data   stx-object-data)    ; data is some type-specific information
+  (parent stx-object-parent stx-object-parent-set!)
+  (annotations stx-object-annotations stx-object-annotations-set!))
+
+
+(define (create-syntax-object type offset length data)
+  (make-syntax-object type offset length data #f '()))
 
 
 (define (stx-object->list stx-obj) 
@@ -36,6 +42,14 @@
        (eq? 'special (stx-object-type stx-obj))))
 
 
+(define (get-top-stx-object stx-obj)
+  (let loop ((stx-object stx-obj))
+    (let ((parent (stx-object-parent stx-object)))
+      (if parent
+          (loop parent)
+          stx-object))))
+
+
 (define (stx-read document start-offset error-handler)
   (define scanner (SchemeScanner:new))
   
@@ -54,6 +68,14 @@
     (set! token-offset (SchemeToken:getOffset tok))
     (set! token-length (SchemeToken:getLength tok))
     current-token)
+  
+  (define (set-parent parent elements)
+    (let loop ((elements elements))
+      (cond ((pair? elements) 
+             (stx-object-parent-set! (car elements) parent)
+             (loop (cdr elements)))
+            ((stx-object? elements)
+             (stx-object-parent-set! elements parent)))))
  
   (define (get-next-token)
     (or current-token
@@ -75,10 +97,12 @@
   (define (read-quote/unquote/quasiquote type)
     (let* ((offset  token-offset)
            (len     token-length)
-           (element (begin (consume) (read1))))
-      (make-syntax-object 'list offset (- (+ (stx-object-offset element) (stx-object-length element)) offset)
-                          (list (make-syntax-object 'symbol offset len type)
-                                element))))
+           (element (begin (consume) (read1)))
+           (child   (create-syntax-object 'symbol offset len type))
+           (parent  (create-syntax-object 'list offset (- (+ (stx-object-offset element) (stx-object-length element)) offset)
+                                          (list child element))))
+      (set-parent parent (list child element))
+      parent))
 
   
   (define (read-list)
@@ -90,7 +114,9 @@
         (if (equal? token (SchemeToken:.RPAREN))
             (let ((len (+ (- token-offset offset) token-length)))
               (consume)
-              (make-syntax-object 'list offset len elements))
+              (let ((parent (create-syntax-object 'list offset len elements)))
+                (set-parent parent elements)
+                parent))
             (error-handler "Missing closing parenthesis" offset len)))))
   
 
@@ -105,7 +131,9 @@
         (if (equal? token (SchemeToken:.RPAREN))
             (let ((len (+ (- token-offset offset) token-length)))
               (consume)
-              (make-syntax-object 'vector offset len (list->vector elements)))
+              (let ((parent (create-syntax-object 'vector offset len (list->vector elements))))
+                (set-parent parent elements)
+                parent))
             (error-handler "Missing closing parenthesis" offset len)))))
   
   
@@ -113,8 +141,8 @@
     (let ((offset token-offset)
           (len    token-length))
       (consume)
-      (make-syntax-object 'string offset len 
-                          (symbol->string (SchemeScanner:getText scanner offset len)))))
+      (create-syntax-object 'string offset len 
+                            (symbol->string (SchemeScanner:getText scanner offset len)))))
   
   
   (define (read-constant)
@@ -123,7 +151,7 @@
            (text   (symbol->string (SchemeScanner:getText scanner offset len)))
            (val    (call-with-input-string text read)))
       (consume)
-      (make-syntax-object 'constant offset len val)))
+      (create-syntax-object 'constant offset len val)))
   
   
   (define (read* proper?)
@@ -184,15 +212,15 @@
             ;; TODO support keywords, specials, etc.
 
             ((equal? token (SchemeToken:.SPECIAL))
-             (let ((obj (make-syntax-object 'special token-offset token-length
-                                            (SchemeScanner:getText scanner token-offset token-length))))
+             (let ((obj (create-syntax-object 'special token-offset token-length
+                                              (SchemeScanner:getText scanner token-offset token-length))))
                (consume)
                obj))
             
             ;; -- anything else...
             (else
-             (let ((obj (make-syntax-object 'symbol token-offset token-length 
-                                            (SchemeScanner:getText scanner token-offset token-length))))
+             (let ((obj (create-syntax-object 'symbol token-offset token-length 
+                                              (SchemeScanner:getText scanner token-offset token-length))))
                (consume)
                obj)))))
   
@@ -212,4 +240,38 @@
           (loop (+ (stx-object-offset obj) (stx-object-length obj))
                 (cons obj objs))
           (reverse objs))))))
+
+
+;;;
+;;;; Conversions
+;;;
+
+
+(define (stx-object->datum stx-object)
+
+  (define (read-from-stx-object stx-object)
+    (let ((data (stx-object-data stx-object)))
+      (call-with-input-string (symbol->string data) read)))
+  
+  (define (pairs->datum* pair)
+    (cond  ((null? pair)
+            '())
+           ((pair? pair)
+            (cons (stx-object->datum (car pair))
+                  (pairs->datum* (cdr pair))))
+           (else 
+            (stx-object->datum pair))))
+
+  (case (stx-object-type stx-object)
+    ((constant)
+     (stx-object-data stx-object))
+    ((special symbol string)
+     (read-from-stx-object stx-object))
+    ((list)
+     (pairs->datum* (stx-object-data stx-object)))
+    ((vector)
+     (apply vector (pairs->datum* (stx-object-data stx-object))))
+    (else
+     #f)))
+
 
