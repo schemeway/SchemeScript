@@ -1,31 +1,43 @@
 ;;;
-;;;; Form processors for most Kawa special forms
+;;;; Form processors for most Kawa and Scheme special forms
 ;;;
 ;;
 ;; @created   "Wed Sep 29 11:55:18 EDT 2004"
 ;; @author    "Dominique Boucher"
 ;;
 
-(require 'srfi-1)
-
 ;;;
 ;;;; --
-;;;; Helper functions
+;;;; Code walkers
 ;;;
 
 
-(define (add-entry! dictionary name description type resource line-number #!optional (parent #!null))
-  (let ((entry (SymbolEntry:new name description type resource line-number 5)))
-    (when (not (eq? parent #!null))
-      (SymbolEntry:setParent entry parent))
-    (UserDictionary:addEntry dictionary entry)
-    entry))
+(define-code-walker '(define define-private define-constant)
+  (lambda (stx resource recurse)
+    (stx-match stx
+      ((_ (,name . ,args) . ,body)
+       (when (stx-symbol? name)
+         (parameterize ((current-dictionary-entry (new-dictionary-entry resource name 'procedure (callable-description name))))
+           (recurse body))))
+      
+      ((_ ,var :: ,type ,val)
+       (when (stx-symbol? var)
+         (parameterize ((current-dictionary-entry (new-dictionary-entry resource var 'variable (symbol-description var))))
+           (recurse val))))
+      
+      ((_ ,var ,val)
+       (when (stx-symbol? var)
+         (parameterize ((current-dictionary-entry (new-dictionary-entry resource var 'variable (symbol-description var))))
+           (recurse val)))))))
 
 
-(define (get-line-number form default-value)
-  (if (instance? form <gnu.lists.PairWithPosition>)
-      (PairWithPosition:getLine form)
-      default-value))
+(define (symbol-description var #!optional (type 'variable))
+  (format #f "~a - ~a" (stx-object->datum var) type))
+
+
+(define (callable-description name-stx #!optional (type 'procedure))
+  (let* ((signature (stx-object->datum (stx-object-parent name-stx))))
+    (format #f "~a - ~a" (signature->formals signature) type)))
 
 
 (define (signature->formals lst)
@@ -37,199 +49,124 @@
               (cons parameter (loop (cdr lst)))))
         lst)))
 
+(let* ((type-description    (lambda (typename) (format #f "~a - record type" typename)))
+       (ctor-description    (lambda (name-stx) (callable-description name-stx 'record-constructor)))
+       (pred-description    (lambda (name-stx) (format #f "(~a obj) - record predicate" (stx-object->datum name-stx))))
+       (getter-descrtiption (lambda (name-stx) (format #f "(~a obj) - record field getter" (stx-object->datum name-stx))))
+       (setter-description  (lambda (name-stx) (format #f "(~a obj val) - record field setter" (stx-object->datum name-stx))))
+      
+       (process-record-fields
+       (lambda (resource typename field-accessors)
+         (for-each (lambda (field-accessor)
+                     (stx-match field-accessor
+                       ((,field-name ,field-getter)
+                        (when (stx-symbol? field-getter)
+                          (new-dictionary-entry resource field-getter 'field-getter (getter-descrtiption field-getter))))
+                       ((,field-name ,field-getter ,field-setter)
+                        (when (stx-symbol? field-getter)
+                          (new-dictionary-entry resource field-getter 'field-getter (getter-descrtiption field-getter)))
+                        (when (stx-symbol? field-setter)
+                          (new-dictionary-entry resource field-setter 'field-setter (setter-description field-setter))))))
+                   field-accessors))))
 
-;;;
-;;;; --
-;;;; Form processors
-;;;
-
-
-;;;
-;;;; * define
-;;;
-
-
-(let ((define-processor 
-       (lambda (dictionary form resource line-number)
-         (cond ((and (pair? (cdr form)) (symbol? (cadr form)))
-                (let* ((name        (cadr form))
-                       (description (format #f "~a - variable" name)))
-                  (add-entry! dictionary name description 'variable resource line-number)))
-               ((and (pair? (cdr form)) (pair? (cadr form)) (symbol? (caadr form)))
-                (let ((name        (caadr form))
-                      (description (format #f "~a - procedure" (signature->formals (cadr form)))))
-                  (add-entry! dictionary name description 'procedure resource line-number)))))))
-  (define-form-processor 'define          define-processor)
-  (define-form-processor 'define-private  define-processor)
-  (define-form-processor 'define-constant define-processor))
-
-
-;;;
-;;;; * define-syntax, defmacro, define-macro
-;;;
-
-
-(define-form-processor
- 'define-syntax
- (lambda (dictionary form resource line-number)
-   (when (and (pair? (cdr form))
-              (symbol? (cadr form)))
-     (let* ((name        (cadr form))
-            (description (format #f "~a - user syntax" name)))
-       (add-entry! dictionary name description 'syntax resource line-number)))))
+  (define-code-walker 'define-record-type
+    (lambda (stx resource recurse)
+      (stx-match stx
+        ((_ ,typename (,cstor-name . ,field-names) ,predicate-name . ,field-accessors)
+         (when (and (stx-symbol? typename) (stx-symbol? cstor-name) (stx-symbol? predicate-name))
+           (let ((typename-symbol (stx-object->datum typename)))
+             (parameterize ((current-dictionary-entry (new-dictionary-entry resource typename 'record-type (type-description typename-symbol))))
+               (new-dictionary-entry resource cstor-name 'record-constructor (ctor-description cstor-name))
+               (new-dictionary-entry resource predicate-name 'record-predicate (pred-description predicate-name))
+               (process-record-fields resource typename-symbol field-accessors)))))))))
 
 
-(let ((form-processor
-       (lambda (dictionary form resource line-number)
-         (when (and (list? form)
-                    (>= (length form) 3)
-                    (symbol? (cadr form)))
-           (let* ((name        (cadr form))
-                  (pattern     (caddr form))
-                  (description (format #f "~a - user syntax" (cons name pattern))))
-             (add-entry! dictionary name description 'syntax resource line-number))))))
-  (define-form-processor 'defmacro form-processor)
-  (define-form-processor 'define-macro form-processor))
+(define-code-walker 'define-syntax
+  (lambda (stx resource recurse)
+    (stx-match stx
+      ((_ ,name . ,body)
+       (when (stx-symbol? name)
+         (new-dictionary-entry resource name 'user-syntax (symbol-description name 'user-syntax)))))))
 
 
-;;;
-;;;; * module-name
-;;;
+(define-code-walker '(define-macro defmacro)
+  (lambda (stx resource recurse)
+    (stx-match stx
+      ((_ (,name . ,args) . ,body)
+       (when (stx-symbol? name)
+         (new-dictionary-entry resource name 'user-syntax (callable-description name 'user-syntax))))
+      ((_ ,name . ,body)
+       (when (stx-symbol? name)
+         (new-dictionary-entry resource name 'user-syntax (symbol-description name 'user-syntax)))))))
 
 
-(define-form-processor
- 'module-name
- (lambda (dictionary form resource line-number)
-   (when (and (pair? (cdr form))
-              (null? (cddr form))
-              (symbol? (cadr form)))
-     (let* ((name        (cadr form))
-            (description (format #f "~a - Kawa module" name)))
-       (add-to-module-registry! resource name)
-       (add-entry! dictionary name description 'module resource line-number)))))
+(define-code-walker 'module-name
+  (lambda (stx resource recurse)
+    (stx-match stx
+      ((_ ,name)
+       (when (stx-symbol? name)
+         (add-to-module-registry! resource (stx-object-data name))
+         (new-dictionary-entry resource name 'module (symbol-description name 'module)))))))
+
+
+(define-code-walker 'define-alias
+  (lambda (stx resource recurse)
+    (stx-match stx
+      ((_ ,name ,full-name)
+       (when (and (stx-symbol? name)
+                  (typename? (stx-object-data name))
+                  (stx-symbol? full-name)
+                  (typename? (stx-object-data full-name)))
+         (new-dictionary-entry resource name 'alias (symbol-description name 'alias)))))))
+
+
+(define (typename? obj)
+  (and (symbol? obj)
+       (let ((str (symbol->string obj)))
+         (>= (string-length str) 2)
+         (and (char=? #\< (string-ref str 0))
+              (char=? #\> (string-ref str (- (string-length str) 1)))))))
 
 
 ;;;
 ;;;; * define-simple-class, define-class
 ;;;
 
-
-(let ((class-processor
-       (lambda (dictionary form resource line-number)
-         (when (and (list? form)
-                    (>= (length form) 3)
-                    (symbol? (cadr form))
-                    (list? (caddr form)))
-           (let* ((class-name        (cadr form))
-                  (class-description (format #f "~a - Class" class-name))
-                  (class-entry       (add-entry! dictionary class-name class-description 'class resource line-number)))
+(let ((class-description (lambda (clsname) (format #f "~a - class" (stx-object->datum clsname)))))
+  (define-code-walker '(define-simple-class)
+    (lambda (stx resource recurse)
+      (stx-match stx
+        ((_ ,clsname (,super . ,supers) . ,fields-and-methods)
+         (when (stx-symbol? clsname)
+           (parameterize ((current-dictionary-entry (new-dictionary-entry resource clsname 'class (class-description clsname))))
              (for-each (lambda (field-or-method)
-                         (cond 
-                          ;; -- add an entry for a field
-                          ((and (pair? field-or-method) 
-                                (symbol? (car field-or-method)))
-                           (let* ((field-name  (car field-or-method))
-                                  (description (format #f "~a - field in ~a" field-name class-name))
-                                  (line        (get-line-number field-or-method line-number)))
-                             (add-entry! dictionary field-name description 'field resource line class-entry)))
-                          ;; -- add an entry for a method
-                          ((and (pair? field-or-method) 
-                                (pair? (car field-or-method))
-                                (symbol? (caar field-or-method)))
-                           (let* ((method-name (caar field-or-method))
-                                  (method-form (cons 'invoke 
-                                                     (cons 'o 
-                                                           (cons (string-append "'" (symbol->string method-name))
-                                                                 (signature->formals (cdr (car field-or-method)))))))
-                                  (description (format #f "~a - method in ~a" method-form class-name))
-                                  (line        (get-line-number field-or-method line-number)))
-                             (add-entry! dictionary method-name description 'method resource line class-entry)))))
-                       (cdddr form)))))))
-  (define-form-processor 'define-simple-class class-processor)
-  (define-form-processor 'define-class class-processor))
-
-
-;;;
-;;;; * define-record-type
-;;;
-
-
-(define-form-processor 
- 'define-record-type
- (lambda (dictionary form resource line-number)
-   (when (and (list? form)
-              (>= (length form) 4)
-              (symbol? (cadr form))
-              (list? (caddr form))
-              (symbol? (cadddr form)))
-     (let ((constructor (caddr form))
-           (predicate   (cadddr form))
-           (fields      (cddddr form)))
-       ;; -- add an entry for the constructor
-       (when (and (pair? constructor) (symbol? (car constructor)))
-         (let ((name        (car constructor))
-               (description (format #f "~a - record constructor" constructor))
-               (line        (get-line-number constructor line-number)))
-           (add-entry! dictionary name description 'constructor resource line)))
-       ;; -- add an entry for the predicate
-       (let ((description (format #f "(~a obj) - record predicate" predicate))
-             (line        (get-line-number (cdddr form) line-number)))
-         (add-entry! dictionary predicate description 'record-predicate resource line))
-       ;; -- add an entry for each field
-       (for-each (lambda (field-descriptor)
-                   (when (and (list? field-descriptor)
-                              (<= 2 (length field-descriptor) 3)
-                              (every symbol? field-descriptor))
-                     (let* ((getter-name (cadr field-descriptor))
-                            (description (format #f "(~a record) - field getter" getter-name))
-                            (line        (get-line-number field-descriptor line-number)))
-                       (add-entry! dictionary getter-name description 'record-getter resource line)
-                       (when (= (length field-descriptor) 3)
-                         (let* ((setter-name (caddr field-descriptor))
-                                (description (format #f "(~a record value) - field setter" setter-name)))
-                           (add-entry! dictionary setter-name description 'record-getter resource line))))))
-                 fields)))))
-
-
-;;;
-;;;; * define-alias
-;;;
-
-
-(define-form-processor
- 'define-alias
- (lambda (dictionary form resource line-number)
-   (when (alias-form? form)
-     (let* ((name        (cadr form))
-            (description (format #f "~a" name)))
-       (add-entry! dictionary name description 'alias resource line-number)))))
-
-
-(define (alias-form? form)
-  (and (list? form)
-       (= (length form) 3)
-       (typename? (cadr form))
-       (typename? (caddr form))))
+                         (stx-match field-or-method
+                           (((,method-name . ,args) . ,body)
+                            (new-dictionary-entry resource method-name 'method (callable-description method-name 'method)))
+                           ((,field-name . ,field-facets)
+                            (new-dictionary-entry resource field-name 'field (symbol-description field-name 'field)))))
+                       fields-and-methods))))))))
 
 
 ;;;
 ;;;; * define-namespace
 ;;;
 
-
-(define-form-processor
- 'define-namespace
- (lambda (dictionary form resource line-number)
-   (when (namespace-form? form)
-     (let* ((namespace-symbol (cadr form))
-            (classname        (namespace->fqn (caddr form)))
-            (signatures       (find-class-methods classname)))
-       (when signatures
-         (for-each (lambda (name/signature)
-                     (let ((description (string->symbol (format #f "(~a:~a)" namespace-symbol (cadr name/signature))))
-                           (entry-name  (string->symbol (format #f "~a:~a" namespace-symbol (car name/signature)))))
-                       (add-entry! dictionary entry-name description 'java-member resource line-number)))
-                   signatures))))))
+(define-code-walker '(define-namespace)
+  (lambda (stx resource recurse)
+    (let ((form (stx-object->datum stx)))
+      (when (namespace-form? form)
+        (let ((name-stx (cadr (stx-object-data stx))))
+          (new-dictionary-entry resource name-stx 'namespace (symbol-description name-stx 'namespace))
+          #|(let* ((namespace-symbol (cadr form))
+                 (classname        (namespace->fqn (caddr form)))
+                 (signatures       (find-class-methods classname)))
+            (when signatures
+              (for-each (lambda (name/signature)
+                          (let ((description (format #f "(~a:~a)" namespace-symbol (cadr name/signature)))
+                                (entry-name  (format #f "~a:~a" namespace-symbol (car name/signature))))
+                            (new-dictionary-entry resource name-stx 'java-member description entry-name)))
+                        signatures)))|#)))))
 
 
 (define (namespace-form? form)
@@ -242,13 +179,6 @@
                   (string=? "class:" (substring clsname 0 6)))
              (typename? clsname)))))
 
-
-(define (typename? obj)
-  (and (symbol? obj)
-       (let ((str (symbol->string obj)))
-         (>= (string-length str) 2)
-         (and (char=? #\< (string-ref str 0))
-              (char=? #\> (string-ref str (- (string-length str) 1)))))))
 
 (define (namespace->fqn typename)
   (cond ((string? typename)
