@@ -17,17 +17,13 @@
 ;;;
 
 
-(define *r5rs-dictionary* (make-hash-table))
-(define *kawa-dictionary* (make-hash-table))
 (define *user-dictionary* (make-hash-table))
-
-(define *all-dictionaries* (list *r5rs-dictionary* *kawa-dictionary* *user-dictionary*))
 
 
 (define current-dictionary (make-parameter *user-dictionary*))
 
 
-(define (dictionary-entry name proto type #!optional (level :: <int> 0) (dictionary (current-dictionary)))
+(define (dictionary-entry name proto type #!optional (level :: <int> 2) (dictionary (current-dictionary)))
   (add-dictionary-entry name (SymbolEntry:new name proto type level) dictionary))
 
 
@@ -37,53 +33,71 @@
 ;;;
 
 
-(define (add-dictionary-entry name entry #!optional (dictionary *user-dictionary*))
-  (let ((current-entries (get-dictionary-entries name dictionary)))
+(define (add-dictionary-entry name entry #!optional (dictionary (current-dictionary)))
+  (let ((current-entries (hash-table-ref/default dictionary name '())))
     (set-dictionary-entries! name (cons entry current-entries) dictionary)))
 
 
-(define (set-dictionary-entries! name entries #!optional (dictionary *user-dictionary*))
+(define (set-dictionary-entries! name entries #!optional (dictionary (current-dictionary)))
   (hash-table-set! dictionary name entries))
 
 
-(define (get-dictionary-entries name #!optional (dictionary *user-dictionary*))
+(define (get-dictionary-entries name #!optional (dictionary (current-dictionary)))
+  (synchronize-dictionary)
   (hash-table-ref/default dictionary name '()))
 
 
-(define (get-dictionary-entries-for-resource resource #!optional (dictionary *user-dictionary*))
+(define (get-dictionary-entries-for-resource resource #!optional (dictionary (current-dictionary)))
+  (synchronize-dictionary)
   (hash-table-fold dictionary
                    (lambda (key value result)
                      (append (filter (lambda (entry) 
-                                       (not (eq? resource (SymbolEntry:getFile entry))))
+                                       (equal? resource (SymbolEntry:getFile entry)))
                                      value)
                              result))
                    '()))
 
-(define (remove-dictionary-entries-for-resources resources #!optional (dictionary *user-dictionary*))
+
+(define (remove-dictionary-entries-for-resources resources #!optional (dictionary (current-dictionary)))
   (let ((names (hash-table-keys dictionary)))
     (for-each (lambda (name)
                 (let ((new-entries (filter (lambda (entry) 
-                                             (not (memq (SymbolEntry:getFile entry) resources)))
+                                             (not (member (SymbolEntry:getFile entry) resources)))
                                            (get-dictionary-entries name))))
                   (set-dictionary-entries! name new-entries)))
               names)))
 
 
-(define (find-completions prefix)
-  (apply append! 
-         (map (lambda (dictionary)
-                (hash-table-fold dictionary
-                                 (lambda (key value result)
-                                   (if (starts-with prefix key)
-                                       (append value result)
-                                       result))
-                                 '()))
-              *all-dictionaries*)))
+(define (find-completions prefix #!optional (dictionary (current-dictionary)))
+  (synchronize-dictionary)
+  (hash-table-fold dictionary
+                   (lambda (key value result)
+                     (if (starts-with prefix key)
+                         (append value result)
+                         result))
+                   '()))
 
 
-(define (add-completions-to-list (prefix :: <symbol>) (lst :: <java.util.List>))
-  (for-each (cut java.util.List:add lst <>)
-            (find-completions (symbol->string prefix))))
+(define (update-dictionary-for-file (file :: <org.eclipse.core.resources.IFile>))
+  (remove-dictionary-entries-for-resources (list file))
+  (with-document-from-file file
+    (lambda (document)
+      (scan-resource file document))))
+
+
+(define (scan-resource resource document)
+  (clear-markers resource)
+  (catch 'syntax-error
+    (lambda ()
+      (stx-read-all document (lambda (stx-obj) (walk-definitions resource stx-obj))))
+    (lambda (key message offset len)
+      (add-marker/offset! 'error resource (+ 1 (IDocument:getLineOfOffset document offset)) offset (+ offset len) message)
+      #f)))
+
+
+(define (synchronize-dictionary)
+  (let ((updater (SchemeScriptPlugin:getDictionaryUpdater)))
+    (*:processPendingResources updater #t)))
 
 
 ;;;
@@ -92,10 +106,7 @@
 ;;;
 
 
-
 (begin
-  (parameterize ((current-dictionary *r5rs-dictionary*))
-    (load-relative "r5rs.scm"))
-  (parameterize ((current-dictionary *kawa-dictionary*))
-    (load-relative "kawa.scm")))
+  (load-relative "r5rs.scm")
+  (load-relative "kawa.scm"))
 
