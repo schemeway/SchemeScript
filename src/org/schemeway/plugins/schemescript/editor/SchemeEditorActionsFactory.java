@@ -133,6 +133,11 @@ public final class SchemeEditorActionsFactory {
         addSchemeAction(editor, "code.expandTypename", "expand-typename");
         addSchemeAction(editor, "code.addRequire", "add-require-clause");
         
+        addSchemeAction(editor, "sexp.rename-symbol", "rename-symbol");
+        addSchemeAction(editor, "sexp.rename-symbol-locally", "rename-symbol-locally");
+        addSchemeAction(editor, "sexp.extract-variable", "extract-variable");
+        addSchemeAction(editor, "sexp.create-function", "create-function-from-expression");
+        
         action = new TextOperationAction(SchemeScriptPlugin.getDefault().getResourceBundle(),
                                          "ContentAssistProposal.", editor, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
