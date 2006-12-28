@@ -30,30 +30,32 @@ public class SymbolEntry {
     //private IMarker mMarker;
     private String mCategory;
     private int mPriority;
-    private int mLineNumber;
+    private int mOffset;
+    private int mLength;
     private IFile mFile;
     private SymbolEntry mParent;
     
     public SymbolEntry(String name, String description, String category) {
-        this(name, description, category, null, -1, LOW);
+        this(name, description, category, null, -1, -1, LOW);
     }
     
     public SymbolEntry(String name, String description, String category, int priority) {
-        this(name, description, category, null, -1, priority);
+        this(name, description, category, null, -1, -1, priority);
     }
     
     public SymbolEntry(String name, String description, String category, IFile source, int position) {
-        this(name, description, category, source, position, LOW);
+        this(name, description, category, source, position, -1, LOW);
     }
     
-    public SymbolEntry(String name, String description, String category, IFile source, int linenumber, int priority) {
+    public SymbolEntry(String name, String description, String category, IFile source, int offset, int length, int priority) {
         Assert.isNotNull(name);
         mName = name;
         mDescription = description;
         mCategory = category;
         mPriority = priority;
         mFile = source;
-        mLineNumber = linenumber;
+        mOffset = offset;
+        mLength = length;
     }
     
     public String getName() {
@@ -75,9 +77,13 @@ public class SymbolEntry {
     public IFile getFile() {
         return mFile;
     }
+
+    public int getOffset() {
+    	return mOffset;
+    }
     
-    public int getLineNumber() {
-        return mLineNumber;
+    public int getLength() {
+    	return mLength;
     }
     
     public String getContext() {
