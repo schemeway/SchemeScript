@@ -18,7 +18,7 @@ public class SectionsAndDefinitionsContentBuilder implements OutlineContentBuild
 		List nodes = new ArrayList();
 
 		ContentUtilities.addSections(editor.getDocument(), nodes);
-		ContentUtilities.addDefinitions(editor, nodes, false);
+		ContentUtilities.addDefinitions(editor, nodes, true);
 		Collections.sort(nodes, ContentUtilities.NODE_COMPARATOR);
 
 		return (OutlineNode[]) nodes.toArray(new OutlineNode[nodes.size()]);
