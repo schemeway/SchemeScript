@@ -8,6 +8,9 @@
 ;;
 
 
+(require 'srfi-1)
+
+
 (define-namespace SchemeScriptPlugin "class:org.schemeway.plugins.schemescript.SchemeScriptPlugin")
 (define-namespace SymbolReferencesManager "class:org.schemeway.plugins.schemescript.dictionary.SymbolReferencesManager")
 (define-namespace SymbolReferencesTable "class:org.schemeway.plugins.schemescript.dictionary.SymbolReferencesTable")
@@ -26,21 +29,17 @@
 (define-namespace ITextFileBuffer "class:org.eclipse.core.filebuffers.ITextFileBuffer")
 (define-namespace ITextFileBufferManager "class:org.eclipse.core.filebuffers.ITextFileBufferManager")
 
-(require 'srfi-1)
+
+;;;
+;;;; Linked model (with or without UI)
+;;;
+
 
 
 (define scan-references
   (let ((references-manager (SchemeScriptPlugin:getReferencesManager)))
     (lambda (buffer)
       (SymbolReferencesManager:scanResourceForSymbols references-manager (buffer-file buffer)))))
-
-
-(add-save-hook 'scan-references)
-
-
-;;;
-;;;; Renaming symbols
-;;;
 
 
 (define (make-model-linking-listener thunk)
@@ -53,8 +52,49 @@
      #!void)))
 
 
+(define (create-linked-mode/ui positions #!optional (buffer (current-buffer)))
+  (let* ((model    (LinkedModeModel:new))
+         (group    (LinkedPositionGroup:new)))
+    (for-each (lambda (pos)
+                (let ((position (LinkedPosition:new (car pos) (cadr pos) (caddr pos) 0)))
+                  (LinkedPositionGroup:addPosition group position)))
+              positions)
 
-(define (rename-symbol offset len name #!optional (resource #f))
+    (LinkedModeModel:addGroup model group)
+    (if (LinkedModeModel:tryInstall model)
+        (let* ((viewer (SchemeEditor:getTextViewer buffer)))
+          (let ((ui (LinkedModeUI:new (as <org.eclipse.jface.text.link.LinkedModeModel> model)
+                                      (as <org.eclipse.jface.text.ITextViewer> viewer))))
+            (LinkedModeUI:setCyclingMode ui (LinkedModeUI:.CYCLE_ALWAYS))
+            (LinkedModeUI:enter ui)))
+        (message-box "Linked mode UI" "Unable to create linked mode model."))))
+
+
+(define (create-linked-mode positions #!optional (model-listener #f) (buffer (current-buffer)))
+  (let* ((model    (LinkedModeModel:new))
+         (group    (LinkedPositionGroup:new)))
+    (for-each (lambda (pos)
+                (let ((position (LinkedPosition:new (car pos) (cadr pos) (caddr pos) 0)))
+                  (LinkedPositionGroup:addPosition group position)))
+              positions)
+
+    (LinkedModeModel:addGroup model group)
+    (when model-listener
+      (LinkedModeModel:addLinkingListener model model-listener))
+    (if (LinkedModeModel:tryInstall model)
+        (lambda ()
+          (LinkedModeModel:exit model 1))
+        (begin
+          (message-box "Linked mode UI" "Unable to create linked mode model.")
+          #f))))
+
+
+;;;
+;;;; Renaming symbols
+;;;
+
+
+(define (%rename-symbol offset len name #!optional (resource #f))
 
   (define buffer-manager     (FileBuffers:getTextFileBufferManager))
   (define references-manager (SchemeScriptPlugin:getReferencesManager))
@@ -75,8 +115,6 @@
                  (set! all-resources (cons (cons resource buffer) all-resources))
                  (ITextFileBuffer:getDocument buffer)))))))
 
-
-  
   (define (close-non-shared-documents)
     (for-each (lambda (resource/buffer)
                 (let ((buffer (cdr resource/buffer))
@@ -95,24 +133,18 @@
            all-resources))
 
 
-  (define (rename/ui model buffer)
-    (if (LinkedModeModel:tryInstall model)
-        (let* ((viewer (SchemeEditor:getTextViewer buffer)))
-          (let ((ui (LinkedModeUI:new (as <org.eclipse.jface.text.link.LinkedModeModel> model)
-                                      (as <org.eclipse.jface.text.ITextViewer> viewer))))
-            (LinkedModeUI:setCyclingMode ui (LinkedModeUI:.CYCLE_ALWAYS))
-            (LinkedModeUI:enter ui)))
-        (message-box "Renaming problem" "Unable to create linked mode model.")))
+  (define (rename-locally positions)
+    (create-linked-mode/ui positions))
 
-
-  (define (rename/globally model buffer)
-    (if (LinkedModeModel:tryInstall model)
-        (let ((new-name (ask-for-symbol "Rename Symbol Globally" "New name:" name)))
-          (when new-name
-            (let ((document (SchemeEditor:getDocument buffer)))
-              (IDocument:replace document offset len new-name)))
-          (LinkedModeModel:exit model 1))
-        (message-box "Renaming problem" "Unable to create linked mode model.")))
+  (define (rename-globally positions buffer)
+    (let ((close-model (create-linked-mode positions (make-model-linking-listener close-non-shared-documents))))
+      (if close-model
+          (let ((new-name (ask-for-symbol "Rename Symbol Globally" "New name:" name)))
+            (when new-name
+              (let ((document (SchemeEditor:getDocument buffer)))
+                (IDocument:replace document offset len new-name)))
+            (close-model))
+          (message-box "Renaming problem" "Unable to create linked mode model."))))
 
 
   (define (get-references)
@@ -121,44 +153,84 @@
          (SymbolReferencesTable:getReferences references-table name resource)
          (SymbolReferencesTable:getReferences references-table name))))
 
+  ;; this function has side-effects... the variable 'all-resources' will 
+  ;; contain the set of all resources affected by the refactoring...
+  (define (gather-positions)
+    (map (lambda (ref)
+           (list (ref->document ref) (Reference:.offset ref) (Reference:.length ref)))
+         (get-references)))
 
-  (define (create-and-populate-linked-mode-model buffer)
-    (let* ((model (LinkedModeModel:new))
-           (group (LinkedPositionGroup:new)))
-      (for-each (lambda (ref)
-                  (let ((position (LinkedPosition:new (ref->document ref) (Reference:.offset ref) (Reference:.length ref) 0)))
-                    (LinkedPositionGroup:addPosition group position)))
-                (get-references))
-      
-      (LinkedModeModel:addGroup model group)
-      (LinkedModeModel:addLinkingListener model (make-model-linking-listener close-non-shared-documents))
-      model))
-
-
+  
   (let ((buffer (current-buffer)))
     (scan-references buffer)
-    (let ((model (create-and-populate-linked-mode-model buffer)))
+    (let ((positions (gather-positions)))
       (if (= 1 (length all-resources))
-          (rename/ui model buffer)
+          (rename-locally positions)
           (try-finally
-              (rename/globally model buffer)
+              (rename-globally positions buffer)
             (close-non-shared-documents))))))
 
 
-(define (interactive-rename-symbol)
+(define (rename-symbol)
   (let-values (((start end) (%backward-sexp)))
     (when (and start end (eq? (sexp-type start) symbol:))
       (with-buffer-text
        start end
        (lambda (text)
-         (rename-symbol start (- end start) text))))))
+         (%rename-symbol start (- end start) text))))))
 
 
-(define (interactive-rename-symbol-locally)
+(define (rename-symbol-locally)
   (let-values (((start end) (%backward-sexp)))
     (when (and start end (eq? (sexp-type start) symbol:))
       (with-buffer-text
        start end
        (lambda (text)
-         (rename-symbol start (- end start) text (buffer-file (current-buffer))))))))
+         (%rename-symbol start (- end start) text (buffer-file (current-buffer))))))))
+
+
+;;;
+;;;; Creating a new function
+;;;
+
+
+(define (process-next-expression-at-top proc)
+  (let-values (((start end) (%forward-sexp)))
+    (when (and start end)
+      (with-buffer-text start end
+        (lambda (text)
+          (set-point start)
+          (with-top-sexp
+           (lambda (next-start next-end)
+             (set-point next-end)
+             (proc start end text next-start next-end))))))))
+
+
+(define (create-function-from-expression)
+  (process-next-expression-at-top 
+   (lambda (start end text next-start next-end)
+     (let* ((expr (format #f "~%~%~%(define ~a~%  )~%" text))
+            (len  (string-length expr)))
+       (insert-text expr)
+       (forward-char (- len 3))))))
+
+
+;;;
+;;;; Extracting a new top-level variable
+;;;
+
+
+(define (extract-variable)
+  (process-next-expression-at-top
+   (lambda (start end text next-start next-end)
+     (let* ((expr (format #f "~%~%~%(define var ~a)~%" text))
+            (len  (string-length expr)))
+       (delete-text (- end start) start)
+       (insert-text "var" start)
+       (insert-text expr)
+       (let ((document (buffer-document (current-buffer))))
+         (create-linked-mode/ui (list (list document start 3)
+                                      (list document (+ (point) 14) 3)))))))) ;; TODO - check that 14 is valid under Unix...
+
+
 
