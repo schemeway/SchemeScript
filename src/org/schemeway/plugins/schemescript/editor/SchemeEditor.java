@@ -7,13 +7,11 @@ package org.schemeway.plugins.schemescript.editor;
 
 import gnu.mapping.*;
 
-import java.net.*;
 import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.actions.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.*;
@@ -22,8 +20,6 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -33,7 +29,6 @@ import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.debug.*;
-import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.autoedits.*;
 import org.schemeway.plugins.schemescript.editor.outline.*;
 import org.schemeway.plugins.schemescript.indentation.*;
@@ -44,8 +39,6 @@ import org.schemeway.plugins.schemescript.preferences.*;
 public class SchemeEditor extends TextEditor {
     public final static String ID = "org.schemeway.plugins.schemescript.editor.SchemeEditor";
 
-    private static ISymbolDictionary mDictionary;
-    
     private SexpNavigator mNavigator;
     private PaintManager mPaintManager;
     private SchemeParenthesisPainter mParenPainter;
@@ -281,21 +274,6 @@ public class SchemeEditor extends TextEditor {
         }
     }
 
-    //
-    //// SymbolDictionary support
-    //
-
-    public ISymbolDictionary getSymbolDictionary() {
-        return getSchemeSymbolDictionary();
-    }
-
-    public static ISymbolDictionary getSchemeSymbolDictionary() {
-        if (mDictionary == null) {
-            URL url = SchemeScriptPlugin.findFile(new Path("conf/forms.scm"));
-            mDictionary = UserDictionary.createInstance(KawaDictionary.getInstance(), "scm,ss,sch,brl,krl", url);
-        }
-        return mDictionary;
-    }
 
     protected void initializeKeyBindingScopes() {
         setKeyBindingScopes(new String[] {"org.schemeway.plugins.schemescript.schemeEditorScope"});

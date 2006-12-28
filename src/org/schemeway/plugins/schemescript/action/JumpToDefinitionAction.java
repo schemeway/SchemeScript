@@ -40,11 +40,7 @@ public class JumpToDefinitionAction extends SchemeAction {
             if (symbol == null)
                 return;
 
-            ISymbolDictionary dictionary = editor.getSymbolDictionary();
-            if (dictionary == null)
-                return;
-
-            SymbolEntry[] entries = dictionary.findSymbol(symbol);
+            SymbolEntry[] entries = DictionaryUtils.findUserDefinitions(symbol);
             if (entries.length > 0) {
                 SymbolEntry entry = null;
                 if (entries.length == 1) {

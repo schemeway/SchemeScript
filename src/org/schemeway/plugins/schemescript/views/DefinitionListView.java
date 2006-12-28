@@ -116,7 +116,7 @@ public class DefinitionListView extends ViewPart {
         if (entry == null)
             return;
         
-        SchemeScriptTools.openEditor(entry.getFile(), entry.getLineNumber() - 1);
+        SchemeScriptTools.openEditor(entry.getFile(), entry.getOffset(), entry.getLength());
     }
     
     public static void showInView(SymbolEntry[] entries) {

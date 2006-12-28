@@ -16,7 +16,7 @@
 ;;;
 
 
-(define *module-registry* :: <java.util.WeakHashMap> (WeakHashMap:new))
+(define *module-registry* (WeakHashMap:new))
 
 
 ;;;
@@ -37,13 +37,12 @@
 
 
 (define (symbol->module-name symbol #!optional (buffer (current-buffer)))
-  (let* ((dictionary (SchemeEditor:getSymbolDictionary buffer))
-         (entries    (filter symbol?
-                             (delete-duplicates!
-                              (map (lambda (entry)
-                                     (find-module-name (SymbolEntry:getFile entry)))
-                                   (array->list (SymbolDictionary:findSymbol dictionary symbol)))))))
-    
+  (let ((entries    (filter symbol?
+                            (delete-duplicates!
+                             (map (lambda (entry)
+                                    (find-module-name (SymbolEntry:getFile entry)))
+                                  (get-dictionary-entries (symbol->string symbol)))))))
+
     (cond ((null? entries) #f)
           ((null? (cdr entries)) (car entries))
           (else 

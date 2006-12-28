@@ -7,21 +7,19 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.*;
-import org.eclipse.jface.text.templates.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
-import org.schemeway.plugins.schemescript.parser.SexpNavigator;
+import org.schemeway.plugins.schemescript.parser.*;
 
 /**
  * @author Nu Echo Inc.
  */
 public class SchemeContentAssistProcessor implements IContentAssistProcessor {
     
-    private SchemeEditor mEditor;
+	private SchemeEditor mEditor;
     private IResource mResource;
     
     private static final char[] TRIGGER_CHARS = new char[] { '\n', ' ' };
@@ -174,10 +172,9 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         try {
             String symbol = SchemeTextUtilities.findSymbolBeforePoint(viewer, offset);
             if (symbol != null) {
-                ISymbolDictionary dictionary = getEditor().getSymbolDictionary();
                 List proposals = new LinkedList();
                 int len = symbol.length();
-                SymbolEntry[] matchingEntries = dictionary.completeSymbol(symbol);
+                SymbolEntry[] matchingEntries = DictionaryUtils.findCompletions(symbol);
                 for (int index = 0; index < matchingEntries.length; index++) {
                     SymbolEntry entry = matchingEntries[index];
                     String insertion = entry.getName().substring(len);
@@ -187,14 +184,6 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
                     }
                     proposals.add(new SchemeCompletionProposal(entry.getName(), insertion, offset, priority));
                 }
-                // add templates
-                TemplateContextType type = dictionary.getTemplateContextType();
-                TemplateContext context = new DocumentTemplateContext(type, getEditor().getDocument(), offset - len, len);
-                Template[] templates = dictionary.completeTemplates(symbol);
-                for (int index = 0; index < templates.length; index++)  {
-                    proposals.add(new TemplateProposal(templates[index], context, new Region(offset, len), null));
-                }
-                
                 if (proposals.size() != 0) {
                     Collections.sort(proposals, new ProposalComparator());
                     proposals = removeDuplicates(proposals);
@@ -239,7 +228,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         
         if (symbol != null) {
             List informations = new LinkedList();
-            SymbolEntry[] matchingEntries = getEditor().getSymbolDictionary().findSymbol(symbol);
+            SymbolEntry[] matchingEntries = DictionaryUtils.findUserDefinitions(symbol);
             for (int index = 0; index < matchingEntries.length; index++) {
                 informations.add(makeContextInfo(matchingEntries[index]));
             }

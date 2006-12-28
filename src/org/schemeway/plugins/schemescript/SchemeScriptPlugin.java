@@ -10,6 +10,7 @@ import java.util.*;
 
 import kawa.standard.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
@@ -34,6 +35,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     //The shared instance.
     private static SchemeScriptPlugin plugin;
 	private static SymbolReferencesManager sReferencesManager;
+	private static DictionaryUpdater sDictionaryUpdater;
     //Resource bundle.
     private ResourceBundle resourceBundle;
 
@@ -97,6 +99,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
+        sDictionaryUpdater.dispose();
         if (propertyChangedListener != null) {
             getPreferenceStore().removePropertyChangeListener(propertyChangedListener);
         }
@@ -183,6 +186,14 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 			sReferencesManager = new SymbolReferencesManager();
 		}
 		return sReferencesManager;
+	}
+	
+	public static DictionaryUpdater getDictionaryUpdater() {
+		if (sDictionaryUpdater == null) {
+			sDictionaryUpdater = DictionaryUpdater.createInstance("scm,ss,sch,brl,krl");
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(sDictionaryUpdater, IResourceChangeEvent.POST_CHANGE);
+		}
+		return sDictionaryUpdater;
 	}
     
     public static void logException(String message, Throwable exception) {

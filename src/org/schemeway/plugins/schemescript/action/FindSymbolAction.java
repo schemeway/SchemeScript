@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.schemeway.plugins.schemescript.dialogs.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
-import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.views.*;
 
 public class FindSymbolAction extends Action implements IWorkbenchWindowActionDelegate {
@@ -32,7 +31,7 @@ public class FindSymbolAction extends Action implements IWorkbenchWindowActionDe
         else
             shell = mWindow.getShell();
         
-        FindSymbolDialog dialog = new FindSymbolDialog(shell, SchemeEditor.getSchemeSymbolDictionary());
+        FindSymbolDialog dialog = new FindSymbolDialog(shell);
         if (dialog.open() == Window.OK) {
             SymbolEntry[] entries = dialog.getSelectedEntries();
             if (entries != null) {

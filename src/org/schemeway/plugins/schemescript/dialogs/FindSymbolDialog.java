@@ -17,15 +17,13 @@ import org.schemeway.plugins.schemescript.dictionary.*;
 
 public final class FindSymbolDialog extends Dialog {
     
-    private ISymbolDictionary mDictionary;
     private SymbolEntry[] mSelectedEntries = null;
     
     private Text mPrefix;
     private List mSymbols;
 
-    public FindSymbolDialog(Shell parentShell, ISymbolDictionary dictionary) {
+    public FindSymbolDialog(Shell parentShell) {
         super(parentShell);
-        mDictionary = dictionary;
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
     
@@ -69,7 +67,7 @@ public final class FindSymbolDialog extends Dialog {
         String text = mPrefix.getText();
         mSymbols.removeAll();
         if (!text.equals("")) {
-            SymbolEntry[] entries = mDictionary.completeSymbol(text);
+            SymbolEntry[] entries = DictionaryUtils.findCompletions(text);
             TreeSet set = new TreeSet();
             
             for(int i=0; i<entries.length; i++) {
@@ -89,12 +87,12 @@ public final class FindSymbolDialog extends Dialog {
         if (mSymbols.getSelectionCount() == 1) {
             int selection = mSymbols.getSelectionIndices()[0];
             String symbol = mSymbols.getItem(selection);
-            mSelectedEntries = mDictionary.findSymbol(symbol);
+            mSelectedEntries = DictionaryUtils.findUserDefinitions(symbol);
         }
         else if (mSymbols.getItemCount() > 0)
         {
         	String symbol = mSymbols.getItem(0);
-        	mSelectedEntries = mDictionary.findSymbol(symbol);
+        	mSelectedEntries = DictionaryUtils.findUserDefinitions(symbol);
         }
         else {
             mSelectedEntries = null;

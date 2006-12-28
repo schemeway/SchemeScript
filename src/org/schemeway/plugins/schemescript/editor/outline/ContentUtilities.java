@@ -30,8 +30,7 @@ public final class ContentUtilities {
 	}
 
 	public static OutlineNode createNodeForEntry(IDocument document, SymbolEntry entry) throws BadLocationException {
-		int offset = document.getLineOffset(entry.getLineNumber() - 1);
-		Position position = new Position(offset);
+		Position position = new Position(entry.getOffset(), entry.getLength());
 		document.addPosition(position);
 		OutlineNode node = OutlineNode.createDefinition(createNodeName(entry), position, 0);
 		return node;
@@ -63,9 +62,9 @@ public final class ContentUtilities {
 	
 	    if (input instanceof IFileEditorInput) {
 	        IFileEditorInput editorInput = (IFileEditorInput) input;
-	        List entries = editor.getSymbolDictionary().findSymbolForResource(editorInput.getFile());
-	        for (int index = 0; index < entries.size(); index++) {
-	            SymbolEntry entry = (SymbolEntry) entries.get(index);
+	        SymbolEntry[] entries = findDefinitions(editorInput);
+	        for (int index = 0; index < entries.length; index++) {
+	            SymbolEntry entry = (SymbolEntry) entries[index];
 	            
 	            if ("java-member".equals(entry.getCategory()))
 	            	continue;
@@ -78,6 +77,10 @@ public final class ContentUtilities {
 	            }
 	        }
 	    }
+	}
+
+	private static SymbolEntry[] findDefinitions(IFileEditorInput editorInput) {
+		return DictionaryUtils.findDefinitionsForResource(editorInput.getFile());
 	}
 
 	public static void addSections(IDocument document, List nodes) throws BadLocationException, BadPositionCategoryException
