@@ -1,8 +1,8 @@
 ;; R5RS dictionary for SchemeScript
 
-(dictionary-entry "define" "(define name value)" 'syntax 2)
-(dictionary-entry "begin" "(begin body ...)" 'syntax 2)
-(dictionary-entry "lambda" "(lambda formals body)" 'syntax 2)
+(dictionary-entry "define" "(define name value)" 'syntax 0)
+(dictionary-entry "begin" "(begin body ...)" 'syntax 0)
+(dictionary-entry "lambda" "(lambda formals body)" 'syntax 0)
 (dictionary-entry "if" "(if test consequent [alternative])" 'syntax)
 (dictionary-entry "set!" "(set! var val)" 'syntax)
 (dictionary-entry "boolean?" "(boolean? o)" 'function)
