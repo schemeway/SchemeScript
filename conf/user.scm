@@ -12,6 +12,9 @@
 ;;;; * System initializations
 ;;;
 
+(require 'srfi-1)
+(require 'srfi-69)
+
 ;; -- DO NOT REMOVE THE FOLLOWING LINES --
 (load-relative "macros.scm")
 (load-relative "util.scm")
@@ -27,8 +30,12 @@
 (load-relative "markers.scm")
 (load-relative "scratchpad.scm")
 (load-relative "reader.scm")
+(load-relative "stxmatch.scm")
 (load-relative "codewalkers.scm")
+(load-relative "forms.scm")
 (load-relative "refactoring.scm")
+(load-relative "dictionaries.scm")
+
 
 
 ;; -- ADD YOUR OWN INITIALIZATIONS HERE
