@@ -8,7 +8,7 @@
 ;; Taylor Campbell's excellent paredit.el, a superb minor Emacs mode for 
 ;; parentheses-based languages.
 
-;; TODO: indentation
+
 ;; TODO: documentation
 
 
@@ -160,4 +160,20 @@
           (loop (+ point 1))
           (if (> point start)
               (delete-text (- point start) start buffer))))))
+
+
+(define (up-and-forward)
+  (with-up-sexp (point) (current-buffer)
+   (lambda (start end)
+     (set-point end)
+     (insert-text " ")
+     (forward-char 1))))
+
+
+(define (up-and-forward/newline)
+  (with-up-sexp (point) (current-buffer)
+   (lambda (start end)
+     (set-point end)
+     (insert-text "\n")
+     (forward-char 1))))
 
