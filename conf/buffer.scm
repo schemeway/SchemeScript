@@ -198,6 +198,19 @@
       (set-point start buffer))))
 
 
+;; indentation
+(define (indent-region start end #!optional (buffer (current-buffer)))
+  (let ((start-line (offset-line start buffer))
+        (end-line   (offset-line end buffer))
+        (explorer   (SchemeEditor:getExplorer buffer))
+        (manager    (SchemeEditor:getIndentationManager buffer)))
+    (run-compound-change
+     (lambda ()
+       (FormatAction:indentLines (buffer-document buffer) start-line end-line
+                                 (SchemeIndentationContext:new explorer manager 0)))
+     buffer)))
+
+
 
 ;; Adds a function that is called when a Scheme buffer is saved.
 ;; The function must accept one parameter, the buffer saved.
