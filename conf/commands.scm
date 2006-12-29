@@ -25,7 +25,8 @@
               (lambda ()
                 (delete-text (- end-outer start-outer) start-outer buffer)
                 (insert-text sexp start-outer buffer)
-                (set-point start-outer buffer))
+                (set-point start-outer buffer)
+                (indent-region start-outer (+ start-outer (string-length sexp))))
               buffer)))))))))
 
 
@@ -38,7 +39,8 @@
         (lambda ()
           (insert-text ")" end buffer)
           (insert-text "(" start buffer)
-          (set-point (+ start 1) buffer))
+          (set-point (+ start 1) buffer)
+          (indent-region start (+ end 2) buffer))
         buffer)))))
 
 
@@ -51,7 +53,8 @@
         (lambda ()
           (delete-text 1 (- end 1) buffer)
           (delete-text 1 start buffer)
-          (set-point (- point 1) buffer))
+          (set-point (- point 1) buffer)
+          (indent-region point (- end 2) buffer))
         buffer)))))
 
 
@@ -64,6 +67,7 @@
         (lambda ()
           (remove-whitespaces)
           (insert-text ") (" point buffer)
+          (with-forward-sexp (+ point 2) buffer indent-region)
           (set-point (+ point 1) buffer))
         buffer)))))
 
@@ -79,7 +83,8 @@
            (lambda ()
              (delete-text 1 start-after buffer)
              (delete-text 1 (- end-before 1) buffer)
-             (set-point (- point 1) buffer))
+             (set-point (- point 1) buffer)
+             (indent-region start-after (- end-before)))
            buffer)))))))
 
 
@@ -122,7 +127,8 @@
         (lambda ()
           (delete-text (- end point) point buffer)
           (set-point point)
-          (remove-whitespaces))
+          (remove-whitespaces)
+          (with-up-sexp point buffer indent-region))
         buffer)))))
 
 
