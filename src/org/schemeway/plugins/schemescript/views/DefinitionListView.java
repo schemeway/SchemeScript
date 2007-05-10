@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.views;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -31,15 +32,16 @@ public class DefinitionListView extends ViewPart {
 
     private static class SymbolLabelProvider extends LabelProvider implements ITableLabelProvider {
         public String getColumnText(Object obj, int index) {
-            switch (index) {
+            IFile file = ((SymbolEntry) obj).getFile();
+			switch (index) {
                 case 0:
                     return "";
                 case 1:
                     return ((SymbolEntry) obj).getDescription();
                 case 2:
-                    return ((SymbolEntry) obj).getFile().getName();
+                    return file == null ? "" : file.getName();
                 case 3:
-                    return ((SymbolEntry) obj).getFile().getParent().getRawLocation().toOSString();
+                    return file == null ? "" : file.getParent().getRawLocation().toOSString();
                 default:
                     return "";
             }
@@ -115,6 +117,9 @@ public class DefinitionListView extends ViewPart {
     public static void openEditorAtLine(SymbolEntry entry) {
         if (entry == null)
             return;
+        
+        if (entry.getFile() == null)
+        	return ;
         
         SchemeScriptTools.openEditor(entry.getFile(), entry.getOffset(), entry.getLength());
     }
