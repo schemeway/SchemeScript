@@ -5,15 +5,12 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import java.util.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.editor.*;
-import org.schemeway.plugins.schemescript.views.*;
 
 public class JumpToDefinitionAction extends SchemeAction {
     
@@ -42,50 +39,11 @@ public class JumpToDefinitionAction extends SchemeAction {
 
             SymbolEntry[] entries = DictionaryUtils.findUserDefinitions(symbol);
             if (entries.length > 0) {
-                SymbolEntry entry = null;
-                if (entries.length == 1) {
-                    entry = entries[0];
-                }
-                else {
-                    entries = boostPriorities(entries);
-                    DefinitionListView.showInView(entries);
-                }
-
-                if (entry != null && entry.getFile() == null)
-                    entry = null;
-
-                if (entry != null) {
-                    DefinitionListView.openEditorAtLine(entry);
-                }
+                SchemeTextUtilities.openOrSelectEntry(entries, getResource());
             }
         }
         catch (Throwable exception) {
             SchemeScriptPlugin.logException("Exception in jump definition", exception);
         }
-    }
-
-    private SymbolEntry[] boostPriorities(SymbolEntry[] entries) {
-        List list = Arrays.asList(entries);
-
-        Collections.sort(list, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                SymbolEntry e1 = (SymbolEntry) o1;
-                SymbolEntry e2 = (SymbolEntry) o2;
-                int p1 = e1.getPriority();
-                int p2 = e2.getPriority();
-                if (e1.getFile() != null && e1.getFile().equals(getResource()))
-                    p1 += 10;
-                if (e2.getFile() != null && e2.getFile().equals(getResource()))
-                    p2 += 10;
-                if (p1 < p2)
-                    return 1;
-                if (p1 == p2)
-                    return 0;
-                else
-                    return -1;
-            }
-        });
-
-        return (SymbolEntry[]) list.toArray(new SymbolEntry[list.size()]);
     }
 }

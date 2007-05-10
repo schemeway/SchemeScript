@@ -7,6 +7,7 @@ package org.schemeway.plugins.schemescript.editor;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
+import org.eclipse.jface.text.hyperlink.*;
 import org.eclipse.jface.text.presentation.*;
 import org.eclipse.jface.text.source.*;
 
@@ -83,6 +84,12 @@ public class SchemeConfiguration extends SourceViewerConfiguration {
     
     public ITextHover getTextHover(ISourceViewer viewer, String contentType) {
         return new SchemeTextHover(getEditor());
+    }
+    
+    public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
+    	return new IHyperlinkDetector[] {
+    			new SymbolHyperlinkDetector(mEditor)
+    	};
     }
 
 }
