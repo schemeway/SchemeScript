@@ -99,7 +99,9 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
-        sDictionaryUpdater.dispose();
+        if (sDictionaryUpdater != null) {
+        	sDictionaryUpdater.dispose();
+        }
         if (propertyChangedListener != null) {
             getPreferenceStore().removePropertyChangeListener(propertyChangedListener);
         }
