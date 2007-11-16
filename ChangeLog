@@ -2,6 +2,8 @@
 
 - Added support for #! on the first line (for running scripts)
 - Added support for Snow-like definitions
+- Added initial support for R6RS library form
+- Punctuation tokens are now colorized separately (can be customized in the preferences)
 
 *** Version 1.2.22
 
