@@ -150,7 +150,8 @@
 
 (define (r6rs-library-name? stx-name)
   (and (stx-list? stx-name)
-       (every symbol? (stx-object->datum stx-name))))
+       (every (lambda (obj) (or (symbol? obj) (list? obj)))
+              (stx-object->datum stx-name))))
 
 
 ;;;
