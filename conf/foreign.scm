@@ -28,6 +28,9 @@
 (define-namespace SymbolEntry      "class:org.schemeway.plugins.schemescript.dictionary.SymbolEntry")
 (define-namespace UserDictionary   "class:org.schemeway.plugins.schemescript.dictionary.IUserDictionary")
 (define-namespace SchemePlugin     "class:org.schemeway.plugins.schemescript.SchemeScriptPlugin")
+(define-namespace SchemeIndentationContext "class:org.schemeway.plugins.schemescript.indentation.SchemeIndentationContext")
+(define-namespace FormatAction     "class:org.schemeway.plugins.schemescript.action.FormatAction")
+
 
 (define-namespace JavaCore         "class:org.eclipse.jdt.core.JavaCore")
 (define-namespace IJavaModel       "class:org.eclipse.jdt.core.IJavaModel")
@@ -94,3 +97,10 @@
 
 (define-namespace FileBuffers "class:org.eclipse.core.filebuffers.FileBuffers")
 (define-namespace ITextFileBufferManager "class:org.eclipse.core.filebuffers.ITextFileBufferManager")
+
+
+(define-namespace HashMap <java.util.HashMap>)
+(define-namespace Iterator <java.util.Iterator>)
+(define-namespace Set <java.util.Set>)
+
+
