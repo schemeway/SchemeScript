@@ -137,6 +137,22 @@
               (char=? #\> (string-ref str (- (string-length str) 1)))))))
 
 
+(define-code-walker 'library
+  (lambda (stx resource recurse)
+    (stx-match stx
+      ((_ ,name . ,forms)
+       (when (r6rs-library-name? name)
+         (let ((library-name (format #f "~a" (stx-object->datum name))))
+           (parameterize ((current-dictionary-entry
+                           (new-dictionary-entry resource name 'r6rs-library (symbol-description name '|R6RS library|) library-name)))
+             (recurse forms))))))))
+
+
+(define (r6rs-library-name? stx-name)
+  (and (stx-list? stx-name)
+       (every symbol? (stx-object->datum stx-name))))
+
+
 ;;;
 ;;;; * define-simple-class, define-class
 ;;;
