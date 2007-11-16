@@ -76,7 +76,7 @@ public class SchemeTextHover implements ITextHover {
 			while (iterator.hasNext()) {
 				Annotation annotation = (Annotation) iterator.next();
 				Position position = model.getPosition(annotation);
-				if (position.offset <= hoverRegion.getOffset()
+				if (position != null && position.offset <= hoverRegion.getOffset()
 						&& hoverRegion.getOffset() <= position.offset + position.length
 						&& annotation instanceof MarkerAnnotation) {
 					messages.add(annotation.getText());
