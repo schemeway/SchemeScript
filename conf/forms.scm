@@ -12,7 +12,7 @@
 ;;;
 
 
-(define-code-walker '(define define-private define-constant)
+(define-code-walker '(define* define define-private define-constant)
   (lambda (stx resource recurse)
     (stx-match stx
       ((_ (,name . ,args) . ,body)
@@ -89,7 +89,7 @@
          (new-dictionary-entry resource name 'user-syntax (symbol-description name 'user-syntax)))))))
 
 
-(define-code-walker '(define-macro defmacro)
+(define-code-walker '(define-macro defmacro define-macro*)
   (lambda (stx resource recurse)
     (stx-match stx
       ((_ (,name . ,args) . ,body)
@@ -98,6 +98,15 @@
       ((_ ,name . ,body)
        (when (stx-symbol? name)
          (new-dictionary-entry resource name 'user-syntax (symbol-description name 'user-syntax)))))))
+
+
+(define-code-walker 'package*
+  (lambda (stx resource recurse)
+    (stx-match stx
+      ((_ ,name . ,rest)
+       (when (stx-symbol? name)
+         (add-to-module-registry! resource (stx-object-data name))
+         (new-dictionary-entry resource name '|Snow! package| (symbol-description name '|Snow! package|)))))))
 
 
 (define-code-walker 'module-name
@@ -156,17 +165,17 @@
   (lambda (stx resource recurse)
     (let ((form (stx-object->datum stx)))
       (when (namespace-form? form)
-        (let ((name-stx (cadr (stx-object-data stx))))
-          (new-dictionary-entry resource name-stx 'namespace (symbol-description name-stx 'namespace))
-          #|(let* ((namespace-symbol (cadr form))
-                 (classname        (namespace->fqn (caddr form)))
-                 (signatures       (find-class-methods classname)))
-            (when signatures
-              (for-each (lambda (name/signature)
-                          (let ((description (format #f "(~a:~a)" namespace-symbol (cadr name/signature)))
-                                (entry-name  (format #f "~a:~a" namespace-symbol (car name/signature))))
-                            (new-dictionary-entry resource name-stx 'java-member description entry-name)))
-                        signatures)))|#)))))
+        (let* ((name-stx (cadr (stx-object-data stx)))
+               (namespace-symbol (cadr form))
+               (classname        (namespace->fqn (caddr form)))
+               (signatures       (find-class-methods classname)))
+          (new-dictionary-entry resource name-stx 'namespace (symbol-description name-stx 'namespace) namespace-symbol classname)
+          '(when signatures
+            (for-each (lambda (name/signature)
+                        (let ((description (format #f "(~a:~a)" namespace-symbol (cadr name/signature)))
+                              (entry-name  (format #f "~a:~a" namespace-symbol (car name/signature))))
+                          (new-dictionary-entry resource name-stx 'java-member description entry-name)))
+                      signatures)))))))
 
 
 (define (namespace-form? form)
