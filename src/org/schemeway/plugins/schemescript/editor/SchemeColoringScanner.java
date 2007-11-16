@@ -26,6 +26,7 @@ public class SchemeColoringScanner implements ITokenScanner {
     private Token typeToken = new Token(null);
     private Token errorToken = new Token(null);
     private Token parenToken = new Token(null);
+    private Token punctuationToken = new Token(null);
 
     private SchemeScanner mScanner = new SchemeScanner();
     private ColorManager mColorManager;
@@ -49,6 +50,7 @@ public class SchemeColoringScanner implements ITokenScanner {
         typeToken.setData(makeAttribute(store, ColorPreferences.TYPE_COLOR));
         errorToken.setData(makeAttribute(store, ColorPreferences.ERROR_COLOR));
         parenToken.setData(makeAttribute(store, ColorPreferences.PAREN_COLOR));
+        punctuationToken.setData(makeAttribute(store, ColorPreferences.PUNCTUATION_COLOR));
         PreferenceUtil.updateKeywordManager(store, mKeywordManager);
     }
 
@@ -92,6 +94,12 @@ public class SchemeColoringScanner implements ITokenScanner {
                 return parenToken;
             case SchemeToken.EXPR_COMMENT_PREFIX:
             	return errorToken;
+            case SchemeToken.BACKQUOTE:
+            case SchemeToken.QUOTE:
+            case SchemeToken.DOT:
+            case SchemeToken.UNQUOTE:
+            case SchemeToken.UNQUOTE_SPLICING:
+            	return punctuationToken;
             case SchemeToken.SYMBOL:
             {
                 String text = mScanner.getText(mOffset, mLength);

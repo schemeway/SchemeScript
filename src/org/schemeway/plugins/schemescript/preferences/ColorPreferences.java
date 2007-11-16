@@ -54,6 +54,7 @@ public class ColorPreferences extends SchemePreferencePage {
     public final static String CONSTANT_COLOR = PREFIX + "constant";
     public final static String MUTATOR_COLOR = PREFIX + "mutator";
     public final static String TYPE_COLOR = PREFIX + "type";
+    public final static String PUNCTUATION_COLOR = PREFIX + "punctuation";
 
     private static AppearanceItem[] mItems =
     {
@@ -68,7 +69,8 @@ public class ColorPreferences extends SchemePreferencePage {
         new AppearanceItem(STRING_COLOR, "Strings", ISchemeColorConstants.SCHEME_STRING, false, false),
         new AppearanceItem(CONSTANT_COLOR, "Constants", ISchemeColorConstants.SCHEME_CONSTANT, false, false),
         new AppearanceItem(MUTATOR_COLOR, "Mutators", ISchemeColorConstants.SCHEME_MUTATOR, true, false),
-        new AppearanceItem(TYPE_COLOR, "Type names", ISchemeColorConstants.SCHEME_TYPE, false, false)
+        new AppearanceItem(TYPE_COLOR, "Type names", ISchemeColorConstants.SCHEME_TYPE, false, false),
+        new AppearanceItem(PUNCTUATION_COLOR, "Punctuation", ISchemeColorConstants.SCHEME_PUNCTUATION, true, false),
     };
 
     private ColorSelector mCurrentItemColor;
