@@ -1,7 +1,19 @@
+*** Version 1.2.23
+
+- Added support for #! on the first line (for running scripts)
+- Added support for Snow-like definitions
+
+*** Version 1.2.22
+
+- Added support for hyperlinks to jump to the symbol definition
+- Reimplemented the symbol dictionary stuff. Now gives precise location of symbols.
+- Implemented feature request #1569364  : Treat [] like () while editing
+
 *** Version 1.2.15
 
 - Port to Eclipse 3.2
 - Implemented feature request #1325814 : Support for SRFI-62
+- Implemented feature request #1558931 : Eclipse variables in interpreter working directory
 - examples/scm2html.scm: a script to format a Scheme expression into HTML
 - Support for more S-expression-based commands (inspired by paredit.el).
 - Ctrl-/ can now uncomment a line or region if the cursor is in a line/multiline/expression comment.
