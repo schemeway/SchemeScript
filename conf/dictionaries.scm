@@ -134,6 +134,8 @@
 
 
 (begin
-  (load-relative "r5rs.scm")
-  (load-relative "kawa.scm"))
+  (load-relative "languages/r5rs.scm")
+  (load-relative "languages/kawa.scm")
+  (load-relative "languages/r6rs.scm")
+  (load-relative "languages/snow.scm"))
 
