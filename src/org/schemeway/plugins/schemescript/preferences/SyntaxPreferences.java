@@ -49,8 +49,11 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
     private final static String[] DEFAULT_DEFINES = new String[] {
                 "define",
+                "define*",
                 "define-syntax",
                 "define-macro",
+                "define-macro*",
+                "define-syntax*",
                 "defmacro",
                 "define-simple-class",
                 "define-class",
@@ -104,7 +107,9 @@ public class SyntaxPreferences extends SchemePreferencePage {
                 "future",
                 "delay",
                 "force",
-                "synchronized"
+                "synchronized",
+                "library",
+                "package*"
     };
     private final static String[] DEFAULT_MUTATORS = new String[] {
                 "set!", "set-car!", "set-cdr!", "vector-set!", "string-set!", "slot-set!"

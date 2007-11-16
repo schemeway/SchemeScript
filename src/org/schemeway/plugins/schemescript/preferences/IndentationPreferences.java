@@ -33,6 +33,7 @@ public class IndentationPreferences extends SchemePreferencePage {
 
     private final static IndentationScheme[] INDENT_DEFAULTS = new IndentationScheme[] {
                 new IndentationScheme("define", IndentationScheme.DEFINITION, 0),
+                new IndentationScheme("define*", IndentationScheme.DEFINITION, 0),
                 new IndentationScheme("define-syntax", IndentationScheme.DEFINITION, 0),
                 new IndentationScheme("define-macro", IndentationScheme.DEFINITION, 0),
                 new IndentationScheme("define-simple-class", IndentationScheme.DEFINITION, 0),
@@ -62,7 +63,9 @@ public class IndentationPreferences extends SchemePreferencePage {
                 new IndentationScheme("try-catch", IndentationScheme.WITH, 1),
                 new IndentationScheme("try-finally", IndentationScheme.WITH, 1),
                 new IndentationScheme("receive", IndentationScheme.WITH, 2),
-                new IndentationScheme("catch", IndentationScheme.WITH, 2)
+                new IndentationScheme("catch", IndentationScheme.WITH, 2),
+                new IndentationScheme("library", IndentationScheme.WITH, 1),
+                new IndentationScheme("package*", IndentationScheme.WITH, 1)
     };
 
     protected Control createContents(Composite parent) {
