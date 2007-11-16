@@ -142,7 +142,7 @@
     (stx-match stx
       ((_ ,name . ,forms)
        (when (r6rs-library-name? name)
-         (let ((library-name (format #f "~a" (stx-object->datum name))))
+         (let ((library-name (string->symbol (format #f "~a" (stx-object->datum name)))))
            (parameterize ((current-dictionary-entry
                            (new-dictionary-entry resource name 'r6rs-library (symbol-description name '|R6RS library|) library-name)))
              (recurse forms))))))))
