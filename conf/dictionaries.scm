@@ -12,7 +12,8 @@
 ;;;
 
 
-(define *user-dictionary* (make-hash-table))
+
+(define *user-dictionary* (HashMap:new))
 
 
 (define current-dictionary (make-parameter *user-dictionary*))
@@ -29,22 +30,52 @@
 
 
 (define (add-dictionary-entry name entry #!optional (dictionary (current-dictionary)))
-  (let ((current-entries (hash-table-ref/default dictionary name '())))
+  (let ((current-entries (if (HashMap:containsKey dictionary name)
+                             (HashMap:get dictionary name)
+                             '())))
     (set-dictionary-entries! name (cons entry current-entries) dictionary)))
 
 
 (define (set-dictionary-entries! name entries #!optional (dictionary (current-dictionary)))
-  (hash-table-set! dictionary name entries))
+  (HashMap:put dictionary name entries))
 
 
 (define (get-dictionary-entries name #!optional (dictionary (current-dictionary)))
   (synchronize-dictionary)
-  (hash-table-ref/default dictionary name '()))
+  (if (HashMap:containsKey dictionary name)
+      (HashMap:get dictionary name)
+      '()))
+
+
+(define (dictionary-fold dictionary proc init)
+  (let ((key-iterator (Set:iterator (HashMap:keySet dictionary))))
+    (let loop ((result init))
+      (if (Iterator:hasNext key-iterator)
+          (let* ((key (Iterator:next key-iterator))
+                 (val (HashMap:get dictionary key)))
+            (loop (proc key val result)))
+          result))))
+
+
+(define (dictionary-for-each proc dictionary)
+  (let ((key-iterator (Set:iterator (HashMap:keySet dictionary))))
+    (while (Iterator:hasNext key-iterator)
+       (let* ((key (Iterator:next key-iterator))
+              (val (HashMap:get dictionary key)))
+         (proc key value)))))
+
+
+(define (dictionary-keys dictionary)
+  (let ((key-iterator (Set:iterator (HashMap:keySet dictionary)))
+        (result       '()))
+    (while (Iterator:hasNext key-iterator)
+       (set! result (cons (Iterator:next key-iterator) result)))
+    result))
 
 
 (define (get-dictionary-entries-for-resource resource #!optional (dictionary (current-dictionary)))
   (synchronize-dictionary)
-  (hash-table-fold dictionary
+  (dictionary-fold dictionary
                    (lambda (key value result)
                      (append (filter (lambda (entry) 
                                        (equal? resource (SymbolEntry:getFile entry)))
@@ -54,9 +85,9 @@
 
 
 (define (remove-dictionary-entries-for-resources resources #!optional (dictionary (current-dictionary)))
-  (let ((names (hash-table-keys dictionary)))
+  (let ((names (dictionary-keys dictionary)))
     (for-each (lambda (name)
-                (let ((new-entries (filter (lambda (entry) 
+                (let ((new-entries (filter (lambda (entry)
                                              (not (member (SymbolEntry:getFile entry) resources)))
                                            (get-dictionary-entries name))))
                   (set-dictionary-entries! name new-entries)))
@@ -65,9 +96,9 @@
 
 (define (find-completions prefix #!optional (dictionary (current-dictionary)))
   (synchronize-dictionary)
-  (hash-table-fold dictionary
+  (dictionary-fold dictionary
                    (lambda (key value result)
-                     (if (starts-with prefix key)
+                     (if (String:startsWith key prefix)
                          (append value result)
                          result))
                    '()))

@@ -8,15 +8,12 @@
 ;;
 
 
-(define-namespace WeakHashMap "class:java.util.WeakHashMap")
-
-
 ;;;
 ;;;; * Global registry
 ;;;
 
 
-(define *module-registry* (WeakHashMap:new))
+(define *module-registry* (HashMap:new))
 
 
 ;;;
@@ -26,11 +23,11 @@
 
 
 (define (add-to-module-registry! resource modulename)
-  (WeakHashMap:put *module-registry* resource modulename))
+  (HashMap:put *module-registry* resource modulename))
 
 
 (define (find-module-name resource)
-  (let ((value (WeakHashMap:get *module-registry* resource)))
+  (let ((value (HashMap:get *module-registry* resource)))
     (if (eq? value #!null)
         #f
         value)))
@@ -41,7 +38,7 @@
                             (delete-duplicates!
                              (map (lambda (entry)
                                     (find-module-name (SymbolEntry:getFile entry)))
-                                  (get-dictionary-entries (symbol->string symbol)))))))
+                                  (get-dictionary-entries symbol))))))
 
     (cond ((null? entries) #f)
           ((null? (cdr entries)) (car entries))
