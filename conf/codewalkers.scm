@@ -15,7 +15,7 @@
 
 
 (define (new-dictionary-entry resource stx-obj category description #!optional (name #f))
-  (let* ((name  (or name (symbol->string (stx-object-data stx-obj))))
+  (let* ((name  (or name (stx-object-data stx-obj)))
          (entry (SymbolEntry:new name description category resource (stx-object-offset stx-obj) (stx-object-length stx-obj) 0)))
     (SymbolEntry:setParent entry (current-dictionary-entry))
     (add-dictionary-entry name entry)
