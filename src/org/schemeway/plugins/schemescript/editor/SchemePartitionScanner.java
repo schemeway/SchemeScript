@@ -81,6 +81,10 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 			else if (lookahead() == ';') {
 				result = scanExpression();
 			}
+			else if (lookahead() == '!' && currentLine() == 0)
+			{
+				result = scanSinglelineComment();
+			}
 			else {
 				result = scanDefault();
 			}
@@ -101,6 +105,15 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 		}
 		}
 		return result;
+	}
+
+	private int currentLine() {
+		try {
+			return mDocument.getLineOfOffset(mPosition);
+		}
+		catch (BadLocationException e) {
+			return -1;
+		}
 	}
 
 	private Token scanExpression() {
