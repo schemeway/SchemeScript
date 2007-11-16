@@ -8,9 +8,9 @@ package org.schemeway.plugins.schemescript.preferences;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.*;
-import org.eclipse.jface.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 

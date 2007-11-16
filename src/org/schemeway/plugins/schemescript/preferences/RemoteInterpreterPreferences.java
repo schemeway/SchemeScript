@@ -47,7 +47,7 @@ public class RemoteInterpreterPreferences extends FieldEditorPreferencePage impl
         hostEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
         
         IntegerFieldEditor portEditor =  new IntegerFieldEditor(INTERPRETER_PORT, "Port:", getFieldEditorParent());
-        portEditor.setValidateStrategy(IntegerFieldEditor.VALIDATE_ON_KEY_STROKE);
+        portEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
         portEditor.setValidRange(1, 32767);
         
         addField(hostEditor);
