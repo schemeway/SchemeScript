@@ -34,9 +34,9 @@ public class SyntaxPreferences extends SchemePreferencePage {
     	public List listbox;
     	public Text reTextbox;
 
-    	public SyntaxCategoryWidgets(List listbox, Text textbox) {
+    	public SyntaxCategoryWidgets(List list, Text textbox) {
 			super();
-			this.listbox = listbox;
+			this.listbox = list;
 			reTextbox = textbox;
 		}
     }
@@ -109,7 +109,10 @@ public class SyntaxPreferences extends SchemePreferencePage {
                 "force",
                 "synchronized",
                 "library",
-                "package*"
+                "import",
+                "export",
+                "package*",
+                "include*"
     };
     private final static String[] DEFAULT_MUTATORS = new String[] {
                 "set!", "set-car!", "set-cdr!", "vector-set!", "string-set!", "slot-set!"
@@ -221,9 +224,9 @@ public class SyntaxPreferences extends SchemePreferencePage {
         
         reText.addKeyListener(new KeyAdapter() {
         	public void keyReleased(KeyEvent e) {
-        		String text = reText.getText();
+        		String eventText = reText.getText();
         		try {
-        			Pattern.compile(text);
+        			Pattern.compile(eventText);
         			setValid(true);
         			setErrorMessage(null);
         		}
