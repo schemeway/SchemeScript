@@ -111,7 +111,7 @@
             (else
              (let ((path (IResource:getFullPath resource)))
                (ITextFileBufferManager:connect buffer-manager path #!null)
-               (let ((buffer (ITextFileBufferManager:getTextFileBuffer buffer-manager path)))
+               (let ((buffer (ITextFileBufferManager:getTextFileBuffer buffer-manager (as <org.eclipse.core.runtime.IPath> path))))
                  (set! all-resources (cons (cons resource buffer) all-resources))
                  (ITextFileBuffer:getDocument buffer)))))))
 
@@ -197,13 +197,14 @@
 (define (process-next-expression-at-top proc)
   (let-values (((start end) (%forward-sexp)))
     (when (and start end)
-      (with-buffer-text start end
-        (lambda (text)
-          (set-point start)
-          (with-top-sexp
-           (lambda (next-start next-end)
-             (set-point next-end)
-             (proc start end text next-start next-end))))))))
+      (let-values (((start end) (%backward-sexp end)))
+        (with-buffer-text start end
+          (lambda (text)
+            (set-point start)
+            (with-top-sexp
+             (lambda (next-start next-end)
+               (set-point next-end)
+               (proc start end text next-start next-end)))))))))
 
 
 (define (create-function-from-expression)
@@ -223,11 +224,13 @@
 (define (extract-variable)
   (process-next-expression-at-top
    (lambda (start end text next-start next-end)
-     (let* ((expr (format #f "~%~%~%(define var ~a)~%" text))
-            (len  (string-length expr)))
+     (let* ((expr            (format #f "~%~%~%(define var~%  ~a)~%" text))
+            (expr-len        (string-length expr))
+            (insertion-point (+ (- next-end expr-len) 3)))
        (delete-text (- end start) start)
        (insert-text "var" start)
        (insert-text expr)
+       (indent-region insertion-point (+ insertion-point expr-len))
        (let ((document (buffer-document (current-buffer))))
          (create-linked-mode/ui (list (list document start 3)
                                       (list document (+ (point) 14) 3)))))))) ;; TODO - check that 14 is valid under Unix...
