@@ -64,7 +64,7 @@ public final class ContentUtilities {
 	        IFileEditorInput editorInput = (IFileEditorInput) input;
 	        SymbolEntry[] entries = findDefinitions(editorInput);
 	        for (int index = 0; index < entries.length; index++) {
-	            SymbolEntry entry = (SymbolEntry) entries[index];
+	            SymbolEntry entry = entries[index];
 	            
 	            if ("java-member".equals(entry.getCategory()))
 	            	continue;

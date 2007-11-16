@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;

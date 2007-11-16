@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.editor.*;

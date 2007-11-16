@@ -20,12 +20,12 @@ public class OutlineNode {
 	public String type;
 	public int level;
 
-	public OutlineNode(String type, String name, Position position, int level) {
-		this.type = type;
-		this.name = name;
-		this.position = position;
+	public OutlineNode(String theType, String theName, Position thePosition, int theLevel) {
+		this.type = theType;
+		this.name = theName;
+		this.position = thePosition;
 		this.parent = null;
-		this.level = level;
+		this.level = theLevel;
 		this.children = new LinkedList();
 	}
 

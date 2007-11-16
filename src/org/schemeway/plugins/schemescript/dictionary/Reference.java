@@ -10,10 +10,9 @@ public class Reference {
 	public int offset;
 	public int length;
 
-	public Reference(IResource resource, int offset, int length) {
-		super();
-		this.length = length;
-		this.offset = offset;
-		this.resource = resource;
+	public Reference(IResource mResource, int mOffset, int mLength) {
+		length = mLength;
+		offset = mOffset;
+		resource = mResource;
 	}
 }

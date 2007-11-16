@@ -7,6 +7,7 @@ package org.schemeway.plugins.schemescript.action;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
 
 public class SelectionStack {
@@ -19,7 +20,7 @@ public class SelectionStack {
     public void push(Region selection, Region previousSelection){
         Assert.isNotNull(selection);
         if (mStack.size() > 0) {
-            if (previousSelection == null || !previousSelection.equals((Region)mStack.get(0))) {
+            if (previousSelection == null || !previousSelection.equals(mStack.get(0))) {
                 mStack.clear();
             }
         }

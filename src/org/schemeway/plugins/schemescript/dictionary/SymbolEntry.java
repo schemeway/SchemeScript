@@ -7,12 +7,10 @@ package org.schemeway.plugins.schemescript.dictionary;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.Assert; // TODO should be replaced by a Plugin specific class
 
 /**
  * An entry in a symbol dictionary.
  * 
- * @see ISymbolDictionary
  * @see IResource
  */
 public class SymbolEntry {
