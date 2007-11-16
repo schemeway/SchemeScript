@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="lib/kawa.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/sisc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/sisc-heap.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/sisc-lib.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/sisc-opt.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/sisc.jar"/>
-	<classpathentry kind="lib" path="lib/sisc-heap.jar"/>
-	<classpathentry kind="lib" path="lib/sisc-lib.jar"/>
-	<classpathentry kind="lib" path="lib/sisc-opt.jar"/>
-	<classpathentry kind="lib" path="lib/kawa.jar"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
