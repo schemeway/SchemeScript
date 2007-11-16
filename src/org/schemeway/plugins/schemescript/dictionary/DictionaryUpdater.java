@@ -141,7 +141,7 @@ public class DictionaryUpdater implements IResourceChangeListener {
 		if (monitor != null)
 			monitor.beginTask("Updating dictionary:", files.length);
 		for (int i = 0; i < files.length; i++) {
-			IFile file = (IFile) files[i];
+			IFile file = files[i];
 			if (monitor != null && monitor.isCanceled())
 				break;
 			scanSchemeFile(file, monitor);
