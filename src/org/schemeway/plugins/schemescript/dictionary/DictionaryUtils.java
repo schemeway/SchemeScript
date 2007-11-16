@@ -23,7 +23,7 @@ public final class DictionaryUtils {
 		if (object != null && object instanceof Procedure) {
 			Procedure getDictionaryEntries = (Procedure) object;
 			try {
-				LList entryList = (LList) getDictionaryEntries.apply1(new FString(symbol));
+				LList entryList = (LList) getDictionaryEntries.apply1(symbol);
 				List entries = new ArrayList();
 				addEntriesToJavaList(entryList, entries);
 				return (SymbolEntry[]) entries.toArray(new SymbolEntry[entries.size()]);
@@ -60,7 +60,7 @@ public final class DictionaryUtils {
 		{
 			Procedure proc = (Procedure) object;
 			try {
-				LList entryList = (LList) proc.apply1(new FString(prefix));
+				LList entryList = (LList) proc.apply1(prefix);
 				LinkedList entries = new LinkedList();
 				addEntriesToJavaList(entryList, entries);
 				return (SymbolEntry[]) entries.toArray(new SymbolEntry[entries.size()]);
