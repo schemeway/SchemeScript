@@ -51,22 +51,25 @@ public class SchemeEditor extends TextEditor {
     private IAutoEditStrategy mStringDeleter;
     private IAutoEditStrategy mCommentDeleter;
     
+    private IPropertyChangeListener mListener;
+    
     private static List sSaveHooks = new ArrayList();
 
     public SchemeEditor() {
         super();
         SchemeTextTools textTools = SchemeScriptPlugin.getDefault().getTextTools();
         setSourceViewerConfiguration(new SchemeConfiguration(textTools, this));
-        IPropertyChangeListener listener = new IPropertyChangeListener() {
+        mListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event)
             {
                 handlePreferenceStoreChanged(event);
             }
         };
-        SchemeScriptPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener);
+        SchemeScriptPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(mListener);
     }
 
     public void dispose() {
+    	SchemeScriptPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(mListener);
         super.dispose();
     }
 
