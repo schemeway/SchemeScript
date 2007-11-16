@@ -27,7 +27,6 @@ public class SymbolEntry {
     
     private String mName;
     private String mDescription;
-    //private IMarker mMarker;
     private String mCategory;
     private int mPriority;
     private int mOffset;
