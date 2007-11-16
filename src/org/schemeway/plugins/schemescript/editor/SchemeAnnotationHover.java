@@ -14,9 +14,6 @@ import org.eclipse.ui.texteditor.*;
  */
 public class SchemeAnnotationHover implements IAnnotationHover {
 
-	/**
-	 * @param editor
-	 */
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		String hoverInfo = null;
 

@@ -111,9 +111,6 @@ public final class BackwardTokenIterator implements ISchemeTokenIterator {
 		    mCurrentPartition = null;
     }
 
-	/**
-	 * @return
-	 */
 	private ITypedRegion getCurrentPartition() {
 		return SchemeTextUtilities.getPartition(mDocument, mPosition);
 	}

@@ -121,7 +121,7 @@ public class KawaStackTraceView extends ViewPart {
 
 	private class SchemeElementFilterAction extends Action {
 		public SchemeElementFilterAction() {
-			super(null, Action.AS_CHECK_BOX);
+			super(null, IAction.AS_CHECK_BOX);
 			setToolTipText("Show Scheme frames only");
 			setImageDescriptor(mSchemeFilterDescriptor);
 		}

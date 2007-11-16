@@ -38,9 +38,6 @@ public class SchemeParenthesisPainter implements IPainter, PaintListener {
         mTextWidget = sourceViewer.getTextWidget();
     }
 
-    /**
-     * @see IPainter#setHighlightColor
-     */
     public final void setHighlightColor(final Color color) {
         mColor = color;
     }
@@ -49,9 +46,6 @@ public class SchemeParenthesisPainter implements IPainter, PaintListener {
         mDefaultColor = color;
     }
 
-    /**
-     * @see IPainter#setHighlightStyle
-     */
     public final void setHighlightStyle(final boolean box) {
         mBox = box;
     }
@@ -80,9 +74,6 @@ public class SchemeParenthesisPainter implements IPainter, PaintListener {
         }
     }
 
-    /**
-     * @see IPainter#paintControl
-     */
     public final void paintControl(final PaintEvent event) {
         if (mTextWidget != null) {
             handleDrawRequest(event.gc);
@@ -113,9 +104,6 @@ public class SchemeParenthesisPainter implements IPainter, PaintListener {
         }
     }
 
-    /**
-     * @see IPainter#draw
-     */
     private final void draw(final GC gc, final int offset, final int length) {
         if (gc != null) {
             Point left = mTextWidget.getLocationAtOffset(offset);

@@ -7,7 +7,7 @@ package org.schemeway.plugins.schemescript.preferences;
 
 import java.util.*;
 
-import org.eclipse.jface.util.*;
+import org.eclipse.core.runtime.Assert;
 
 import org.schemeway.plugins.schemescript.indentation.*;
 

@@ -104,9 +104,9 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
     }
     
     private static void error(String message) throws CoreException {
-        throw new CoreException(new Status(Status.ERROR,
+        throw new CoreException(new Status(IStatus.ERROR,
                                            SchemeScriptPlugin.getDefault().getBundle().getSymbolicName(),
-                                           Status.OK,
+                                           IStatus.OK,
                                            message,
                                            null));
     }

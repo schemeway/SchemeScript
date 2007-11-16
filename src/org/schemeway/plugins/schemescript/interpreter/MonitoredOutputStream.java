@@ -28,8 +28,7 @@ class MonitoredOutputStream extends OutputStream implements IStreamMonitor {
     }
 
     public void removeListener(IStreamListener listener) {
-        if (mListeners.remove(listener))
-            ;
+        mListeners.remove(listener);
     }
 
     // send the string to all listeners.

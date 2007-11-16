@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.parser;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
 
 /**

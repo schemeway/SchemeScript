@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.hyperlink.*;

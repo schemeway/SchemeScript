@@ -16,7 +16,7 @@ import org.eclipse.debug.ui.actions.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.*;

@@ -5,6 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.indentation;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.text.*;
 

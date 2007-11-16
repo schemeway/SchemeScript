@@ -9,7 +9,7 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.*;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.indentation.*;

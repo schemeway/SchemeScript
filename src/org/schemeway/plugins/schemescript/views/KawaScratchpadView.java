@@ -25,7 +25,7 @@ public class KawaScratchpadView extends ViewPart {
 
 	private class RemoveAllAction extends Action {
 		public RemoveAllAction() {
-			super(null, Action.AS_PUSH_BUTTON);
+			super(null, IAction.AS_PUSH_BUTTON);
 			setToolTipText("Remove all");
 			setImageDescriptor(mRemoveAllImageDescriptor);
 		}
@@ -40,7 +40,7 @@ public class KawaScratchpadView extends ViewPart {
 
 	private class RemoveAction extends Action {
 		public RemoveAction() {
-			super(null, Action.AS_PUSH_BUTTON);
+			super(null, IAction.AS_PUSH_BUTTON);
 			setToolTipText("Remove");
 			setImageDescriptor(mRemoveImageDescriptor);
 		}
