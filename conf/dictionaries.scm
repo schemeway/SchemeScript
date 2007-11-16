@@ -98,10 +98,11 @@
   (synchronize-dictionary)
   (dictionary-fold dictionary
                    (lambda (key value result)
-                     (if (String:startsWith key prefix)
-                         (append value result)
-                         result))
-                   '()))
+                     (cond ((String:startsWith key prefix)
+                            (append value result))
+                           (else 
+                            result)))
+                   (method-names prefix)))
 
 
 (define (update-dictionary-for-file (file :: <org.eclipse.core.resources.IFile>))

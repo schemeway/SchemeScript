@@ -177,21 +177,48 @@
 ;;;; * define-namespace
 ;;;
 
+(define *schemescript:namespace-table* (HashMap:new))
+
+(define (add-namespace namespace classname)
+  (HashMap:put *schemescript:namespace-table* namespace classname))
+
+(define (get-namespace-class namespace)
+  (let ((value (HashMap:get *schemescript:namespace-table* namespace)))
+    (and (not (eq? value #!null))
+         value)))
+
+(define (method-names prefix)
+  (let ((prefix-parts (let ((parts (array->list (String:split prefix ":"))))
+                        (cond ((= (length parts) 2)  
+                               parts)
+                              ((String:endsWith prefix ":")
+                               (list (String:substring prefix 0 (- (String:length prefix) 1)) '||))
+                              (else
+                               '())))))
+    (or (and (= (length prefix-parts) 2)
+             (let* ((namespace (car prefix-parts))
+                    (classname (or (get-namespace-class namespace) (symbol->string namespace)))
+                    (members   (find-class-methods classname)))
+               (and members
+                    (map (lambda (member)
+                           (SymbolEntry:new (car member) (cadr member) 'java-member))
+                         (filter (lambda (member)
+                                   (String:startsWith (car member) prefix))
+                                 (map (lambda (member)
+                                        (list (as <String> (format #f "~a:~a" namespace (car member)))
+                                              (as <String> (cadr member))))
+                                      members))))))
+        '())))
+
 (define-code-walker '(define-namespace)
   (lambda (stx resource recurse)
     (let ((form (stx-object->datum stx)))
       (when (namespace-form? form)
         (let* ((name-stx (cadr (stx-object-data stx)))
                (namespace-symbol (cadr form))
-               (classname        (namespace->fqn (caddr form)))
-               (signatures       (find-class-methods classname)))
+               (classname        (namespace->fqn (caddr form))))
           (new-dictionary-entry resource name-stx 'namespace (symbol-description name-stx 'namespace) namespace-symbol classname)
-          '(when signatures
-            (for-each (lambda (name/signature)
-                        (let ((description (format #f "(~a:~a)" namespace-symbol (cadr name/signature)))
-                              (entry-name  (format #f "~a:~a" namespace-symbol (car name/signature))))
-                          (new-dictionary-entry resource name-stx 'java-member description entry-name)))
-                      signatures)))))))
+          (add-namespace namespace-symbol classname))))))
 
 
 (define (namespace-form? form)
