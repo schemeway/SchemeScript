@@ -82,14 +82,14 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;pre&gt;
-&lt;extension point=&quot;org.schemeway.plugins.schemescript.interpreters&quot;&gt;
-  &lt;interpreter
-    id=&quot;kawa&quot;
-    name=&quot;Internal Kawa Interpreter&quot;
-    class=&quot;org.schemeway.plugins.schemescript.interpreter.InternalInterpreter&quot;/&gt;
-    
 &lt;pre&gt;
+  &lt;extension point=&quot;org.schemeway.plugins.schemescript.interpreters&quot;&gt;
+    &lt;interpreter
+      id=&quot;kawa&quot;
+      name=&quot;Internal Kawa Interpreter&quot;
+      class=&quot;org.schemeway.plugins.schemescript.interpreter.InternalInterpreter&quot;/&gt;
+  &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
