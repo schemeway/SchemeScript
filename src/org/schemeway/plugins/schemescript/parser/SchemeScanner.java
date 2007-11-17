@@ -5,10 +5,14 @@
  */
 package org.schemeway.plugins.schemescript.parser;
 
+import java.util.regex.*;
+
 import org.eclipse.jface.text.*;
 
 public class SchemeScanner {
 
+	private static final Pattern NUMBER_REGEXP = Pattern.compile("([0-9]+(\\.[0-9]+(e[+-]?[0-9]+)?)?)|(#x[0-9a-fA-f]+)|(#o[0-7]+)|(#b[01]+)"); 
+	
     public SchemeScanner() {
     }
 
@@ -29,10 +33,6 @@ public class SchemeScanner {
         return mTokenStart;
     }
 
-    /*
-     * TODO - support constants 
-     * TODO - support #e..., #i..., #o..., #b..., #d....
-     */
     public SchemeToken nextToken() {
         // start a new token
         mTokenStart = mTokenEnd;
@@ -130,10 +130,22 @@ public class SchemeScanner {
             if (getTokenLength() == 1 && mDocument.getChar(mTokenStart) == '.')
             	return SchemeToken.createDot(getTokenOffset());
             else
+            {
+                String tokenText = getText(getTokenOffset(), getTokenLength());
+                if (NUMBER_REGEXP.matcher(tokenText).matches())
+                {
+                	return SchemeToken.createConstant(getTokenOffset(), getTokenLength());
+                }
             	return SchemeToken.createSymbol(getTokenOffset(), getTokenLength());
+            }
         }
         else {
             consume();
+            String tokenText = getText(getTokenOffset(), getTokenLength());
+            if (NUMBER_REGEXP.matcher(tokenText).matches())
+            {
+            	return SchemeToken.createConstant(getTokenOffset(), getTokenLength());
+            }
             return SchemeToken.createDefault(getTokenOffset(), getTokenLength());
         }
     }
@@ -255,6 +267,21 @@ public class SchemeScanner {
             {
                 consume();
                 return SchemeToken.createConstant(getTokenOffset(), getTokenLength());
+            }
+            case '\'':
+            {
+            	consume();
+            	return SchemeToken.createQuote(getTokenOffset(), getTokenLength());
+            }
+            case '`':
+            {
+            	consume();
+            	return SchemeToken.createBackquote(getTokenOffset(), getTokenLength());
+            }
+            case ',':
+            {
+            	consume();
+            	return SchemeToken.createUnquote(getTokenOffset(), getTokenLength());
             }
             case ';': 
             {

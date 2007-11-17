@@ -78,13 +78,25 @@ public final class SchemeToken {
     public static SchemeToken createQuote(int offset) {
         return new SchemeToken(QUOTE, offset, 1);
     }
+    
+    public static SchemeToken createQuote(int offset, int length) {
+    	return new SchemeToken(QUOTE, offset, length);
+    }
 
     public static SchemeToken createBackquote(int offset) {
         return new SchemeToken(BACKQUOTE, offset, 1);
     }
 
+    public static SchemeToken createBackquote(int offset, int length) {
+        return new SchemeToken(BACKQUOTE, offset, length);
+    }
+
     public static SchemeToken createUnquote(int offset) {
         return new SchemeToken(UNQUOTE, offset, 1);
+    }
+
+    public static SchemeToken createUnquote(int offset, int length) {
+        return new SchemeToken(UNQUOTE, offset, length);
     }
 
     public static SchemeToken createUnquoteSplicing(int offset) {
