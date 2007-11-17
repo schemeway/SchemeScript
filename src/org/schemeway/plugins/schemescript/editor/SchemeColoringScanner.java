@@ -119,8 +119,10 @@ public class SchemeColoringScanner implements ITokenScanner {
                     return mutatorToken;
                 if (category == KeywordManager.TYPE_SPECIAL)
                     return specialToken;
+                if (category == KeywordManager.TYPE_CONSTANT)
+                    return constantToken;
                 return defaultToken;
-            }
+	            }
             case SchemeToken.SPECIAL:
             {
                 String category = mKeywordManager.getType(mScanner.getText(mOffset, mLength));
