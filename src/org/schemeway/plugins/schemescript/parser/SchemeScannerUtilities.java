@@ -5,6 +5,9 @@
  */
 package org.schemeway.plugins.schemescript.parser;
 
+import org.eclipse.jface.preference.*;
+import org.schemeway.plugins.schemescript.preferences.*;
+
 public final class SchemeScannerUtilities {
 
     private static boolean mBracketsAsParenthesis = true;
@@ -15,6 +18,11 @@ public final class SchemeScannerUtilities {
     public final static int BRACKET = 2;
     public final static int BRACE = 3;
 
+    public static void initializeScanner(IPreferenceStore store) {
+        setBracketsAreParentheses(store.getBoolean(SchemeLexicalExtensionsPreferences.SQUARE_BRACKETS));
+        setDashInIdentifiers(store.getBoolean(SchemeLexicalExtensionsPreferences.DASH_IN_IDS));
+    }
+    
     public final static int getParenthesisType(char ch) {
         switch (ch) {
             case '(':

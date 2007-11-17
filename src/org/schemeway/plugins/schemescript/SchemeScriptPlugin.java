@@ -29,8 +29,8 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
     private static final String CONF_USER_SCM = "conf/user.scm";
     public final static String PLUGIN_NS = "org.schemeway.plugins.schemescript";
 
-    private static final String INTERNAL_INTERPRETER_NAME = "internal";
-    private static final String INTERNAL_INTERPRETER_PREF = PLUGIN_NS + ".interpreter.name"; 
+    public static final String INTERNAL_INTERPRETER_NAME = "internal";
+    public static final String INTERNAL_INTERPRETER_PREF = PLUGIN_NS + ".interpreter.name"; 
     
     //The shared instance.
     private static SchemeScriptPlugin plugin;
@@ -76,7 +76,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
                 public void propertyChange(PropertyChangeEvent event) {
                     IPreferenceStore store = getPreferenceStore();
                     if (event.getProperty().startsWith(SchemeLexicalExtensionsPreferences.PREFIX)) {
-                        initializeScanner(store);
+                        SchemeScannerUtilities.initializeScanner(store);
                     }
                 }
             };
@@ -206,22 +206,5 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
                                     exception);
         getDefault().getLog().log(status);
     
-    }
-
-    protected void initializeDefaultPreferences(IPreferenceStore store) {
-        store.setDefault(INTERNAL_INTERPRETER_PREF, INTERNAL_INTERPRETER_NAME);
-        SchemePreferences.initializeDefaults(store);
-        CommentPreferences.initializeDefaults(store);
-        ColorPreferences.initializeDefaults(store);
-        SyntaxPreferences.initializeDefaults(store);
-        IndentationPreferences.initializeDefaults(store);
-        SchemeLexicalExtensionsPreferences.initializeDefaults(store);
-        RemoteInterpreterPreferences.initializeDefaults(store);
-        initializeScanner(store);
-    }
-    
-    private void initializeScanner(IPreferenceStore store) {
-        SchemeScannerUtilities.setBracketsAreParentheses(store.getBoolean(SchemeLexicalExtensionsPreferences.SQUARE_BRACKETS));
-        SchemeScannerUtilities.setDashInIdentifiers(store.getBoolean(SchemeLexicalExtensionsPreferences.DASH_IN_IDS));
     }
 }
