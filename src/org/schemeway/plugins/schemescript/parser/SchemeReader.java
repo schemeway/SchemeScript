@@ -46,7 +46,8 @@ public class SchemeReader {
 		boolean done = false;
 
 		while (!done) {
-			switch (lookahead().getType()) {
+			int type = lookahead().getType();
+			switch (type) {
 			case SchemeToken.COMMENT:
 			case SchemeToken.WSPACE: {
 				consume();
@@ -58,11 +59,12 @@ public class SchemeReader {
 				break;
 			}
 			case SchemeToken.VECTORPREFIX:
-				consume();
 			case SchemeToken.LPAREN: {
+				if (type == SchemeToken.VECTORPREFIX)
+					consume();
 				consume();
 				parseExpressionList();
-				if (!(lookahead().getType() == SchemeToken.RPAREN)) {
+				if (!(type == SchemeToken.RPAREN)) {
 					int offset = lookahead() == SchemeToken.EOF ? mDocument.getLength() : lookahead().getOffset();
 					throw new ParsingException("RPAREN expected", offset);
 				}
