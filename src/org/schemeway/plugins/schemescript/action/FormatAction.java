@@ -5,15 +5,10 @@
  */
 package org.schemeway.plugins.schemescript.action;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.editor.*;
-import org.schemeway.plugins.schemescript.indentation.SchemeIndentationContext;
-import org.schemeway.plugins.schemescript.indentation.SchemeIndentationStrategy;
-import org.schemeway.plugins.schemescript.parser.SexpNavigator;
+import org.schemeway.plugins.schemescript.indentation.*;
+import org.schemeway.plugins.schemescript.parser.*;
 
 public class FormatAction extends SchemeAction {
     

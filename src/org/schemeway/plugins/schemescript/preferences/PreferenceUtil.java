@@ -13,7 +13,6 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
-
 import org.schemeway.plugins.schemescript.indentation.*;
 import org.schemeway.plugins.schemescript.parser.*;
 

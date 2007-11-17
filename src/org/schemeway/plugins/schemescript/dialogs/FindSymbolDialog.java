@@ -5,7 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.dialogs;
 
-import java.util.TreeSet;
+import java.util.*;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -13,6 +13,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.List;
 import org.schemeway.plugins.schemescript.dictionary.*;
 
 public final class FindSymbolDialog extends Dialog {

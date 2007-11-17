@@ -5,7 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import java.net.SocketException;
+import java.net.*;
 
 public interface SocketExceptionHandler
 {

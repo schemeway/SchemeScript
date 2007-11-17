@@ -8,7 +8,6 @@ package org.schemeway.plugins.schemescript.parser;
 import java.util.*;
 
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 
 public final class BackwardTokenIterator implements ISchemeTokenIterator {

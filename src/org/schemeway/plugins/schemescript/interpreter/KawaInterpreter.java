@@ -5,7 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import org.schemeway.plugins.schemescript.SchemeScriptPlugin;
+import org.schemeway.plugins.schemescript.*;
 
 public class KawaInterpreter extends AbstractInterpreter {
     public static final String CONFIG_TYPE = SchemeScriptPlugin.PLUGIN_NS + ".kawaInterpreter";

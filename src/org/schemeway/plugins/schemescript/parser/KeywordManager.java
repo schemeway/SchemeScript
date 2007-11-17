@@ -5,9 +5,8 @@
  */
 package org.schemeway.plugins.schemescript.parser;
 
-import java.util.Hashtable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
 public class KeywordManager {
     public final static String TYPE_DEFINE = "define";

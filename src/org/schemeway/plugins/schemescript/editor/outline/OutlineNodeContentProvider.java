@@ -3,8 +3,7 @@
  */
 package org.schemeway.plugins.schemescript.editor.outline;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 
 class OutlineNodeContentProvider implements ITreeContentProvider {
     

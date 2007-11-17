@@ -5,21 +5,13 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.ui.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.console.*;
 
 public abstract class AbstractInterpreter implements Interpreter
 {

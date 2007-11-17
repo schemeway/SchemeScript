@@ -5,22 +5,14 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.HashMap;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IStreamMonitor;
-import org.eclipse.debug.core.model.IStreamsProxy;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.schemeway.plugins.schemescript.preferences.RemoteInterpreterPreferences;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.jface.dialogs.*;
+import org.schemeway.plugins.schemescript.preferences.*;
 
 public class RemoteInterpreterProcess implements IInterpreterProcess
 {

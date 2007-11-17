@@ -7,7 +7,6 @@ package org.schemeway.plugins.schemescript.preferences;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
-
 import org.schemeway.plugins.schemescript.indentation.*;
 
 public class IndentationSchemeLabelProvider extends LabelProvider implements ITableLabelProvider {

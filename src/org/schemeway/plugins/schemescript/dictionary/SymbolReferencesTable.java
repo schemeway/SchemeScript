@@ -5,7 +5,7 @@ package org.schemeway.plugins.schemescript.dictionary;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 
 /**
  * @author SchemeWay Project.

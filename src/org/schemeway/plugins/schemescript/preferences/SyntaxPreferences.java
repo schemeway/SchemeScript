@@ -5,8 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.preferences;
 
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import java.util.regex.*;
 
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;

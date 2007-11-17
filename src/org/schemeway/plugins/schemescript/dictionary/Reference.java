@@ -3,7 +3,7 @@
  */
 package org.schemeway.plugins.schemescript.dictionary;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 
 public class Reference {
 	public IResource resource;

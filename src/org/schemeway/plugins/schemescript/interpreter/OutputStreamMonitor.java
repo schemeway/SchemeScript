@@ -10,17 +10,13 @@
  *******************************************************************************/
 package org.schemeway.plugins.schemescript.interpreter;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IStreamListener;
-import org.eclipse.debug.core.model.IFlushableStreamMonitor;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.*;
 
 /**
  * Monitors the output stream of a system process and notifies 

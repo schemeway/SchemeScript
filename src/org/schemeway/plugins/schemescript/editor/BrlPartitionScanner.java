@@ -3,7 +3,7 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.*;
 
 /**
  * @author SchemeWay Project.

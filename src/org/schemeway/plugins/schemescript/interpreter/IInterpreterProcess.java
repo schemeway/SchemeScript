@@ -5,7 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.*;
 
 public interface IInterpreterProcess extends IProcess
 {

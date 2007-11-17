@@ -5,32 +5,20 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import gnu.expr.Compilation;
-import gnu.expr.ModuleExp;
-import gnu.kawa.functions.DisplayFormat;
-import gnu.lists.Consumer;
-import gnu.mapping.CallContext;
-import gnu.mapping.CharArrayInPort;
-import gnu.mapping.Environment;
-import gnu.mapping.InPort;
-import gnu.mapping.OutPort;
-import gnu.mapping.WrongArguments;
-import gnu.text.Lexer;
-import gnu.text.SourceMessages;
+import gnu.expr.*;
+import gnu.kawa.functions.*;
+import gnu.lists.*;
+import gnu.mapping.*;
+import gnu.text.*;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
-import kawa.standard.Scheme;
+import kawa.standard.*;
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IStreamMonitor;
-import org.eclipse.debug.core.model.IStreamsProxy;
-import org.schemeway.plugins.schemescript.views.KawaStackTraceView;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.*;
+import org.schemeway.plugins.schemescript.views.*;
 
 public class KawaProcess implements IInterpreterProcess {
     private static class KawaStreamsProxy implements IStreamsProxy {

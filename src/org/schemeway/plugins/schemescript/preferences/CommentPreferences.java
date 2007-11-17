@@ -7,7 +7,6 @@ package org.schemeway.plugins.schemescript.preferences;
 
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.*;
-
 import org.schemeway.plugins.schemescript.*;
 
 public class CommentPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {

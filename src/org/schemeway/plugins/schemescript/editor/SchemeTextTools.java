@@ -5,12 +5,11 @@
  */
 package org.schemeway.plugins.schemescript.editor;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.*;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.util.*;
-import org.eclipse.core.runtime.Assert;
-
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 import org.schemeway.plugins.schemescript.parser.*;

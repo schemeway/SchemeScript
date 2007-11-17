@@ -7,8 +7,7 @@ package org.schemeway.plugins.schemescript.preferences;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.Assert;
-
+import org.eclipse.core.runtime.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 
 public class IndentationSchemeList {

@@ -10,7 +10,6 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-
 import org.schemeway.plugins.schemescript.parser.*;
 
 public class SchemeParenthesisPainter implements IPainter, PaintListener {

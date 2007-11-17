@@ -10,7 +10,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
-
 import org.schemeway.plugins.schemescript.tools.*;
 
 /**

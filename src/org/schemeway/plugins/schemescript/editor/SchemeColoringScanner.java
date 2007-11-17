@@ -10,7 +10,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
-
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;

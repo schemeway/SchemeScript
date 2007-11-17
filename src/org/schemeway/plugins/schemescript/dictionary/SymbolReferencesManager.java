@@ -3,17 +3,11 @@
  */
 package org.schemeway.plugins.schemescript.dictionary;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.text.IDocument;
-import org.schemeway.plugins.schemescript.parser.SchemeScanner;
-import org.schemeway.plugins.schemescript.parser.SchemeToken;
+import org.eclipse.core.filebuffers.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.*;
+import org.schemeway.plugins.schemescript.parser.*;
 
 /**
  * @author SchemeWay Project.

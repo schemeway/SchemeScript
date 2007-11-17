@@ -6,7 +6,6 @@
 package org.schemeway.plugins.schemescript.parser;
 
 import org.eclipse.jface.text.*;
-
 import org.schemeway.plugins.schemescript.editor.*;
 
 public class ForwardTokenIterator implements ISchemeTokenIterator {

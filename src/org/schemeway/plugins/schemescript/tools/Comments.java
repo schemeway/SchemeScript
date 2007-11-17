@@ -6,7 +6,6 @@
 package org.schemeway.plugins.schemescript.tools;
 
 import org.eclipse.jface.preference.*;
-
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 

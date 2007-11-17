@@ -3,7 +3,7 @@
  */
 package org.schemeway.plugins.schemescript.editor.outline;
 
-import java.util.Comparator;
+import java.util.*;
 
 class OutlineNodePositionComparator implements Comparator {
     public int compare(Object o1, Object o2) {

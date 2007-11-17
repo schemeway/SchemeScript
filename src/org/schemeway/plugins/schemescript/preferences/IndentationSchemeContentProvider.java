@@ -5,9 +5,8 @@
  */
 package org.schemeway.plugins.schemescript.preferences;
 
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
-
 import org.schemeway.plugins.schemescript.indentation.*;
 
 public class IndentationSchemeContentProvider implements IStructuredContentProvider, IIndentationSchemeChangeListener {

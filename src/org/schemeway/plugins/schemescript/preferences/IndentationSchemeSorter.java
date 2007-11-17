@@ -6,7 +6,6 @@
 package org.schemeway.plugins.schemescript.preferences;
 
 import org.eclipse.jface.viewers.*;
-
 import org.schemeway.plugins.schemescript.indentation.*;
 
 public class IndentationSchemeSorter extends ViewerSorter {

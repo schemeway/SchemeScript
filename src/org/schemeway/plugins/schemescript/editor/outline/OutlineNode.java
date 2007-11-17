@@ -3,10 +3,9 @@
  */
 package org.schemeway.plugins.schemescript.editor.outline;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.*;
 
 public class OutlineNode {
 	public static final String CHAPTER = "chapter";

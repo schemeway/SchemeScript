@@ -5,12 +5,12 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import gnu.lists.Pair;
-import gnu.mapping.Environment;
-import kawa.standard.load;
+import gnu.lists.*;
+import gnu.mapping.*;
+import kawa.standard.*;
 
-import org.eclipse.swt.widgets.Display;
-import org.schemeway.plugins.schemescript.SchemeScriptPlugin;
+import org.eclipse.swt.widgets.*;
+import org.schemeway.plugins.schemescript.*;
 
 /**
  * The KawaProxy help ensure that all Scheme evaluations are done in the same
