@@ -175,6 +175,10 @@
                description="Rename symbol locally"
                categoryId="Scheme Editing"
                id="org.schemeway.plugins.schemescript.sexp.rename-symbol-locally" />
+      <command name="Rename symbol in file"
+               description="Rename symbol in file"
+               categoryId="Scheme Editing"
+               id="org.schemeway.plugins.schemescript.sexp.rename-symbol-in-file" />
 
       <command name="Extract variable"
                description="Extract variable"
@@ -426,6 +430,11 @@
       <key  commandId="org.schemeway.plugins.schemescript.sexp.rename-symbol-locally"
             contextId="org.schemeway.plugins.schemescript.schemeEditorScope"
             sequence="ALT+SHIFT+R L"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" >
+      </key>
+      <key  commandId="org.schemeway.plugins.schemescript.sexp.rename-symbol-in-file"
+            contextId="org.schemeway.plugins.schemescript.schemeEditorScope"
+            sequence="ALT+SHIFT+R F"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" >
       </key>
       <key  commandId="org.schemeway.plugins.schemescript.sexp.extract-variable"

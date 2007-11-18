@@ -135,6 +135,7 @@ public final class SchemeEditorActionsFactory {
         
         addSchemeAction(editor, "sexp.rename-symbol", "rename-symbol");
         addSchemeAction(editor, "sexp.rename-symbol-locally", "rename-symbol-locally");
+        addSchemeAction(editor, "sexp.rename-symbol-in-file", "rename-symbol-in-file");
         addSchemeAction(editor, "sexp.extract-variable", "extract-variable");
         addSchemeAction(editor, "sexp.create-function", "create-function-from-expression");
         

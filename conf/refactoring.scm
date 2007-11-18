@@ -94,7 +94,7 @@
 ;;;
 
 
-(define (%rename-symbol offset len name #!optional (resource #f))
+(define (%rename-symbol offset len name #!optional (resource #f) (region-start #f) (region-end #f))
 
   (define buffer-manager     (FileBuffers:getTextFileBufferManager))
   (define references-manager (SchemeScriptPlugin:getReferencesManager))
@@ -149,9 +149,12 @@
 
   (define (get-references)
     (array->list
-     (if resource
-         (SymbolReferencesTable:getReferences references-table name resource)
-         (SymbolReferencesTable:getReferences references-table name))))
+     (cond  ((and resource region-start region-end)
+             (SymbolReferencesTable:getReferences references-table name resource region-start region-end)) 
+            (resource
+             (SymbolReferencesTable:getReferences references-table name resource))
+            (else 
+             (SymbolReferencesTable:getReferences references-table name)))))
 
   ;; this function has side-effects... the variable 'all-resources' will 
   ;; contain the set of all resources affected by the refactoring...
@@ -181,6 +184,17 @@
 
 
 (define (rename-symbol-locally)
+  (let-values (((start end) (%backward-sexp)))
+    (when (and start end (eq? (sexp-type start) symbol:))
+      (with-buffer-text
+       start end
+       (lambda (text)
+         (with-top-sexp 
+          (lambda (region-start region-end)
+            (%rename-symbol start (- end start) text (buffer-file (current-buffer)) region-start region-end))))))))
+
+
+(define (rename-symbol-in-file)
   (let-values (((start end) (%backward-sexp)))
     (when (and start end (eq? (sexp-type start) symbol:))
       (with-buffer-text
