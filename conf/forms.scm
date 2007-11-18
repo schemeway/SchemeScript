@@ -84,6 +84,9 @@
 (define-code-walker 'define-syntax
   (lambda (stx resource recurse)
     (stx-match stx
+      ((_ (,name . ,args) . ,body)
+       (when (stx-symbol? name)
+         (new-dictionary-entry resource name 'user-syntax (callable-description name 'user-syntax))))
       ((_ ,name . ,body)
        (when (stx-symbol? name)
          (new-dictionary-entry resource name 'user-syntax (symbol-description name 'user-syntax)))))))
@@ -195,6 +198,7 @@
                               ((String:endsWith prefix ":")
                                (list (String:substring prefix 0 (- (String:length prefix) 1)) '||))
                               (else
+              
                                '())))))
     (or (and (= (length prefix-parts) 2)
              (let* ((namespace (car prefix-parts))
