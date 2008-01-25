@@ -1,3 +1,19 @@
+*** Version 1.3.0 alpha3
+
+- Ctrl-clicking on a class name (of the form <fqn>) opens the editor for the
+  corresponding class.
+
+*** Version 1.3.0 alpha2
+
+- R6RS library names now can contain version numbers
+- Code completion on Java members (Kawa syntax)
+- Fixed bugs #1833443, #1833998
+- Implemented feature request #1833447 - make #' #` #, colorizable
+- Symbol renaming has now three variants: 
+   . globally (in workspace) - ALT-SHIFT-R G,
+   . in current file - ALT-SHIFT-R F
+   . or in current top-level expression. - ALT-SHIFT-R L
+
 *** Version 1.3.0 alpha1
 
 - Added support for #! on the first line (for running scripts)
