@@ -39,6 +39,9 @@
   (let* ((signature (stx-object->datum (stx-object-parent name-stx))))
     (format #f "~a - ~a" (signature->formals signature) type)))
 
+(define (cl-prototype name args type)
+  (format #f "~a - ~a" (signature->formals (cons name args)) type))
+
 
 (define (signature->formals lst)
   (let loop ((lst lst))
@@ -92,7 +95,7 @@
          (new-dictionary-entry resource name 'user-syntax (symbol-description name 'user-syntax)))))))
 
 
-(define-code-walker '(define-macro defmacro define-macro*)
+(define-code-walker '(define-macro define-macro*)
   (lambda (stx resource recurse)
     (stx-match stx
       ((_ (,name . ,args) . ,body)
@@ -101,6 +104,16 @@
       ((_ ,name . ,body)
        (when (stx-symbol? name)
          (new-dictionary-entry resource name 'user-syntax (symbol-description name 'user-syntax)))))))
+
+
+(define-code-walker '(defmacro)
+  (lambda (stx resource recurse)
+    (stx-match stx
+      ((_ ,name ,args . ,body)
+       (when (stx-symbol? name)
+         (let ((proto (cl-prototype (stx-object->datum name) (stx-object->datum args) 'macro)))
+           (parameterize ((current-dictionary-entry (new-dictionary-entry resource name 'macro proto)))
+             (recurse body))))))))
 
 
 (define-code-walker 'package*
