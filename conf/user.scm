@@ -18,6 +18,7 @@
 ;; -- DO NOT REMOVE THE FOLLOWING LINES --
 (load-relative "macros.scm")
 (load-relative "util.scm")
+(load-relative "plugin.scm")
 (load-relative "foreign.scm")
 (load-relative "bundles.scm")
 (load-relative "constants.scm")
@@ -43,3 +44,5 @@
 ;;;; * User initializations
 ;;;
 
+
+;(load-relative "languages/arc.scm")
