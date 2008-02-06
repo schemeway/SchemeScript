@@ -5,7 +5,7 @@
  */
 package org.schemeway.plugins.schemescript.indentation;
 
-public final class IndentationScheme {
+public final class IndentationRule {
     public final static String DEFAULT = "default";
     public final static String DEFINITION = "definition";
     public final static String SEQUENCE = "sequence";
@@ -18,12 +18,12 @@ public final class IndentationScheme {
     };
 
     private String mSymbol;
-    private String mScheme;
+    private String mCategory;
     private int mHint;
 
-    public IndentationScheme(String symbol, String scheme, int hint) {
+    public IndentationRule(String symbol, String category, int hint) {
         mSymbol = symbol;
-        setScheme(scheme);
+        setCategory(category);
         setHint(hint);
     }
 
@@ -31,16 +31,16 @@ public final class IndentationScheme {
         return mSymbol;
     }
 
-    public String getScheme() {
-        return mScheme;
+    public String getCategory() {
+        return mCategory;
     }
 
     public int getHint() {
         return mHint;
     }
 
-    public final void setScheme(String scheme) {
-        mScheme = scheme;
+    public final void setCategory(String category) {
+        mCategory = category;
     }
 
     public final void setHint(int hint) {

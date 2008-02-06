@@ -39,7 +39,7 @@ public class SchemeTextTools {
     public SchemeIndentationManager getIndentationManager() {
         if (mIndentationManager == null) {
             mIndentationManager = new SchemeIndentationManager();
-            mIndentationManager.updateSchemes();
+            mIndentationManager.loadRules();
         }
         return mIndentationManager;
     }
@@ -133,6 +133,6 @@ public class SchemeTextTools {
     }
 
     public void updateIndentationSchemes() {
-        getIndentationManager().updateSchemes();
+        getIndentationManager().loadRules();
     }
 }

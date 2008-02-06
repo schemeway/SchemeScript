@@ -8,7 +8,7 @@ package org.schemeway.plugins.schemescript.preferences;
 import org.schemeway.plugins.schemescript.indentation.*;
 
 public interface IIndentationSchemeChangeListener {
-    void schemeAdded(IndentationScheme scheme);
+    void schemeAdded(IndentationRule scheme);
 
-    void schemeRemoved(IndentationScheme scheme);
+    void schemeRemoved(IndentationRule scheme);
 }

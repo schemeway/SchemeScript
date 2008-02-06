@@ -93,16 +93,16 @@ public class PreferenceUtil {
     }
 
     // -- Indentation keyworkds
-    public static IndentationScheme[] getIndentationSchemes(IPreferenceStore store, String preference) {
+    public static IndentationRule[] getIndentationSchemes(IPreferenceStore store, String preference) {
         Assert.isNotNull(store);
         Assert.isNotNull(preference);
 
         String schemes = store.getString(preference);
         if (schemes == null)
-            return new IndentationScheme[0];
+            return new IndentationRule[0];
 
         StringTokenizer tokenizer = new StringTokenizer(schemes, LIST_DELIMITER);
-        IndentationScheme[] result = new IndentationScheme[tokenizer.countTokens()];
+        IndentationRule[] result = new IndentationRule[tokenizer.countTokens()];
         int index = 0;
         while (tokenizer.hasMoreTokens()) {
             result[index++] = parseIndentationScheme(tokenizer.nextToken());
@@ -110,7 +110,7 @@ public class PreferenceUtil {
         return result;
     }
 
-    private static IndentationScheme parseIndentationScheme(String token) {
+    private static IndentationRule parseIndentationScheme(String token) {
         int pos1 = token.indexOf(FIELD_DELIMITER);
         int pos2 = token.indexOf(FIELD_DELIMITER, pos1 + 1);
 
@@ -118,12 +118,12 @@ public class PreferenceUtil {
             String symbol = token.substring(0, pos1);
             String scheme = token.substring(pos1 + 1, pos2).intern();
             int hint = Integer.parseInt(token.substring(pos2 + 1));
-            return new IndentationScheme(symbol, scheme, hint);
+            return new IndentationRule(symbol, scheme, hint);
         }
         return null;
     }
 
-    public static void setIndentationSchemes(IPreferenceStore store, String preference, IndentationScheme[] schemes) {
+    public static void setIndentationSchemes(IPreferenceStore store, String preference, IndentationRule[] schemes) {
         Assert.isNotNull(store);
         Assert.isNotNull(preference);
         Assert.isNotNull(schemes);
@@ -132,20 +132,20 @@ public class PreferenceUtil {
 
     public static void setDefaultIndentationSchemes(IPreferenceStore store,
                                                     String preference,
-                                                    IndentationScheme[] schemes) {
+                                                    IndentationRule[] schemes) {
         Assert.isNotNull(store);
         Assert.isNotNull(preference);
         Assert.isNotNull(schemes);
         store.setDefault(preference, buildSchemeString(schemes));
     }
 
-    private static String buildSchemeString(IndentationScheme[] schemes) {
+    private static String buildSchemeString(IndentationRule[] schemes) {
         StringBuffer buffer = new StringBuffer();
 
         for (int index = 0; index < schemes.length; index++) {
-            IndentationScheme scheme = schemes[index];
+            IndentationRule scheme = schemes[index];
             buffer.append(scheme.getSymbol()).append(FIELD_DELIMITER);
-            buffer.append(scheme.getScheme()).append(FIELD_DELIMITER);
+            buffer.append(scheme.getCategory()).append(FIELD_DELIMITER);
             buffer.append(scheme.getHint());
             buffer.append(LIST_DELIMITER);
         }
@@ -156,7 +156,7 @@ public class PreferenceUtil {
         Assert.isNotNull(store);
         Assert.isNotNull(indentationManager);
         indentationManager.clear();
-        indentationManager.setSchemes(getIndentationSchemes(store, IndentationPreferences.INDENT_SCHEMES));
+        indentationManager.setRules(getIndentationSchemes(store, IndentationPreferences.INDENT_SCHEMES));
     }
 
     public static void importPreferences(Shell shell, IPreferenceStore store) {

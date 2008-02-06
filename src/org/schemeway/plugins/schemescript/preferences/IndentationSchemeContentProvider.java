@@ -37,11 +37,11 @@ public class IndentationSchemeContentProvider implements IStructuredContentProvi
         mSchemeList = ((IndentationSchemeList) newInput);
     }
 
-    public void schemeAdded(IndentationScheme scheme) {
+    public void schemeAdded(IndentationRule scheme) {
         mViewer.add(scheme);
     }
 
-    public void schemeRemoved(IndentationScheme scheme) {
+    public void schemeRemoved(IndentationRule scheme) {
         mViewer.remove(scheme);
     }
 }

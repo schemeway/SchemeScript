@@ -16,11 +16,11 @@ public class IndentationSchemeSorter extends ViewerSorter {
     }
 
     public int compare(Viewer viewer, Object firstElement, Object secondElement) {
-        IndentationScheme firstScheme = (IndentationScheme) firstElement;
-        IndentationScheme secondScheme = (IndentationScheme) secondElement;
+        IndentationRule firstScheme = (IndentationRule) firstElement;
+        IndentationRule secondScheme = (IndentationRule) secondElement;
 
         if (mColumn == IndentationPreferences.ROW_SCHEME) {
-            return firstScheme.getScheme().compareTo(secondScheme.getScheme());
+            return firstScheme.getCategory().compareTo(secondScheme.getCategory());
         }
         else {
             return firstScheme.getSymbol().compareTo(secondScheme.getSymbol());

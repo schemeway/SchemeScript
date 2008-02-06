@@ -31,41 +31,41 @@ public class IndentationPreferences extends SchemePreferencePage {
     private TableViewer mViewer;
     private IndentationSchemeList mSchemeList;
 
-    private final static IndentationScheme[] INDENT_DEFAULTS = new IndentationScheme[] {
-                new IndentationScheme("define", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("define*", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("define-syntax", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("define-macro", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("define-simple-class", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("define-class", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("define-procedure", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("define-record", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("define-record-type", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("lambda", IndentationScheme.DEFINITION, 0),
-                new IndentationScheme("cond", IndentationScheme.DEFAULT, 0),
-                new IndentationScheme("if", IndentationScheme.IF, 0),
-                new IndentationScheme("begin", IndentationScheme.SEQUENCE, 0),
-                new IndentationScheme("case", IndentationScheme.WITH, 1),
-                new IndentationScheme("when", IndentationScheme.WITH, 1),
-                new IndentationScheme("unless", IndentationScheme.WITH, 1),
-                new IndentationScheme("let", IndentationScheme.WITH, 1),
-                new IndentationScheme("let*", IndentationScheme.WITH, 1),
-                new IndentationScheme("letrec", IndentationScheme.WITH, 1),
-                new IndentationScheme("let-values", IndentationScheme.WITH, 1),
-                new IndentationScheme("let*-values", IndentationScheme.WITH, 1),
-                new IndentationScheme("syntax-rules", IndentationScheme.WITH, 1),
-                new IndentationScheme("with-input-from-file", IndentationScheme.WITH, 1),
-                new IndentationScheme("with-output-to-file", IndentationScheme.WITH, 1),
-                new IndentationScheme("call-with-output-file", IndentationScheme.WITH, 1),
-                new IndentationScheme("call-with-input-file", IndentationScheme.WITH, 1),
-                new IndentationScheme("make", IndentationScheme.WITH, 1),
-                new IndentationScheme("object", IndentationScheme.WITH, 1),
-                new IndentationScheme("try-catch", IndentationScheme.WITH, 1),
-                new IndentationScheme("try-finally", IndentationScheme.WITH, 1),
-                new IndentationScheme("receive", IndentationScheme.WITH, 2),
-                new IndentationScheme("catch", IndentationScheme.WITH, 2),
-                new IndentationScheme("library", IndentationScheme.WITH, 1),
-                new IndentationScheme("package*", IndentationScheme.WITH, 1)
+    private final static IndentationRule[] INDENT_DEFAULTS = new IndentationRule[] {
+                new IndentationRule("define", IndentationRule.DEFINITION, 0),
+                new IndentationRule("define*", IndentationRule.DEFINITION, 0),
+                new IndentationRule("define-syntax", IndentationRule.DEFINITION, 0),
+                new IndentationRule("define-macro", IndentationRule.DEFINITION, 0),
+                new IndentationRule("define-simple-class", IndentationRule.DEFINITION, 0),
+                new IndentationRule("define-class", IndentationRule.DEFINITION, 0),
+                new IndentationRule("define-procedure", IndentationRule.DEFINITION, 0),
+                new IndentationRule("define-record", IndentationRule.DEFINITION, 0),
+                new IndentationRule("define-record-type", IndentationRule.DEFINITION, 0),
+                new IndentationRule("lambda", IndentationRule.DEFINITION, 0),
+                new IndentationRule("cond", IndentationRule.DEFAULT, 0),
+                new IndentationRule("if", IndentationRule.IF, 0),
+                new IndentationRule("begin", IndentationRule.SEQUENCE, 0),
+                new IndentationRule("case", IndentationRule.WITH, 1),
+                new IndentationRule("when", IndentationRule.WITH, 1),
+                new IndentationRule("unless", IndentationRule.WITH, 1),
+                new IndentationRule("let", IndentationRule.WITH, 1),
+                new IndentationRule("let*", IndentationRule.WITH, 1),
+                new IndentationRule("letrec", IndentationRule.WITH, 1),
+                new IndentationRule("let-values", IndentationRule.WITH, 1),
+                new IndentationRule("let*-values", IndentationRule.WITH, 1),
+                new IndentationRule("syntax-rules", IndentationRule.WITH, 1),
+                new IndentationRule("with-input-from-file", IndentationRule.WITH, 1),
+                new IndentationRule("with-output-to-file", IndentationRule.WITH, 1),
+                new IndentationRule("call-with-output-file", IndentationRule.WITH, 1),
+                new IndentationRule("call-with-input-file", IndentationRule.WITH, 1),
+                new IndentationRule("make", IndentationRule.WITH, 1),
+                new IndentationRule("object", IndentationRule.WITH, 1),
+                new IndentationRule("try-catch", IndentationRule.WITH, 1),
+                new IndentationRule("try-finally", IndentationRule.WITH, 1),
+                new IndentationRule("receive", IndentationRule.WITH, 2),
+                new IndentationRule("catch", IndentationRule.WITH, 2),
+                new IndentationRule("library", IndentationRule.WITH, 1),
+                new IndentationRule("package*", IndentationRule.WITH, 1)
     };
 
     protected Control createContents(Composite parent) {
@@ -147,7 +147,7 @@ public class IndentationPreferences extends SchemePreferencePage {
         mViewer.setUseHashlookup(true);
 
         TextCellEditor symbolEditor = new TextCellEditor(table);
-        ComboBoxCellEditor schemeEditor = new ComboBoxCellEditor(table, IndentationScheme.ALL_SCHEMES, SWT.READ_ONLY);
+        ComboBoxCellEditor schemeEditor = new ComboBoxCellEditor(table, IndentationRule.ALL_SCHEMES, SWT.READ_ONLY);
         TextCellEditor hintEditor = new TextCellEditor(table);
         ((Text) hintEditor.getControl()).addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) {
@@ -179,7 +179,7 @@ public class IndentationPreferences extends SchemePreferencePage {
 
         addButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
-                mSchemeList.addScheme(new IndentationScheme(text.getText(), IndentationScheme.DEFAULT, 0));
+                mSchemeList.addScheme(new IndentationRule(text.getText(), IndentationRule.DEFAULT, 0));
                 text.setText("");
                 addButton.setEnabled(false);
             }
@@ -188,7 +188,7 @@ public class IndentationPreferences extends SchemePreferencePage {
         deleteButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 Object data = table.getItem(table.getSelectionIndex()).getData();
-                mSchemeList.removeScheme((IndentationScheme) data);
+                mSchemeList.removeScheme((IndentationRule) data);
                 deleteButton.setEnabled(false);
             }
         });
@@ -204,8 +204,7 @@ public class IndentationPreferences extends SchemePreferencePage {
     }
 
     protected void initializeValues() {
-        IPreferenceStore store = getPreferenceStore();
-        IndentationScheme[] schemes = PreferenceUtil.getIndentationSchemes(store, INDENT_SCHEMES);
+        IndentationRule[] schemes = SchemeScriptPlugin.getDefault().getTextTools().getIndentationManager().getRules();
         mSchemeList = new IndentationSchemeList(schemes);
 
         mViewer.setContentProvider(new IndentationSchemeContentProvider(mViewer));
@@ -213,7 +212,6 @@ public class IndentationPreferences extends SchemePreferencePage {
     }
 
     protected void storeValues() {
-        IPreferenceStore store = getPreferenceStore();
-        PreferenceUtil.setIndentationSchemes(store, INDENT_SCHEMES, mSchemeList.getSchemes());
+    	SchemeScriptPlugin.getDefault().getTextTools().getIndentationManager().saveRules();
     }
 }

@@ -50,7 +50,7 @@ public class SchemeColoringScanner implements ITokenScanner {
         errorToken.setData(makeAttribute(store, ColorPreferences.ERROR_COLOR));
         parenToken.setData(makeAttribute(store, ColorPreferences.PAREN_COLOR));
         punctuationToken.setData(makeAttribute(store, ColorPreferences.PUNCTUATION_COLOR));
-        PreferenceUtil.updateKeywordManager(store, mKeywordManager);
+        //PreferenceUtil.updateKeywordManager(store, mKeywordManager);
     }
 
     private TextAttribute makeAttribute(IPreferenceStore store, String name) {

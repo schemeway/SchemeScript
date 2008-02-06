@@ -104,7 +104,7 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                 if (explorer.getSexpType() == SexpNavigator.TYPE_SYMBOL) {
                     // Find the indentation scheme
                     String text = explorer.getText();
-                    IndentationScheme scheme = context.getManager().getFunction(text);
+                    IndentationRule scheme = context.getManager().getFunction(text);
 
                     indentation = findIndentationFromScheme(context.getExplorer(),
                                                             context.getOffset(),
@@ -132,12 +132,12 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                                                  int insertionOffset,
                                                  int previousStart,
                                                  int outerStart,
-                                                 IndentationScheme scheme) throws BadLocationException {
+                                                 IndentationRule scheme) throws BadLocationException {
         int indentation;
-        String type = scheme.getScheme();
+        String type = scheme.getCategory();
         IDocument document = explorer.getDocument();
 
-        if (type == IndentationScheme.DEFAULT) {
+        if (type == IndentationRule.DEFAULT) {
             // find the first no
             int lineStart = explorer.getDocument().getLineInformationOfOffset(previousStart).getOffset();
             int offset = previousStart;
@@ -148,16 +148,16 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
             }
             indentation = findColumn(document, previousStart);
         }
-        else if (type == IndentationScheme.NONE) {
+        else if (type == IndentationRule.NONE) {
             indentation = findColumn(document, outerStart);
         }
-        else if (type == IndentationScheme.SEQUENCE || type == IndentationScheme.DEFINITION) {
+        else if (type == IndentationRule.SEQUENCE || type == IndentationRule.DEFINITION) {
             indentation = findColumn(document, outerStart) + 2;
         }
-        else if (type == IndentationScheme.IF) {
+        else if (type == IndentationRule.IF) {
             indentation = findColumn(document, outerStart) + 4;
         }
-        else if (type == IndentationScheme.WITH) {
+        else if (type == IndentationRule.WITH) {
             int previousCount = 0;
             int offset = insertionOffset;
 

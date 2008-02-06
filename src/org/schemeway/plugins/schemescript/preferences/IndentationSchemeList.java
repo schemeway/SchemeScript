@@ -14,7 +14,7 @@ public class IndentationSchemeList {
     List mSchemes;
     List mSchemeListeners;
 
-    public IndentationSchemeList(IndentationScheme[] initialSchemes) {
+    public IndentationSchemeList(IndentationRule[] initialSchemes) {
         mSchemes = new ArrayList();
         mSchemeListeners = new ArrayList();
         setSchemes(initialSchemes);
@@ -29,28 +29,28 @@ public class IndentationSchemeList {
         mSchemeListeners.remove(listener);
     }
 
-    public IndentationScheme[] getSchemes() {
-        return (IndentationScheme[]) mSchemes.toArray(new IndentationScheme[mSchemes.size()]);
+    public IndentationRule[] getSchemes() {
+        return (IndentationRule[]) mSchemes.toArray(new IndentationRule[mSchemes.size()]);
     }
 
-    public void setSchemes(IndentationScheme[] schemes) {
+    public void setSchemes(IndentationRule[] schemes) {
         mSchemes.clear();
         for (int index = 0; index < schemes.length; index++) {
-            IndentationScheme scheme = schemes[index];
+            IndentationRule scheme = schemes[index];
             if (scheme != null) {
                 mSchemes.add(scheme);
             }
         }
     }
 
-    public void addScheme(IndentationScheme scheme) {
+    public void addScheme(IndentationRule scheme) {
         mSchemes.add(scheme);
         for (int index = 0; index < mSchemeListeners.size(); index++) {
             ((IIndentationSchemeChangeListener) mSchemeListeners.get(index)).schemeAdded(scheme);
         }
     }
 
-    public void removeScheme(IndentationScheme scheme) {
+    public void removeScheme(IndentationRule scheme) {
         mSchemes.remove(scheme);
         for (int index = 0; index < mSchemeListeners.size(); index++) {
             ((IIndentationSchemeChangeListener) mSchemeListeners.get(index)).schemeRemoved(scheme);

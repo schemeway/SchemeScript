@@ -24,23 +24,23 @@ public class IndentationSchemeCellModifier implements ICellModifier
     {
         return (property.equals(IndentationPreferences.ROW_SCHEME) 
                 || (property.equals(IndentationPreferences.ROW_HINT)
-                    && ((IndentationScheme)element).getScheme() == IndentationScheme.WITH));
+                    && ((IndentationRule)element).getCategory() == IndentationRule.WITH));
     }
 
     public Object getValue(Object element, String property)
     {
-        IndentationScheme scheme = (IndentationScheme) element;
+        IndentationRule scheme = (IndentationRule) element;
         if (property.equals(IndentationPreferences.ROW_SYMBOL))
             return scheme.getSymbol();
         else if (property.equals(IndentationPreferences.ROW_SCHEME))
-            return getIndexOfScheme(scheme.getScheme());
+            return getIndexOfScheme(scheme.getCategory());
         else
             return Integer.toString(scheme.getHint());
     }
     
     private Integer getIndexOfScheme(String scheme)
     {
-        String[] schemes = IndentationScheme.ALL_SCHEMES; 
+        String[] schemes = IndentationRule.ALL_SCHEMES; 
         for (int i=0; i<schemes.length; i++)
         {
             if (scheme.equals(schemes[i]))
@@ -53,11 +53,11 @@ public class IndentationSchemeCellModifier implements ICellModifier
     public void modify(Object element, String property, Object value)
     {
         TableItem item = (TableItem) element;
-        IndentationScheme scheme = (IndentationScheme) item.getData();
+        IndentationRule scheme = (IndentationRule) item.getData();
         if (property.equals(IndentationPreferences.ROW_SCHEME))
         {
             int index = ((Integer)value).intValue();
-            scheme.setScheme(IndentationScheme.ALL_SCHEMES[index]);
+            scheme.setCategory(IndentationRule.ALL_SCHEMES[index]);
         }
         else if (property.equals(IndentationPreferences.ROW_HINT))
         {

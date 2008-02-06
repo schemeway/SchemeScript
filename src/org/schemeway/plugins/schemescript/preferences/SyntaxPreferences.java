@@ -266,32 +266,35 @@ public class SyntaxPreferences extends SchemePreferencePage {
     }
 
     protected void initializeValues() {
-        IPreferenceStore store = getPreferenceStore();
-        mDefineWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_DEFINE));
-        mDefineWidgets.reTextbox.setText(store.getString(SYNTAX_DEFINE_RE));
-        mKeywordWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_KEYWORD));
-        mKeywordWidgets.reTextbox.setText(store.getString(SYNTAX_KEYWORD_RE));
-        mSpecialWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_SPECIAL));
-        mSpecialWidgets.reTextbox.setText(store.getString(SYNTAX_SPECIAL_RE));
-        mMutatorWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_MUTATOR));
-        mMutatorWidgets.reTextbox.setText(store.getString(SYNTAX_MUTATOR_RE));
-        mConstantWidgets.listbox.setItems(PreferenceUtil.getKeywords(store, SYNTAX_CONSTANT));
-        mConstantWidgets.reTextbox.setText(store.getString(SYNTAX_CONSTANT_RE));
+        KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
+        mDefineWidgets.listbox.setItems(manager.getDefines());
+        mDefineWidgets.reTextbox.setText(manager.getDefineRE());
+        mKeywordWidgets.listbox.setItems(manager.getKeywords());
+        mKeywordWidgets.reTextbox.setText(manager.getKeywordRE());
+        mSpecialWidgets.listbox.setItems(manager.getSpecials());
+        mSpecialWidgets.reTextbox.setText(manager.getSpecialsRE());
+        mMutatorWidgets.listbox.setItems(manager.getMutators());
+        mMutatorWidgets.reTextbox.setText(manager.getMutatorsRE());
+        mConstantWidgets.listbox.setItems(manager.getConstants());
+        mConstantWidgets.reTextbox.setText(manager.getConstantsRE());
         
     }
 
     protected void storeValues() {
-        IPreferenceStore store = getPreferenceStore();
-        PreferenceUtil.setKeywords(store, SYNTAX_DEFINE, mDefineWidgets.listbox.getItems());
-        store.setValue(SYNTAX_DEFINE_RE, mDefineWidgets.reTextbox.getText());
-        PreferenceUtil.setKeywords(store, SYNTAX_KEYWORD, mKeywordWidgets.listbox.getItems());
-        store.setValue(SYNTAX_KEYWORD_RE, mKeywordWidgets.reTextbox.getText());
-        PreferenceUtil.setKeywords(store, SYNTAX_SPECIAL, mSpecialWidgets.listbox.getItems());
-        store.setValue(SYNTAX_SPECIAL_RE, mSpecialWidgets.reTextbox.getText());
-        PreferenceUtil.setKeywords(store, SYNTAX_MUTATOR, mMutatorWidgets.listbox.getItems());
-        store.setValue(SYNTAX_MUTATOR_RE, mMutatorWidgets.reTextbox.getText());
-        PreferenceUtil.setKeywords(store, SYNTAX_CONSTANT, mConstantWidgets.listbox.getItems());
-        store.setValue(SYNTAX_CONSTANT_RE, mConstantWidgets.reTextbox.getText());
+    	KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
+    	
+    	manager.clear();
+    	manager.setDefines(mDefineWidgets.listbox.getItems());
+    	manager.setDefineRegularExpression(mDefineWidgets.reTextbox.getText());
+    	manager.setConstants(mConstantWidgets.listbox.getItems());
+    	manager.setConstantRegularExpression(mConstantWidgets.reTextbox.getText());
+    	manager.setKeywords(mKeywordWidgets.listbox.getItems());
+    	manager.setKeywordRegularExpression(mKeywordWidgets.reTextbox.getText());
+    	manager.setMutators(mMutatorWidgets.listbox.getItems());
+    	manager.setMutatorRegularExpression(mMutatorWidgets.reTextbox.getText());
+    	manager.setSpecials(mSpecialWidgets.listbox.getItems());
+    	manager.setSpecialRegularExpression(mSpecialWidgets.reTextbox.getText());
+    	manager.saveValues();
     }
 
 }

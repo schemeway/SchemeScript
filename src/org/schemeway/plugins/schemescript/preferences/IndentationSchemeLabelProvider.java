@@ -16,14 +16,14 @@ public class IndentationSchemeLabelProvider extends LabelProvider implements ITa
     }
 
     public String getColumnText(Object element, int columnIndex) {
-        IndentationScheme scheme = (IndentationScheme) element;
+        IndentationRule scheme = (IndentationRule) element;
         if (columnIndex == 0)
             return scheme.getSymbol();
         else
             if (columnIndex == 1)
-                return scheme.getScheme();
+                return scheme.getCategory();
             else {
-                if (scheme.getScheme() == IndentationScheme.WITH)
+                if (scheme.getCategory() == IndentationRule.WITH)
                     return Integer.toString(scheme.getHint());
                 else
                     return "";

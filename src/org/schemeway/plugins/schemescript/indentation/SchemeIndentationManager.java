@@ -13,44 +13,57 @@ import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
 public class SchemeIndentationManager {
-    private static IndentationScheme DEFAULT_SCHEME;
+    private static IndentationRule DEFAULT_SCHEME;
     static {
-        DEFAULT_SCHEME = new IndentationScheme(null, IndentationScheme.DEFAULT, 0);
+        DEFAULT_SCHEME = new IndentationRule(null, IndentationRule.DEFAULT, 0);
     }
 
-    private Hashtable mMapping;
+    private Map mRulesMap;
 
     public SchemeIndentationManager() {
-        mMapping = new Hashtable();
+        mRulesMap = new HashMap();
     }
 
     public void clear() {
-        mMapping.clear();
+        mRulesMap.clear();
     }
 
-    public void setSchemes(IndentationScheme[] schemes) {
-        Assert.isNotNull(schemes);
+    public void setRules(IndentationRule[] rules) {
+        Assert.isNotNull(rules);
 
         clear();
-        for (int index = 0; index < schemes.length; index++) {
-            IndentationScheme scheme = schemes[index];
+        for (int index = 0; index < rules.length; index++) {
+            IndentationRule scheme = rules[index];
             if (scheme != null) {
-                mMapping.put(scheme.getSymbol(), scheme);
+            	addIndentationRule(scheme);
             }
         }
     }
+    
+    public IndentationRule[] getRules() {
+    	return (IndentationRule[]) mRulesMap.values().toArray(new IndentationRule[mRulesMap.size()]);
+    }
 
-    public final IndentationScheme getFunction(String symbol) {
-        IndentationScheme scheme = (IndentationScheme) mMapping.get(symbol);
+    public void addIndentationRule(IndentationRule rule) {
+    	mRulesMap.put(rule.getSymbol(), rule);
+    }
+    
+    public final IndentationRule getFunction(String symbol) {
+        IndentationRule scheme = (IndentationRule) mRulesMap.get(symbol);
         if (scheme == null)
             return DEFAULT_SCHEME;
         else
             return scheme;
     }
 
-    public void updateSchemes() {
+    public void loadRules() {
         IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
-        setSchemes(PreferenceUtil.getIndentationSchemes(store, IndentationPreferences.INDENT_SCHEMES));
+        setRules(PreferenceUtil.getIndentationSchemes(store, IndentationPreferences.INDENT_SCHEMES));
+    }
+    
+    public void saveRules() {
+    	IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
+    	PreferenceUtil.setIndentationSchemes(store, IndentationPreferences.INDENT_SCHEMES, getRules());
     }
 
     /* -- Factory methods -- */
