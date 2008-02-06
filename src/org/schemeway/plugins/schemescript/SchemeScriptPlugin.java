@@ -67,9 +67,9 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 
         Scheme.registerEnvironment();
 
-        loadConfigFile(CONF_USER_SCM);
-        
         textTools = new SchemeTextTools(new ColorManager());
+
+        loadConfigFile(CONF_USER_SCM);
         
         if (propertyChangedListener == null) {
             propertyChangedListener = new IPropertyChangeListener() {
@@ -192,7 +192,7 @@ public class SchemeScriptPlugin extends AbstractUIPlugin {
 	
 	public static DictionaryUpdater getDictionaryUpdater() {
 		if (sDictionaryUpdater == null) {
-			sDictionaryUpdater = DictionaryUpdater.createInstance("scm,ss,sch,brl,krl");
+			sDictionaryUpdater = DictionaryUpdater.createInstance("scm,ss,sch,brl,krl,arc");
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(sDictionaryUpdater, IResourceChangeEvent.POST_CHANGE);
 		}
 		return sDictionaryUpdater;
