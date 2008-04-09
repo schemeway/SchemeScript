@@ -28,7 +28,7 @@ public class IndentationPreferences extends SchemePreferencePage {
                 ROW_SYMBOL, ROW_SCHEME, ROW_HINT
     };
 
-    private TableViewer mViewer;
+    private IndentationSchemeListViewer mViewer;
     private IndentationSchemeList mSchemeList;
 
     private final static IndentationRule[] INDENT_DEFAULTS = new IndentationRule[] {
@@ -137,7 +137,7 @@ public class IndentationPreferences extends SchemePreferencePage {
 
     private void createTableViewer(Table table) {
         GridData data;
-        mViewer = new TableViewer(table);
+        mViewer = new IndentationSchemeListViewer(table);
         data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 3;
         data.heightHint = 400;
@@ -212,6 +212,8 @@ public class IndentationPreferences extends SchemePreferencePage {
     }
 
     protected void storeValues() {
-    	SchemeScriptPlugin.getDefault().getTextTools().getIndentationManager().saveRules();
+    	SchemeIndentationManager indentationManager = SchemeScriptPlugin.getDefault().getTextTools().getIndentationManager();
+    	indentationManager.setRules(mSchemeList.getSchemes());
+		indentationManager.saveRules();
     }
 }

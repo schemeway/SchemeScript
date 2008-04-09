@@ -10,10 +10,10 @@ import org.eclipse.jface.viewers.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 
 public class IndentationSchemeContentProvider implements IStructuredContentProvider, IIndentationSchemeChangeListener {
-    TableViewer mViewer;
+    IndentationSchemeListViewer mViewer;
     IndentationSchemeList mSchemeList = null;
 
-    public IndentationSchemeContentProvider(TableViewer viewer) {
+    public IndentationSchemeContentProvider(IndentationSchemeListViewer viewer) {
         Assert.isNotNull(viewer);
         mViewer = viewer;
     }
@@ -38,7 +38,7 @@ public class IndentationSchemeContentProvider implements IStructuredContentProvi
     }
 
     public void schemeAdded(IndentationRule scheme) {
-        mViewer.add(scheme);
+        mViewer.addIndentationRule(scheme);
     }
 
     public void schemeRemoved(IndentationRule scheme) {
