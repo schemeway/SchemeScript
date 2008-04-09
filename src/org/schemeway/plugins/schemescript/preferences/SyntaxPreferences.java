@@ -31,11 +31,13 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
     private static class SyntaxCategoryWidgets {
     	public List listbox;
+    	public ListViewer viewer;
     	public Text reTextbox;
 
-    	public SyntaxCategoryWidgets(List list, Text textbox) {
+    	public SyntaxCategoryWidgets(List list, Text textbox, ListViewer listViewer) {
 			super();
 			this.listbox = list;
+			viewer = listViewer; 
 			reTextbox = textbox;
 		}
     }
@@ -182,7 +184,9 @@ public class SyntaxPreferences extends SchemePreferencePage {
         data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 3;
         list.setLayoutData(data);
-        new ListViewer(list);
+        final ListViewer listViewer = new ListViewer(list);
+        listViewer.setContentProvider(new ArrayContentProvider());
+        listViewer.setSorter(new ViewerSorter());
 
         list.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
@@ -199,7 +203,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
         addButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
-                list.add(text.getText());
+                listViewer.add(text.getText());
                 text.setText("");
                 addButton.setEnabled(false);
             }
@@ -236,19 +240,19 @@ public class SyntaxPreferences extends SchemePreferencePage {
         	}
         });
         
-        return new SyntaxCategoryWidgets(list, reText);
+        return new SyntaxCategoryWidgets(list, reText, listViewer);
     }
 
     protected void doPerformDefaults() {
-        mDefineWidgets.listbox.setItems(DEFAULT_DEFINES);
+        mDefineWidgets.viewer.setInput(DEFAULT_DEFINES);
         mDefineWidgets.reTextbox.setText("");
-        mKeywordWidgets.listbox.setItems(DEFAULT_KEYWORDS);
+        mKeywordWidgets.viewer.setInput(DEFAULT_KEYWORDS);
         mKeywordWidgets.reTextbox.setText("");
-        mSpecialWidgets.listbox.setItems(DEFAULT_SPECIALS);
+        mSpecialWidgets.viewer.setInput(DEFAULT_SPECIALS);
         mSpecialWidgets.reTextbox.setText("");
-        mMutatorWidgets.listbox.setItems(DEFAULT_MUTATORS);
+        mMutatorWidgets.viewer.setInput(DEFAULT_MUTATORS);
         mMutatorWidgets.reTextbox.setText("");
-        mConstantWidgets.listbox.setItems(DEFAULT_CONSTANTS);
+        mConstantWidgets.viewer.setInput(DEFAULT_CONSTANTS);
         mConstantWidgets.reTextbox.setText("");
     }
 
@@ -267,15 +271,15 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
     protected void initializeValues() {
         KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
-        mDefineWidgets.listbox.setItems(manager.getDefines());
+        mDefineWidgets.viewer.setInput(manager.getDefines());
         mDefineWidgets.reTextbox.setText(manager.getDefineRE());
-        mKeywordWidgets.listbox.setItems(manager.getKeywords());
+        mKeywordWidgets.viewer.setInput(manager.getKeywords());
         mKeywordWidgets.reTextbox.setText(manager.getKeywordRE());
-        mSpecialWidgets.listbox.setItems(manager.getSpecials());
+        mSpecialWidgets.viewer.setInput(manager.getSpecials());
         mSpecialWidgets.reTextbox.setText(manager.getSpecialsRE());
-        mMutatorWidgets.listbox.setItems(manager.getMutators());
+        mMutatorWidgets.viewer.setInput(manager.getMutators());
         mMutatorWidgets.reTextbox.setText(manager.getMutatorsRE());
-        mConstantWidgets.listbox.setItems(manager.getConstants());
+        mConstantWidgets.viewer.setInput(manager.getConstants());
         mConstantWidgets.reTextbox.setText(manager.getConstantsRE());
         
     }
