@@ -29,6 +29,7 @@
 (define-namespace ITextFileBuffer "class:org.eclipse.core.filebuffers.ITextFileBuffer")
 (define-namespace ITextFileBufferManager "class:org.eclipse.core.filebuffers.ITextFileBufferManager")
 
+(define-namespace Position "class:org.eclipse.jface.text.Position")
 
 ;;;
 ;;;; Linked model (with or without UI)
@@ -109,7 +110,7 @@
                   (let ((buffer (cdr resource/buffer)))
                     (ITextFileBuffer:getDocument buffer))))
             (else
-             (let ((path (IResource:getFullPath resource)))
+             (let ((path :: <org.eclipse.core.runtime.IPath> (IResource:getFullPath resource)))
                (ITextFileBufferManager:connect buffer-manager path #!null)
                (let ((buffer (ITextFileBufferManager:getTextFileBuffer buffer-manager (as <org.eclipse.core.runtime.IPath> path))))
                  (set! all-resources (cons (cons resource buffer) all-resources))
@@ -250,4 +251,48 @@
                                       (list document (+ (point) 14) 3)))))))) ;; TODO - check that 14 is valid under Unix...
 
 
+
+;;;
+;;;; Extracting a local variable
+;;;
+
+
+;; experimental stuff...
+(define (create-local-variable)
+  (let-values (((start end) (%forward-sexp)))
+    (when (and start end)
+      (with-buffer-text start end
+        (lambda (text)
+          (let ((let-expr (format #f "(let ((var ~a))~%var)" text)))
+            (delete-text (- end start) start)
+            (insert-text let-expr start)
+            (indent-region start (+ start (string-length let-expr)))))))))
+
+
+(define (extract-parameter-variable)
+  (let-values (((start end) (%forward-sexp)))
+    (when (and start end)
+      (with-buffer-text start end
+        (lambda (parameter-text)
+          (let* ((expr-position (Position:new start))
+                 (buffer        (current-buffer))
+                 (document      (buffer-document buffer)))
+            (IDocument:addPosition document expr-position)
+            (with-up-sexp start buffer
+              (lambda (call-start call-end)
+                (with-buffer-text call-start call-end
+                  (lambda (call-text)
+                    (run-compound-change
+                     (lambda ()
+                       (insert-text ")" call-end)
+                       (insert-text (format #f "(let ((var ~a))~%" parameter-text) call-start)
+                       (with-forward-sexp call-start buffer
+                         (lambda (start end)
+                           (indent-region start end)
+                           (let ((expr-point (field expr-position 'offset)))
+                             (IDocument:removePosition document expr-position)
+                             (delete-text (string-length parameter-text) expr-point)
+                             (insert-text "var" expr-point)
+                             (create-linked-mode/ui (list (list document (+ call-start 7) 3)
+                                                          (list document expr-point 3))))))))))))))))))
 
