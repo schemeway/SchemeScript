@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SchemeScript Plug-in
 Bundle-SymbolicName: org.schemeway.plugins.schemescript; singleton:=true
-Bundle-Version: 1.3.0.alpha2
+Bundle-Version: 1.3.0.alpha6
 Bundle-ClassPath: schemescript.jar,
  lib/kawa.jar,
  lib/sisc.jar,
@@ -92,9 +92,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.ui,
  org.eclipse.jdt.debug,
  org.eclipse.jdt.debug.ui,
- org.eclipse.pde,
- org.eclipse.pde.core,
- org.eclipse.pde.ui,
  org.eclipse.ui.forms,
  org.eclipse.search,
  org.eclipse.core.variables
