@@ -184,6 +184,17 @@
                description="Extract variable"
                categoryId="Scheme Editing"
                id="org.schemeway.plugins.schemescript.sexp.extract-variable" />
+<!--
+      <command name="Create local variable"
+               description="Create local variable"
+               categoryId="Scheme Editing"
+               id="org.schemeway.plugins.schemescript.sexp.create-local-variable" />
+
+      <command name="Extract parameter"
+               description="Extract parameter"
+               categoryId="Scheme Editing"
+               id="org.schemeway.plugins.schemescript.sexp.extract-parameter" />
+-->
       <command name="Create function"
                description="Create new function from prototype"
                categoryId="Scheme Editing"
@@ -442,6 +453,18 @@
             sequence="ALT+SHIFT+L"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" >
       </key>
+<!--      
+      <key  commandId="org.schemeway.plugins.schemescript.sexp.create-local-variable"
+            contextId="org.schemeway.plugins.schemescript.schemeEditorScope"
+            sequence="ALT+SHIFT+E V"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" >
+      </key>
+      <key  commandId="org.schemeway.plugins.schemescript.sexp.extract-parameter"
+            contextId="org.schemeway.plugins.schemescript.schemeEditorScope"
+            sequence="ALT+SHIFT+E P"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" >
+      </key>
+-->      
       <key  commandId="org.schemeway.plugins.schemescript.sexp.create-function"
             contextId="org.schemeway.plugins.schemescript.schemeEditorScope"
             sequence="ALT+SHIFT+M"
@@ -903,4 +926,28 @@
             class="org.schemeway.plugins.schemescript.preferences.SchemePreferencesInitializer">
       </initializer>
    </extension>
+   
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            canSearchEnclosingProjects="true"
+            class="org.schemeway.plugins.schemescript.dictionary.SymbolSearchPage"
+            enabled="true"
+            extensions="scm:2,sch:2"
+            icon="icons/search.gif"
+            id="org.schemeway.search.symbolSearch"
+            label="Scheme Search"
+            showScopeSection="true">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchResultViewPages">
+      <viewPage
+            class="org.schemeway.plugins.schemescript.dictionary.SymbolSearchResultPage"
+            id="org.schemeway.plugins.schemescript.dictionary.SymbolSearchPage"
+            label="Scheme Symbol Search"
+            searchResultClass="org.schemeway.plugins.schemescript.dictionary.SymbolSearchResult">
+      </viewPage>
+   </extension>
+  
 </plugin>
