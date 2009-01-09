@@ -70,6 +70,10 @@ public class SchemeScanner {
                     consume();
                     return SchemeToken.createRightParen(getTokenOffset());
                 }
+                case '|':
+                {
+                	return parseExtendedSymbol();
+                }
                 case '#':
                 {
                     return parsePoundPrefixedToken();
@@ -119,7 +123,32 @@ public class SchemeScanner {
         return SchemeToken.EOF;
     }
 
-    private SchemeToken parseDefaultToken(char ch) throws BadLocationException {
+	private SchemeToken parseExtendedSymbol() throws BadLocationException {
+		consume();
+		char ch = lookahead();
+		boolean backslashSeen = false;
+		while (ch != EOR) {
+			if (ch == '|' && !backslashSeen) {
+				break;
+			}
+			if (ch == '\\' && !backslashSeen) {
+				backslashSeen = true;
+			} else {
+				backslashSeen = false;
+			}
+			consume();
+			ch = lookahead();
+		}
+		if (ch == '|') {
+			consume();
+			return SchemeToken.createSymbol(getTokenOffset(), getTokenLength());
+		}
+		else {
+			return SchemeToken.createError(getTokenOffset(), getTokenLength());
+		}
+	}
+
+	private SchemeToken parseDefaultToken(char ch) throws BadLocationException {
         if (SchemeScannerUtilities.isIdentifierPartChar(ch)) {
             consume();
             ch = lookahead();
