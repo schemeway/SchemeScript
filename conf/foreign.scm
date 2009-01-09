@@ -45,6 +45,10 @@
 (define-namespace IParent          "class:org.eclipse.jdt.core.IParent")
 (define-namespace Flags            "class:org.eclipse.jdt.core.Flags")
 (define-namespace SearchEngine     "class:org.eclipse.jdt.core.search.SearchEngine")
+(define-namespace SearchPattern        "class:org.eclipse.jdt.core.search.SearchPattern")
+(define-namespace IJavaSearchConstants "class:org.eclipse.jdt.core.search.IJavaSearchConstants")
+
+
 (define-namespace Signature        "class:org.eclipse.jdt.core.Signature")
 
 
