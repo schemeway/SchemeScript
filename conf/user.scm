@@ -44,5 +44,5 @@
 ;;;; * User initializations
 ;;;
 
-
+;; uncomment the next line to enable Arc support
 ;(load-relative "languages/arc.scm")
