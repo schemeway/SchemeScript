@@ -23,13 +23,13 @@
              'complement 'w/uniq 'atomic 'atwith 'atwiths
              'each 'do1 'caselet 'case 
              'loop 'on 'or= 'repeat 'push 'pull 'pop 'swap 'rotate 'pushnew 
-             'zap 'nil! 't! 'iflet 'aif 'awhen 'aand 'accum 'drain 'default
+             'zap 'nil! 't! 'if-let 'aif 'awhen 'aand 'accum 'drain 'default
              'w/infile 'w/outfile 'w/instring 'w/outstring 'w/appendfile 
              'w/stdout 'w/stdin 'tostring 'fromstring 'rand-choice
              'n-of 'insort 'insortnew 'summing 'obj 'time 'jtime 
              'time10 'errsafe 'until 'nor 'conswhen 'prf
              'w/table 'noisy-each 'point 'catch 'w/bars
-             'help 'for 'forlen 'when 'whenlet 'while 'whiler 'whilet 'with 'withs)
+             'help 'for 'forlen 'when 'when-let 'while 'whiler 'whilet 'with 'withs)
 
 
 (define-code-walker '(module)
