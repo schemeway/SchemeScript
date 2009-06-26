@@ -5,12 +5,16 @@ package org.schemeway.plugins.schemescript.dictionary;
 
 import org.eclipse.jface.layout.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.texteditor.*;
 
 /**
  * @author SchemeWay Project.
@@ -47,6 +51,8 @@ public class SymbolSearchPage implements ISearchPage {
 
 		mSymbolText = new Text(composite, SWT.BORDER);
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).applyTo(mSymbolText);
+		mSymbolText.setText(getDefaultSearchText());
+		mSymbolText.setSelection(0, mSymbolText.getText().length());
 
 		mSymbolText.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
@@ -58,6 +64,21 @@ public class SymbolSearchPage implements ISearchPage {
 				}
 			}
 		});
+	}
+
+	private String getDefaultSearchText() {
+		IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.getActiveEditor();
+		if (activeEditor instanceof AbstractDecoratedTextEditor) {
+			AbstractDecoratedTextEditor editor = (AbstractDecoratedTextEditor) activeEditor;
+			ISelection selection = editor.getSelectionProvider().getSelection();
+			if (selection instanceof TextSelection) {
+				TextSelection textSelection = (TextSelection) selection;
+				return textSelection.getText();
+			}
+		}
+
+		return "";
 	}
 
 	public void dispose() {
