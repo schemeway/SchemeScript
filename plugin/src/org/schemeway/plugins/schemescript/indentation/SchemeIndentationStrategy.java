@@ -97,6 +97,9 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                     outerStart++;
                     ch = document.getChar(outerStart);
                 }
+                if (SchemeScannerUtilities.isOpeningBracket(ch)) {
+                	return findColumn(document, outerStart) + 1;	
+                }
 
                 explorer.downSexpression(outerStart);
                 explorer.forwardSexpression(explorer.getSexpStart());

@@ -60,12 +60,20 @@ public final class SchemeScannerUtilities {
     }
 
     public final static boolean isOpeningParenthesis(char ch) {
-        return (ch == '(' || (mBracketsAsParenthesis && (ch == '[' || ch == '{')));
+        return (ch == '(' || (mBracketsAsParenthesis && isOpeningBracket(ch)));
     }
 
+	public final static boolean isOpeningBracket(char ch) {
+		return (ch == '[' || ch == '{');
+	}
+    
     public final static boolean isClosingParenthesis(char ch) {
-        return (ch == ')' || (mBracketsAsParenthesis && (ch == ']' || ch == '}')));
+        return (ch == ')' || (mBracketsAsParenthesis && isClosingBracket(ch)));
     }
+
+	public final static boolean isClosingBracket(char ch) {
+		return (ch == ']' || ch == '}');
+	}
 
     public final static boolean isPunctuationChar(char ch) {
         return (isParenthesis(ch) || ch == '\'' || ch == ',' || ch == '`');
@@ -102,7 +110,7 @@ public final class SchemeScannerUtilities {
                || ch == '+'
                || ch == '.'
                || ch == '@'
-               || (!mBracketsAsParenthesis && (ch == '[' || ch == ']'));
+               || (!mBracketsAsParenthesis && isOpeningBracket(ch));
     }
 
     public final static boolean isWhitespaceChar(char ch) {
