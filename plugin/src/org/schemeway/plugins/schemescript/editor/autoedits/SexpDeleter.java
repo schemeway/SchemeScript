@@ -10,16 +10,6 @@ import org.schemeway.plugins.schemescript.editor.*;
 
 public class SexpDeleter implements IAutoEditStrategy {
 
-    /*
-     * TODO
-     *  - plutot que deleter les S-expressions englobantes, 
-     *    deleter seulement lorsque les parenthèses "matchent"
-     *  - Idem pour l'insertion...
-     *  - Ajouter une action pour étendre la selection 
-     *    aux S-expressions englobantes (l'équivalent actuel
-     *    de SexpUtils.deleteSelection()
-     */
-    
     public SexpDeleter() {
         super();
     }
@@ -29,10 +19,10 @@ public class SexpDeleter implements IAutoEditStrategy {
             if (command.text.length() == 0 && command.length == 1) {
                 char currentChar;
                 currentChar = document.getChar(command.offset);
-                if (currentChar == '(' || currentChar == '[') {
+                if (currentChar == '(' || currentChar == '[' || currentChar == '{') {
                     SexpUtils.deleteForwardSexp(document, command);
                 }
-                else if (currentChar == ')' || currentChar == ']') {
+                else if (currentChar == ')' || currentChar == ']' || currentChar == '}') {
                     SexpUtils.deleteBackwardSexp(document, command);
                 }
             }

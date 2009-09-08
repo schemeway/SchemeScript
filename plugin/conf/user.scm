@@ -46,3 +46,6 @@
 
 ;; uncomment the next line to enable Arc support
 ;(load-relative "languages/arc.scm")
+
+;; uncomment the next line to enable Clojure support
+;(load-relative "languages/clojure.scm")
