@@ -43,6 +43,7 @@ public class SchemeScanner {
 
             switch (ch) {
                 case '[':
+            	case '{':
                 {
                     if (SchemeScannerUtilities.bracketsAreParentheses()) {
                         consume();
@@ -57,6 +58,7 @@ public class SchemeScanner {
                     return SchemeToken.createLeftParen(getTokenOffset());
                 }
                 case ']':
+                case '}':
                 {
                     if (SchemeScannerUtilities.bracketsAreParentheses()) {
                         consume();

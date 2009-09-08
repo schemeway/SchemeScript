@@ -7,6 +7,7 @@ package org.schemeway.plugins.schemescript.editor.autoedits;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
+import org.schemeway.plugins.schemescript.parser.*;
 
 public class MatchingDelimitersInserter implements IAutoEditStrategy {
     private final ISourceViewer viewer;
@@ -40,41 +41,68 @@ public class MatchingDelimitersInserter implements IAutoEditStrategy {
                     }
                     break;
                 case '(':
-                    document.replace(command.offset + command.length, 0, ")");
-                    viewer.setSelectedRange(command.offset + 1, 0);
-                    command.length = 0;
-                    command.doit = false;
+                    insertMatchingDelimiter(document, command, ")");
                     break;
                 case '[':
-                    document.replace(command.offset + command.length, 0, "]");
-                    viewer.setSelectedRange(command.offset + 1, 0);
-                    command.length = 0;
-                    command.doit = false;
+                	insertMatchingDelimiter(document, command, "]");
                     break;
+                case '{':
+                	if (SchemeScannerUtilities.bracketsAreParentheses()) {
+                		insertMatchingDelimiter(document, command, "}");
+                		break;
+                	}
+                	else
+                		return;
                 case ']':
+                	if (SchemeScannerUtilities.bracketsAreParentheses()) {
+                		movePastClosingDelimiter(document, command, insertedChar, ']');
+                		break;
+                	}
+                	else 
+            			return;
+                case '}':
+                	if (SchemeScannerUtilities.bracketsAreParentheses()) {
+                		movePastClosingDelimiter(document, command, insertedChar, '}');
+                		break;
+                	}
+                	else
+                		return;
                 case ')':
-                    if (command.offset < document.getLength()) {
-                        char previousChar = document.getChar(command.offset);
-                        int n;
-
-                        if (previousChar == ']' || previousChar == ')') {
-                            command.length = 1;
-                            command.caretOffset = command.offset + 1;
-                        }
-                        else if ((n = findNextRParen(insertedChar, document, command.offset)) > 0) {
-                            command.length = n;
-                        }
-                        else
-                            command.text = "";
-                    }
-                    else 
-                        command.text = "";
+                    movePastClosingDelimiter(document, command, insertedChar, ')');
                     break;
             }
         }
         catch (BadLocationException e) {
         }
     }
+
+	private void movePastClosingDelimiter(IDocument document, DocumentCommand command, char insertedChar, char closingDelimiter)
+			throws BadLocationException {
+		if (command.offset < document.getLength()) {
+		    char previousChar = document.getChar(command.offset);
+		    int n;
+
+		    if (previousChar == ')' || previousChar == ']' || previousChar == '}') {
+		        command.length = 1;
+		        command.caretOffset = command.offset + 1;
+		        command.text = new String(new char[] {previousChar});
+		    }
+		    else if ((n = findNextRParen(insertedChar, document, command.offset)) > 0) {
+		        command.length = n;
+		    }
+		    else
+		        command.text = "";
+		}
+		else 
+		    command.text = "";
+	}
+
+	private void insertMatchingDelimiter(IDocument document, DocumentCommand command, String closingDelimiter) throws BadLocationException {
+		document.replace(command.offset + command.length, 0, closingDelimiter);
+		viewer.setSelectedRange(command.offset + 1, 0);
+		command.length = 0;
+		command.doit = false;
+	}
 
     private static int findNextRParen(char charToMatch, IDocument document, int offset) throws BadLocationException {
         int max = document.getLength();
