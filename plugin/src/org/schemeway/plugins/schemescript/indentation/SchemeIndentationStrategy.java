@@ -93,11 +93,12 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                 // We are inside an S-expression
                 int outerStart = explorer.getSexpStart();
                 char ch = document.getChar(outerStart);
+                char firstCh = ch;
                 while (!SchemeScannerUtilities.isOpeningParenthesis(ch)) {
                     outerStart++;
                     ch = document.getChar(outerStart);
                 }
-                if (SchemeScannerUtilities.isOpeningBracket(ch)) {
+                if (isConstantListPrefix(firstCh) || SchemeScannerUtilities.isOpeningBracket(ch)) {
                 	return findColumn(document, outerStart) + 1;	
                 }
 
@@ -130,6 +131,13 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
         }
         return indentation;
     }
+
+	/*
+	 * Returns true for characters starting a constant list (currently vector, quoted and back-quoted list) 
+	 */
+	private static boolean isConstantListPrefix(char firstCh) {
+		return firstCh == '\'' || firstCh == '`' || firstCh == '#';
+	}
 
     private static int findIndentationFromScheme(SexpNavigator explorer,
                                                  int insertionOffset,
