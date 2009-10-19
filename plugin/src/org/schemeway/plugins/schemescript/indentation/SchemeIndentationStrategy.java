@@ -9,11 +9,12 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.*;
+import org.schemeway.plugins.schemescript.dictionary.*;
 import org.schemeway.plugins.schemescript.parser.*;
 import org.schemeway.plugins.schemescript.preferences.*;
 
 public class SchemeIndentationStrategy implements IAutoEditStrategy {
-    private SexpNavigator mExplorer;
+    private SexpNavigator            mExplorer;
     private SchemeIndentationManager mIndentationManager;
 
     public SchemeIndentationStrategy(SchemeIndentationManager indentManager) {
@@ -28,9 +29,8 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
 
     public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
         initializeStrategy(document);
-        if (command.length == 0
-            && command.text != null
-            && TextUtilities.endsWith(document.getLegalLineDelimiters(), command.text) != -1) {
+        if (command.length == 0 && command.text != null
+                && TextUtilities.endsWith(document.getLegalLineDelimiters(), command.text) != -1) {
             try {
                 IRegion lineInfo = document.getLineInformationOfOffset(command.offset);
                 String line = document.get(lineInfo.getOffset(), lineInfo.getLength());
@@ -43,12 +43,10 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                 if (continueComment && line.startsWith(prefix) && (!line.equals(prefix + " "))
                         && command.offset != lineInfo.getOffset()) {
                     command.text = command.text + prefix + " ";
-                }
-                else {
+                } else {
                     autoIndentAfterNewLine(document, command);
                 }
-            }
-            catch (BadLocationException exception) {
+            } catch (BadLocationException exception) {
 
             }
         }
@@ -64,9 +62,8 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
 
     private void autoIndentAfterNewLine(IDocument document, DocumentCommand command) {
         try {
-            int indentation = findIndentation(new SchemeIndentationContext(mExplorer,
-                                                                           mIndentationManager,
-                                                                           command.offset));
+            int indentation = findIndentation(new SchemeIndentationContext(mExplorer, mIndentationManager,
+                    command.offset));
             if (indentation > 0) {
                 StringBuffer buffer = new StringBuffer(command.text);
 
@@ -75,8 +72,7 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                 command.text = buffer.toString();
             }
             removeLeadingSpaces(document, command);
-        }
-        catch (BadLocationException exception) {
+        } catch (BadLocationException exception) {
         }
     }
 
@@ -98,9 +94,11 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                     outerStart++;
                     ch = document.getChar(outerStart);
                 }
-                if (isConstantListPrefix(firstCh) || SchemeScannerUtilities.isOpeningBracket(ch)) {
-                	return findColumn(document, outerStart) + 1;	
+                indentation = findColumn(document, outerStart) + 1;
+                if (SchemeScannerUtilities.isOpeningBracket(ch)) {
+                    return indentation;
                 }
+                boolean constantList = isConstantListPrefix(firstCh);
 
                 explorer.downSexpression(outerStart);
                 explorer.forwardSexpression(explorer.getSexpStart());
@@ -114,36 +112,37 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                                                             context.getOffset(),
                                                             previousStart,
                                                             outerStart,
-                                                            scheme);
-                }
-                else if (explorer.getSexpType() == SexpNavigator.TYPE_LIST) {
+                                                            scheme,
+                                                            text,
+                                                            constantList);
+                } else if (explorer.getSexpType() == SexpNavigator.TYPE_LIST) {
                     indentation = findColumn(document, explorer.getSexpStart());
-                }
-                else
+                } else
                     indentation = findColumn(document, previousStart);
-            }
-            else {
+            } else {
                 indentation = findColumn(document, previousStart);
             }
-        }
-        else if (explorer.upSexpression(context.getOffset())) {
+        } else if (explorer.upSexpression(context.getOffset())) {
             indentation = findColumn(document, explorer.getSexpStart()) + 1;
         }
         return indentation;
     }
 
-	/*
-	 * Returns true for characters starting a constant list (currently vector, quoted and back-quoted list) 
-	 */
-	private static boolean isConstantListPrefix(char firstCh) {
-		return firstCh == '\'' || firstCh == '`' || firstCh == '#';
-	}
+    /*
+     * Returns true for characters starting a constant list (currently vector,
+     * quoted and back-quoted list)
+     */
+    private static boolean isConstantListPrefix(char firstCh) {
+        return firstCh == '\'' || firstCh == '`' || firstCh == '#';
+    }
 
     private static int findIndentationFromScheme(SexpNavigator explorer,
                                                  int insertionOffset,
                                                  int previousStart,
                                                  int outerStart,
-                                                 IndentationRule scheme) throws BadLocationException {
+                                                 IndentationRule scheme,
+                                                 String symbolText,
+                                                 boolean constantList) throws BadLocationException {
         int indentation;
         String type = scheme.getCategory();
         IDocument document = explorer.getDocument();
@@ -157,18 +156,18 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                 previousStart = offset;
                 offset = explorer.getSexpStart();
             }
-            indentation = findColumn(document, previousStart);
-        }
-        else if (type == IndentationRule.NONE) {
+            if (constantList && DictionaryUtils.findUserDefinitions(symbolText).length == 0) {
+                indentation = findColumn(document, outerStart) + 1;
+            } else {
+                indentation = findColumn(document, previousStart);
+            }
+        } else if (type == IndentationRule.NONE) {
             indentation = findColumn(document, outerStart);
-        }
-        else if (type == IndentationRule.SEQUENCE || type == IndentationRule.DEFINITION) {
+        } else if (type == IndentationRule.SEQUENCE || type == IndentationRule.DEFINITION) {
             indentation = findColumn(document, outerStart) + 2;
-        }
-        else if (type == IndentationRule.IF) {
+        } else if (type == IndentationRule.IF) {
             indentation = findColumn(document, outerStart) + 4;
-        }
-        else if (type == IndentationRule.WITH) {
+        } else if (type == IndentationRule.WITH) {
             int previousCount = 0;
             int offset = insertionOffset;
 
@@ -182,8 +181,7 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                 indentation = findColumn(document, outerStart) + 2;
             else
                 indentation = findColumn(document, outerStart) + 4;
-        }
-        else
+        } else
             indentation = findColumn(document, previousStart);
         return indentation;
     }
@@ -215,8 +213,7 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
             char ch = document.getChar(offset++);
             if (ch == ' ' || ch == '\t') {
                 length++;
-            }
-            else {
+            } else {
                 break;
             }
         }
