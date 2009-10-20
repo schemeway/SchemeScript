@@ -207,7 +207,9 @@
     (run-compound-change
      (lambda ()
        (FormatAction:indentLines (buffer-document buffer) start-line end-line
-                                 (SchemeIndentationContext:new explorer manager 0)))
+                                 (SchemeIndentationContext:new explorer manager 0)
+                                 buffer
+                                 start))
      buffer)))
 
 
