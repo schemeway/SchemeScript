@@ -160,25 +160,33 @@ public class SyntaxPreferences extends SchemePreferencePage {
         composite.setLayout(layout);
         item.setControl(composite);
 
-        final Button deleteButton = new Button(composite, SWT.NONE);
-        deleteButton.setText("Delete");
-        deleteButton.setToolTipText("Delete the selected symbols");
-        deleteButton.setEnabled(false);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        data.horizontalSpan = 1;
-        deleteButton.setLayoutData(data);
+        Composite addDeleteComposite = new Composite(composite, SWT.NONE);
+        layout = new GridLayout();
+        layout.numColumns = 3;
+        addDeleteComposite.setLayout(layout);
+        data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        data.horizontalSpan = 3;
+        addDeleteComposite.setLayoutData(data);
+        
+        final Text text = new Text(addDeleteComposite, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        text.setLayoutData(data);
 
-        final Button addButton = new Button(composite, SWT.NONE);
+        final Button addButton = new Button(addDeleteComposite, SWT.NONE);
         addButton.setText("Add");
         addButton.setToolTipText("Add a new symbol");
         addButton.setEnabled(false);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data = new GridData();
         data.horizontalSpan = 1;
         addButton.setLayoutData(data);
 
-        final Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-        text.setLayoutData(data);
+        final Button deleteButton = new Button(addDeleteComposite, SWT.NONE);
+        deleteButton.setText("Delete");
+        deleteButton.setToolTipText("Delete the selected symbols");
+        deleteButton.setEnabled(false);
+        data = new GridData();
+        data.horizontalSpan = 1;
+        deleteButton.setLayoutData(data);
 
         final List list = new List(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
         data = new GridData(GridData.FILL_BOTH);
@@ -203,9 +211,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
         addButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
-                listViewer.add(text.getText());
-                text.setText("");
-                addButton.setEnabled(false);
+                addEntry(text, addButton, listViewer);
             }
         });
 
@@ -299,6 +305,12 @@ public class SyntaxPreferences extends SchemePreferencePage {
     	manager.setSpecials(mSpecialWidgets.listbox.getItems());
     	manager.setSpecialRegularExpression(mSpecialWidgets.reTextbox.getText());
     	manager.saveValues();
+    }
+
+    private void addEntry(final Text text, final Button addButton, final ListViewer listViewer) {
+        listViewer.add(text.getText());
+        text.setText("");
+        addButton.setEnabled(false);
     }
 
 }
