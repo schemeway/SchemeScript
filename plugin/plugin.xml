@@ -687,12 +687,6 @@
             id="org.schemeway.plugins.schemescript.preferences.indentation">
       </page>
       <page
-            name="External Interpreter"
-            category="org.schemeway.plugins.schemescript.preferences.scheme"
-            class="org.schemeway.plugins.schemescript.preferences.InterpreterPreferences"
-            id="org.schemeway.plugins.schemescript.preferences.interpreter">
-      </page>
-      <page
             name="Fast Eval Keys"
             category="org.schemeway.plugins.schemescript.preferences.scheme"
             class="org.schemeway.plugins.schemescript.preferences.FastEvalPreferences"
@@ -705,9 +699,21 @@
             id="org.schemeway.plugins.schemescript.preferences.syntax-extensions">
       </page>
       <page
+            name="Interpreter"
             category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.InterpreterPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.interpreter">
+      </page>
+      <page
+            name="External Interpreter"
+            category="org.schemeway.plugins.schemescript.preferences.interpreter"
+            class="org.schemeway.plugins.schemescript.preferences.ExternalInterpreterPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.interpreter.externalinterpreter">
+      </page>
+      <page
+            category="org.schemeway.plugins.schemescript.preferences.interpreter"
             class="org.schemeway.plugins.schemescript.preferences.RemoteInterpreterPreferences"
-            id="org.schemeway.plugins.schemescript.preferences.remoteInterpreter"
+            id="org.schemeway.plugins.schemescript.preferences.interpreter.remoteInterpreter"
             name="Remote Interpreter"/>
    </extension>
    <extension

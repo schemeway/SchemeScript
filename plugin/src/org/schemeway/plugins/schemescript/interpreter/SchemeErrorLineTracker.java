@@ -33,18 +33,18 @@ public class SchemeErrorLineTracker implements IConsoleLineTracker, IPropertyCha
     
 
     public void propertyChange(PropertyChangeEvent event) {
-        if (event.getProperty().startsWith(InterpreterPreferences.PREFIX)) {
+        if (event.getProperty().startsWith(ExternalInterpreterPreferences.PREFIX)) {
             setup();
         }
     }
     
     private void setup() {
-        String regex = InterpreterPreferences.getErrorRegexp();
+        String regex = ExternalInterpreterPreferences.getErrorRegexp();
         if (regex != null) {
             mErrorPattern  = Pattern.compile(regex);
-            mFilenameGroup = InterpreterPreferences.getFilenameGroup();
-            mLineNoGroup   = InterpreterPreferences.getLineNumberGroup();
-            mLinkGroup     = InterpreterPreferences.getLinkGroup();
+            mFilenameGroup = ExternalInterpreterPreferences.getFilenameGroup();
+            mLineNoGroup   = ExternalInterpreterPreferences.getLineNumberGroup();
+            mLinkGroup     = ExternalInterpreterPreferences.getLinkGroup();
         }
         else {
             mErrorPattern  = null;
@@ -97,7 +97,7 @@ public class SchemeErrorLineTracker implements IConsoleLineTracker, IPropertyCha
     }
     
     private IFile findFile(String filename) {
-        return SchemeScriptTools.findFile(filename, InterpreterPreferences.getWorkingDirectory().getAbsolutePath());
+        return SchemeScriptTools.findFile(filename, ExternalInterpreterPreferences.getWorkingDirectory().getAbsolutePath());
     }
 
     public void dispose() {

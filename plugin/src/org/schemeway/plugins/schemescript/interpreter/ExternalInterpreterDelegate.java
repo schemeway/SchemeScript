@@ -43,14 +43,14 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
     }
 
     private String[] getCommandLine() throws CoreException {
-        String command = InterpreterPreferences.getCommandLine();
-        File workdir = InterpreterPreferences.getWorkingDirectory();
+        String command = ExternalInterpreterPreferences.getCommandLine();
+        File workdir = ExternalInterpreterPreferences.getWorkingDirectory();
         if (workdir != null) {
         	String dir = workdir.getPath();
         	dir = dir.replaceAll("\\\\", "/"); // HACK for Windows
         	command = command.replaceAll(WORKDIR_VAR, dir);
         }
-        if (InterpreterPreferences.getSavesPID()) {
+        if (ExternalInterpreterPreferences.getSavesPID()) {
             command = command.replaceAll(PIDFILE_VAR, ExternalInterpreter.getPIDFilename());
         }
         return parseCommandLine(command);
@@ -128,10 +128,10 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
     }
 
     private String getInterpreterName() {
-        return InterpreterPreferences.getInterpreterName();
+        return ExternalInterpreterPreferences.getInterpreterName();
     }
 
     private File getWorkingDirectory() {
-        return InterpreterPreferences.getWorkingDirectory();
+        return ExternalInterpreterPreferences.getWorkingDirectory();
     }
 }

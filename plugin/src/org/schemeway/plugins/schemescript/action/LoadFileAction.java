@@ -10,6 +10,7 @@ import org.eclipse.ui.part.*;
 import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.interpreter.*;
+import org.schemeway.plugins.schemescript.preferences.*;
 
 public class LoadFileAction extends SchemeAction {
 
@@ -25,6 +26,9 @@ public class LoadFileAction extends SchemeAction {
 		if (editor == null)
 			return;
 
+		if (InterpreterPreferences.isSaveRequiredBeforeLoad()) {
+		    editor.doSave(null);
+		}
 		IEditorInput input = editor.getEditorInput();
 		if (input instanceof FileEditorInput) {
 			FileEditorInput fileInput = (FileEditorInput) input;

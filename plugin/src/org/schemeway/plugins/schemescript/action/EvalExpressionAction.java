@@ -10,6 +10,7 @@ import org.schemeway.plugins.schemescript.*;
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.interpreter.*;
 import org.schemeway.plugins.schemescript.parser.*;
+import org.schemeway.plugins.schemescript.preferences.*;
 
 public class EvalExpressionAction extends SchemeAction {
     private boolean mMoveToTop;
@@ -54,6 +55,8 @@ public class EvalExpressionAction extends SchemeAction {
             }
         }
         if (textToEval != null) {
+            if (InterpreterPreferences.surroundCodeWithBegin()) 
+                textToEval = "(begin " + textToEval + ")"; 
             evalText(textToEval);
         }
     }

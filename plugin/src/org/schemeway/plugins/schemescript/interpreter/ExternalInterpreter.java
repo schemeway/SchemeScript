@@ -132,7 +132,7 @@ public class ExternalInterpreter implements Interpreter {
     }
 
     public boolean supportInterruption() {
-        return InterpreterPreferences.getSavesPID();
+        return ExternalInterpreterPreferences.getSavesPID();
     }
 
     public void interrupt() {
@@ -149,7 +149,7 @@ public class ExternalInterpreter implements Interpreter {
     
     private String getPID() {
         try {
-            String filename = InterpreterPreferences.getWorkingDirectory().getPath() + "/" + getPIDFilename();
+            String filename = ExternalInterpreterPreferences.getWorkingDirectory().getPath() + "/" + getPIDFilename();
             Object value = readPID(filename);
             if (value instanceof IntNum) {
                 return ((IntNum)value).toString();
