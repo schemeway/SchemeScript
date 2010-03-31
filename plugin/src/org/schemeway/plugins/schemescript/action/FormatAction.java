@@ -95,6 +95,9 @@ public class FormatAction extends SchemeAction {
                     } else if (firstTokenPartition.getLength() >= 2
                             && document.get(firstTokenPartition.getOffset(), 2).equals(";;")) {
                         newIndentation = SchemeIndentationStrategy.findIndentation(context);
+                    } else if (firstTokenPartition.getLength() >= 2
+                            && document.get(firstTokenPartition.getOffset(), 2).equals("#|")) {
+                        return;
                     } else {
                         newIndentation = DEFAULT_SIMPLE_COMMENT_COLUMN;
                         if (lineNo > 0) {
