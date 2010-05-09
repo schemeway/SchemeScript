@@ -35,7 +35,7 @@ public class KawaProcess implements IInterpreterProcess {
 
         private void disableExit() {
             try {
-                write("(define (exit . args) #f)");
+                write("(define (exit . args) (display \"Warning: (exit) disabled.\" (current-error-port)) (newline (current-error-port)) #f)");
             } catch (IOException e) {
             }
         }
