@@ -30,6 +30,14 @@ public class KawaProcess implements IInterpreterProcess {
             OutPort.setOutDefault(new OutPort(new OutputStreamWriter(mOutputMonitor), false, true));
             OutPort.outDefault().objectFormat = DisplayFormat.getSchemeFormat(true);
             OutPort.setErrDefault(new OutPort(new OutputStreamWriter(mErrorMonitor), false, true));
+            disableExit();
+        }
+
+        private void disableExit() {
+            try {
+                write("(define (exit . args) #f)");
+            } catch (IOException e) {
+            }
         }
 
         public IStreamMonitor getErrorStreamMonitor() {
