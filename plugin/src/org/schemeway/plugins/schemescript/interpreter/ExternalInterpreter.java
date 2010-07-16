@@ -41,7 +41,7 @@ public class ExternalInterpreter implements Interpreter {
                 ILaunchConfigurationType configType = DebugPlugin.getDefault()
                                                                  .getLaunchManager()
                                                                  .getLaunchConfigurationType(CONFIG_TYPE);
-                ILaunchConfigurationWorkingCopy copy = configType.newInstance(null, "");
+                ILaunchConfigurationWorkingCopy copy = configType.newInstance(null, "Scheme");
                 mLaunch = copy.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
                 IProcess[] processes = mLaunch.getProcesses();
                 

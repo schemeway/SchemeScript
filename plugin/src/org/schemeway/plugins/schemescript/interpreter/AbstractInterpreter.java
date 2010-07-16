@@ -31,7 +31,7 @@ public abstract class AbstractInterpreter implements Interpreter
                 ILaunchConfigurationType configType = DebugPlugin.getDefault()
                                                                  .getLaunchManager()
                                                                  .getLaunchConfigurationType(getConfigurationType());
-                ILaunchConfigurationWorkingCopy copy = configType.newInstance(null, "");
+                ILaunchConfigurationWorkingCopy copy = configType.newInstance(null, "Scheme");
                 copy.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
             }
             catch (CoreException exception) {
