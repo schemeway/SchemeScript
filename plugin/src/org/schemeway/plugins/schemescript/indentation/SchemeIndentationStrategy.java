@@ -102,8 +102,9 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
 
                 explorer.downSexpression(outerStart);
                 explorer.forwardSexpression(explorer.getSexpStart());
+                int firstSexpType = explorer.getSexpType();
                 // we have a form '(symbol ...)'
-                if (explorer.getSexpType() == SexpNavigator.TYPE_SYMBOL) {
+                if (firstSexpType == SexpNavigator.TYPE_SYMBOL) {
                     // Find the indentation scheme
                     String text = explorer.getText();
                     IndentationRule scheme = context.getManager().getFunction(text);
@@ -115,7 +116,9 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                                                             scheme,
                                                             text,
                                                             constantList);
-                } else if (explorer.getSexpType() == SexpNavigator.TYPE_LIST) {
+                } else if (firstSexpType == SexpNavigator.TYPE_LIST) {
+                    indentation = findColumn(document, explorer.getSexpStart());
+                } else if (firstSexpType == SexpNavigator.TYPE_CONSTANT || firstSexpType == SexpNavigator.TYPE_STRING) {
                     indentation = findColumn(document, explorer.getSexpStart());
                 } else
                     indentation = findColumn(document, previousStart);
