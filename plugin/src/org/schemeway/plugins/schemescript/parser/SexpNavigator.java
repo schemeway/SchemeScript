@@ -131,6 +131,8 @@ public class SexpNavigator {
         setupIterator(direction, start);
         mSexpType = TYPE_ERROR;
 
+        boolean startSet = false;
+        
         SchemeToken currentToken = mTokenIterator.nextToken();
         int type = currentToken.getType();
         if ((currentToken == SchemeToken.EOF))
@@ -138,6 +140,7 @@ public class SexpNavigator {
         else {
             if (direction == DIRECTION_FORWARD && syntacticPrefixType(type)) {
                 mSexpStart = currentToken.getOffset();
+                startSet = true;
                 mSexpEnd = mSexpStart + currentToken.getLength();
                 currentToken = mTokenIterator.nextToken(false);
                 type = currentToken.getType();
@@ -156,8 +159,11 @@ public class SexpNavigator {
             }
             else
                 if (type == enteringType || endLevel < 0) {
-                    if (direction == DIRECTION_FORWARD)
-                        mSexpStart = currentToken.getOffset();
+                    if (direction == DIRECTION_FORWARD) {
+                        if (!startSet) {
+                            mSexpStart = currentToken.getOffset();
+                        }
+                    }
                     else
                         mSexpEnd = currentToken.getOffset() + currentToken.getLength();
 

@@ -124,7 +124,7 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                     indentation = findColumn(document, previousStart);
             } else {
                 indentation = findColumn(document, previousStart);
-            }
+            }   
         } else if (explorer.upSexpression(context.getOffset())) {
             indentation = findColumn(document, explorer.getSexpStart()) + 1;
         }
@@ -159,7 +159,7 @@ public class SchemeIndentationStrategy implements IAutoEditStrategy {
                 previousStart = offset;
                 offset = explorer.getSexpStart();
             }
-            if (constantList && DictionaryUtils.findUserDefinitions(symbolText).length == 0) {
+            if (DictionaryUtils.findUserDefinitions(symbolText).length == 0) {
                 indentation = findColumn(document, outerStart) + 1;
             } else {
                 indentation = findColumn(document, previousStart);
