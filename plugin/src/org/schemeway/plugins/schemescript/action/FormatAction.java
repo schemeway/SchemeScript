@@ -9,6 +9,7 @@ import org.eclipse.jface.text.*;
 import org.schemeway.plugins.schemescript.editor.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 import org.schemeway.plugins.schemescript.parser.*;
+import org.schemeway.plugins.schemescript.preferences.*;
 
 public class FormatAction extends SchemeAction {
 
@@ -108,6 +109,8 @@ public class FormatAction extends SchemeAction {
                             if (previousLineLastPartition.getType() == SchemePartitionScanner.SCHEME_COMMENT
                                     && document.getChar(previousLineLastPartition.getOffset()) == ';') {
                                 newIndentation = previousLineLastPartition.getOffset() - previousLineInfo.getOffset();
+                            } else if (!CommentPreferences.isUsingEmacsBehavior()) {
+                                newIndentation = SchemeIndentationStrategy.findIndentation(context);
                             }
                         }
                     }

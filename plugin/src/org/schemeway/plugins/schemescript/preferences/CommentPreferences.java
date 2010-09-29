@@ -15,6 +15,7 @@ public class CommentPreferences extends FieldEditorPreferencePage implements IWo
     public final static String COMMENT_AUTHOR = PREFIX + "author";
     public final static String COMMENT_COPYRIGHT = PREFIX + "copyright";
     public final static String COMMENT_CONTINUE = PREFIX + "continue";
+    public final static String COMMENT_EMACS_BEHAVIOR = PREFIX + "emacs-behavior";
 
     public CommentPreferences() {
         super("Scheme comment-related preferences", GRID);
@@ -36,6 +37,7 @@ public class CommentPreferences extends FieldEditorPreferencePage implements IWo
         store.setDefault(COMMENT_AUTHOR, "");
         store.setDefault(COMMENT_COPYRIGHT, "");
         store.setDefault(COMMENT_CONTINUE, true);
+        store.setDefault(COMMENT_EMACS_BEHAVIOR, true);
     }
 
     /*
@@ -51,6 +53,9 @@ public class CommentPreferences extends FieldEditorPreferencePage implements IWo
         addField(new BooleanFieldEditor(COMMENT_CONTINUE,
                                         "Automatically continue comment from previous line",
                                         getFieldEditorParent()));
+        addField(new BooleanFieldEditor(COMMENT_EMACS_BEHAVIOR,
+                                        "Emacs behavior for formatting lines starting with ;",
+                                        getFieldEditorParent()));
     }
 
     public static String getCommentPrefix() {
@@ -62,5 +67,10 @@ public class CommentPreferences extends FieldEditorPreferencePage implements IWo
         else {
             return prefix;
         }
+    }
+    
+    public static boolean isUsingEmacsBehavior() {
+        IPreferenceStore store = SchemeScriptPlugin.getDefault().getPreferenceStore();
+        return store.getBoolean(CommentPreferences.COMMENT_EMACS_BEHAVIOR);
     }
 }
