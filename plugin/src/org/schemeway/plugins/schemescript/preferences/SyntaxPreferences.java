@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004 Nu Echo Inc.
- * 
+ *
  * This is free software. For terms and warranty disclaimer, see ./COPYING
  */
 package org.schemeway.plugins.schemescript.preferences;
@@ -30,18 +30,18 @@ public class SyntaxPreferences extends SchemePreferencePage {
     public final static String SYNTAX_CONSTANT_RE = PREFIX + "constant-re";
 
     private static class SyntaxCategoryWidgets {
-    	public List listbox;
-    	public ListViewer viewer;
-    	public Text reTextbox;
+        public List listbox;
+        public ListViewer viewer;
+        public Text reTextbox;
 
-    	public SyntaxCategoryWidgets(List list, Text textbox, ListViewer listViewer) {
-			super();
-			this.listbox = list;
-			viewer = listViewer; 
-			reTextbox = textbox;
-		}
+        public SyntaxCategoryWidgets(List list, Text textbox, ListViewer listViewer) {
+            super();
+            this.listbox = list;
+            viewer = listViewer;
+            reTextbox = textbox;
+        }
     }
-    
+
     private SyntaxCategoryWidgets mDefineWidgets;
     private SyntaxCategoryWidgets mKeywordWidgets;
     private SyntaxCategoryWidgets mSpecialWidgets;
@@ -65,6 +65,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
                 "module-export",
                 "module-static",
                 "module-implements",
+                "module-compile-options",
                 "require",
                 "define-record-type",
                 "define-unit",
@@ -96,6 +97,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
                 "make",
                 "invoke",
                 "invoke-static",
+                "invoke-special",
                 "field",
                 "static-field",
                 "slot-ref",
@@ -148,8 +150,8 @@ public class SyntaxPreferences extends SchemePreferencePage {
     }
 
     private SyntaxCategoryWidgets createListControl(TabFolder folder, String tabName, String toolTip) {
-    	GridData data;
-    	
+        GridData data;
+
         TabItem item = new TabItem(folder, SWT.NULL);
         item.setText(tabName);
         item.setToolTipText(toolTip);
@@ -167,7 +169,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
         data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
         data.horizontalSpan = 3;
         addDeleteComposite.setLayoutData(data);
-        
+
         final Text text = new Text(addDeleteComposite, SWT.SINGLE | SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
         text.setLayoutData(data);
@@ -226,26 +228,26 @@ public class SyntaxPreferences extends SchemePreferencePage {
         data = new GridData(GridData.BEGINNING);
         data.horizontalSpan = 2;
         reLabel.setLayoutData(data);
-        
+
         final Text reText = new Text(composite, SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
         reText.setLayoutData(data);
-        
+
         reText.addKeyListener(new KeyAdapter() {
-        	public void keyReleased(KeyEvent e) {
-        		String eventText = reText.getText();
-        		try {
-        			Pattern.compile(eventText);
-        			setValid(true);
-        			setErrorMessage(null);
-        		}
-        		catch (PatternSyntaxException exception) {
-        			setValid(false);
-        			setErrorMessage("Invalid regular expression");
-        		}
-        	}
+            public void keyReleased(KeyEvent e) {
+                String eventText = reText.getText();
+                try {
+                    Pattern.compile(eventText);
+                    setValid(true);
+                    setErrorMessage(null);
+                }
+                catch (PatternSyntaxException exception) {
+                    setValid(false);
+                    setErrorMessage("Invalid regular expression");
+                }
+            }
         });
-        
+
         return new SyntaxCategoryWidgets(list, reText, listViewer);
     }
 
@@ -287,24 +289,24 @@ public class SyntaxPreferences extends SchemePreferencePage {
         mMutatorWidgets.reTextbox.setText(manager.getMutatorsRE());
         mConstantWidgets.viewer.setInput(manager.getConstants());
         mConstantWidgets.reTextbox.setText(manager.getConstantsRE());
-        
+
     }
 
     protected void storeValues() {
-    	KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
-    	
-    	manager.clear();
-    	manager.setDefines(mDefineWidgets.listbox.getItems());
-    	manager.setDefineRegularExpression(mDefineWidgets.reTextbox.getText());
-    	manager.setConstants(mConstantWidgets.listbox.getItems());
-    	manager.setConstantRegularExpression(mConstantWidgets.reTextbox.getText());
-    	manager.setKeywords(mKeywordWidgets.listbox.getItems());
-    	manager.setKeywordRegularExpression(mKeywordWidgets.reTextbox.getText());
-    	manager.setMutators(mMutatorWidgets.listbox.getItems());
-    	manager.setMutatorRegularExpression(mMutatorWidgets.reTextbox.getText());
-    	manager.setSpecials(mSpecialWidgets.listbox.getItems());
-    	manager.setSpecialRegularExpression(mSpecialWidgets.reTextbox.getText());
-    	manager.saveValues();
+        KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
+
+        manager.clear();
+        manager.setDefines(mDefineWidgets.listbox.getItems());
+        manager.setDefineRegularExpression(mDefineWidgets.reTextbox.getText());
+        manager.setConstants(mConstantWidgets.listbox.getItems());
+        manager.setConstantRegularExpression(mConstantWidgets.reTextbox.getText());
+        manager.setKeywords(mKeywordWidgets.listbox.getItems());
+        manager.setKeywordRegularExpression(mKeywordWidgets.reTextbox.getText());
+        manager.setMutators(mMutatorWidgets.listbox.getItems());
+        manager.setMutatorRegularExpression(mMutatorWidgets.reTextbox.getText());
+        manager.setSpecials(mSpecialWidgets.listbox.getItems());
+        manager.setSpecialRegularExpression(mSpecialWidgets.reTextbox.getText());
+        manager.saveValues();
     }
 
     private void addEntry(final Text text, final Button addButton, final ListViewer listViewer) {
