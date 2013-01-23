@@ -284,6 +284,12 @@
                description="Sends predefined code to the interpreter"
                categoryId="Scheme Editing"
                id="org.schemeway.plugins.schemescript.eval.fast9"/>
+      <command
+            categoryId="Scheme Editing"
+            description="Adds a define-alias clause"
+            id="org.schemeway.plugins.schemescript.code.addAlias"
+            name="Add alias">
+      </command>
       <command name="Add require"
                description="Adds a require clause"
                categoryId="Scheme Editing"
@@ -590,6 +596,12 @@
             contextId="org.eclipse.ui.globalScope"
             sequence="ALT+K 9"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" >
+      </key>
+      <key
+            commandId="org.schemeway.plugins.schemescript.code.addAlias"
+            contextId="org.schemeway.plugins.schemescript.schemeEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="ALT+CTRL+SHIFT+A">
       </key>
       <key  commandId="org.schemeway.plugins.schemescript.code.addRequire"
             contextId="org.schemeway.plugins.schemescript.schemeEditorScope"
