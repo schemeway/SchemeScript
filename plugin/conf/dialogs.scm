@@ -18,13 +18,13 @@
          (ok-button     (new-button button-area (lambda _ (ok))
                                     text:        "Ok"
                                     layout-data: (grid-data style: '(right) width: *BUTTON-WIDTH*)))
-         (cancel-button (new-button button-area (lambda _ (cancel)) 
+         (cancel-button (new-button button-area (lambda _ (cancel))
                                     text:        "Cancel"
                                     layout-data: (grid-data style: '(right) width: *BUTTON-WIDTH*)))
          (is-ok?        (lambda (flag) (Button:setEnabled ok-button flag))))
-    
+
     (Shell:setImage shell (Shell:getImage parent-shell))
-    (Composite:setLayout shell       (grid-layout columns:       1 
+    (Composite:setLayout shell       (grid-layout columns:       1
                                                   margin-width:  *DIALOG-MARGIN-WIDTH*
                                                   margin-height: *DIALOG-MARGIN-HEIGHT*))
     (Composite:setLayout button-area (grid-layout columns:       2
@@ -33,19 +33,19 @@
                                                   hspacing:      *BUTTON-SPACING*))
     (Composite:setLayoutData button-area (grid-data style: '(right)))
     (Composite:setLayoutData client-area (grid-data style: '(fill-both)))
-    
+
     (control-builder client-area is-ok? ok cancel)
-    
+
     (when (and width height)
       (Shell:setBounds shell 0 0 width height)
       (let* ((parent-rect (Shell:getBounds parent-shell))
              (new-x       (+ (field parent-rect 'x) (max 0 (/ (- (field parent-rect 'width) width) 2))))
              (new-y       (+ (field parent-rect 'y) (max 0 (/ (- (field parent-rect 'height) height) 2)))))
         (Shell:setBounds shell new-x new-y width height)))
-  
+
     (Shell:setText shell (as <String> text))
     (Shell:open shell)
-    (let ((display (if (eq? parent-shell #!null) 
+    (let ((display (if (eq? parent-shell #!null)
                        (default-display)
                        (Shell:getDisplay parent-shell))))
       (while (not (Shell:isDisposed shell))
@@ -75,8 +75,15 @@
                   (when (and (= 13 (field event 'keyCode))
                              (= 0  (field event 'stateMask))
                              selection)
+                    (ok)))))
+
+              (List:addMouseListener
+               viewer
+               (object (<org.eclipse.swt.events.MouseAdapter>)
+                 ((mouseDoubleClick (event :: <org.eclipse.swt.events.MouseEvent>)) :: <void>
+                  (when selection
                     (ok)))))))))
-    
+
     (and (eq? 'ok (dialog title control-builder 300 250))
          selection)))
 
@@ -104,7 +111,7 @@
                            (ok))
                           (else
                            (is-ok? (not (string=? "" (symbol->string symbol))))))))))))))
-    
+
     (and (eq? 'ok (dialog title control-builder 300 90))
          symbol)))
 
