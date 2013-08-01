@@ -115,10 +115,10 @@
 
 
 (define (find-best-alias-clause buffer start insertion)
-  (let ((binding (if (use-private-alias?) "define-private-alias" "define-alias")))
+  (let ((sexp-prefix (format #f "(~a " (if (use-private-alias?) "define-private-alias" "define-alias"))))
     (let loop ((start start) (needs-newline #t))
       (let-values (((sexp-start sexp-end) (%forward-sexp start buffer)))
-        (if (looking-at (format #f "(~a " binding) sexp-start buffer)
+        (if (looking-at sexp-prefix sexp-start buffer)
             (let-values (((name-start name-end) (%forward-sexp sexp-start buffer)))
               (let ((text (buffer-text name-start name-end buffer)))
                 (cond ((string=? insertion text)
