@@ -727,6 +727,12 @@
             class="org.schemeway.plugins.schemescript.preferences.RemoteInterpreterPreferences"
             id="org.schemeway.plugins.schemescript.preferences.interpreter.remoteInterpreter"
             name="Remote Interpreter"/>
+      <page
+            category="org.schemeway.plugins.schemescript.preferences.scheme"
+            class="org.schemeway.plugins.schemescript.preferences.ActionPreferences"
+            id="org.schemeway.plugins.schemescript.preferences.action"
+            name="Action">
+      </page>
    </extension>
    <extension
          point="org.eclipse.help.toc">

@@ -30,7 +30,7 @@
 (define-namespace SchemePlugin     "class:org.schemeway.plugins.schemescript.SchemeScriptPlugin")
 (define-namespace SchemeIndentationContext "class:org.schemeway.plugins.schemescript.indentation.SchemeIndentationContext")
 (define-namespace FormatAction     "class:org.schemeway.plugins.schemescript.action.FormatAction")
-
+(define-namespace ActionPreferences "class:org.schemeway.plugins.schemescript.preferences.ActionPreferences")
 
 (define-namespace JavaCore         "class:org.eclipse.jdt.core.JavaCore")
 (define-namespace IJavaModel       "class:org.eclipse.jdt.core.IJavaModel")
