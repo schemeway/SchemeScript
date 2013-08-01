@@ -34,12 +34,12 @@ public class SyntaxPreferences extends SchemePreferencePage {
         public ListViewer viewer;
         public Text reTextbox;
 
-    	public SyntaxCategoryWidgets(List list, Text textbox, ListViewer listViewer) {
-			super();
-			this.listbox = list;
-			viewer = listViewer;
-			reTextbox = textbox;
-		}
+        public SyntaxCategoryWidgets(List list, Text textbox, ListViewer listViewer) {
+            super();
+            this.listbox = list;
+            viewer = listViewer;
+            reTextbox = textbox;
+        }
     }
 
     private SyntaxCategoryWidgets mDefineWidgets;
@@ -152,7 +152,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
     }
 
     private SyntaxCategoryWidgets createListControl(TabFolder folder, String tabName, String toolTip) {
-    	GridData data;
+        GridData data;
 
         TabItem item = new TabItem(folder, SWT.NULL);
         item.setText(tabName);
@@ -240,19 +240,19 @@ public class SyntaxPreferences extends SchemePreferencePage {
         reText.setLayoutData(data);
 
         reText.addKeyListener(new KeyAdapter() {
-        	@Override
+            @Override
             public void keyReleased(KeyEvent e) {
-        		String eventText = reText.getText();
-        		try {
-        			Pattern.compile(eventText);
-        			setValid(true);
-        			setErrorMessage(null);
-        		}
-        		catch (PatternSyntaxException exception) {
-        			setValid(false);
-        			setErrorMessage("Invalid regular expression");
-        		}
-        	}
+                String eventText = reText.getText();
+                try {
+                    Pattern.compile(eventText);
+                    setValid(true);
+                    setErrorMessage(null);
+                }
+                catch (PatternSyntaxException exception) {
+                    setValid(false);
+                    setErrorMessage("Invalid regular expression");
+                }
+            }
         });
 
         return new SyntaxCategoryWidgets(list, reText, listViewer);
@@ -303,20 +303,20 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
     @Override
     protected void storeValues() {
-    	KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
+        KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
 
-    	manager.clear();
-    	manager.setDefines(mDefineWidgets.listbox.getItems());
-    	manager.setDefineRegularExpression(mDefineWidgets.reTextbox.getText());
-    	manager.setConstants(mConstantWidgets.listbox.getItems());
-    	manager.setConstantRegularExpression(mConstantWidgets.reTextbox.getText());
-    	manager.setKeywords(mKeywordWidgets.listbox.getItems());
-    	manager.setKeywordRegularExpression(mKeywordWidgets.reTextbox.getText());
-    	manager.setMutators(mMutatorWidgets.listbox.getItems());
-    	manager.setMutatorRegularExpression(mMutatorWidgets.reTextbox.getText());
-    	manager.setSpecials(mSpecialWidgets.listbox.getItems());
-    	manager.setSpecialRegularExpression(mSpecialWidgets.reTextbox.getText());
-    	manager.saveValues();
+        manager.clear();
+        manager.setDefines(mDefineWidgets.listbox.getItems());
+        manager.setDefineRegularExpression(mDefineWidgets.reTextbox.getText());
+        manager.setConstants(mConstantWidgets.listbox.getItems());
+        manager.setConstantRegularExpression(mConstantWidgets.reTextbox.getText());
+        manager.setKeywords(mKeywordWidgets.listbox.getItems());
+        manager.setKeywordRegularExpression(mKeywordWidgets.reTextbox.getText());
+        manager.setMutators(mMutatorWidgets.listbox.getItems());
+        manager.setMutatorRegularExpression(mMutatorWidgets.reTextbox.getText());
+        manager.setSpecials(mSpecialWidgets.listbox.getItems());
+        manager.setSpecialRegularExpression(mSpecialWidgets.reTextbox.getText());
+        manager.saveValues();
     }
 
     private void addEntry(final Text text, final Button addButton, final ListViewer listViewer) {
