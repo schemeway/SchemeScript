@@ -34,12 +34,12 @@ public class SyntaxPreferences extends SchemePreferencePage {
         public ListViewer viewer;
         public Text reTextbox;
 
-        public SyntaxCategoryWidgets(List list, Text textbox, ListViewer listViewer) {
-            super();
-            this.listbox = list;
-            viewer = listViewer;
-            reTextbox = textbox;
-        }
+    	public SyntaxCategoryWidgets(List list, Text textbox, ListViewer listViewer) {
+			super();
+			this.listbox = list;
+			viewer = listViewer;
+			reTextbox = textbox;
+		}
     }
 
     private SyntaxCategoryWidgets mDefineWidgets;
@@ -70,6 +70,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
                 "define-record-type",
                 "define-unit",
                 "define-alias",
+                "define-private-alias",
                 "define-base-unit"
     };
     private final static String[] DEFAULT_KEYWORDS = new String[] {
@@ -125,6 +126,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
                 "#!eof", "#!null", "#!void"
     };
 
+    @Override
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -150,7 +152,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
     }
 
     private SyntaxCategoryWidgets createListControl(TabFolder folder, String tabName, String toolTip) {
-        GridData data;
+    	GridData data;
 
         TabItem item = new TabItem(folder, SWT.NULL);
         item.setText(tabName);
@@ -199,12 +201,14 @@ public class SyntaxPreferences extends SchemePreferencePage {
         listViewer.setSorter(new ViewerSorter());
 
         list.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 deleteButton.setEnabled(list.getSelectionCount() > 0);
             }
         });
 
         text.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent event) {
                 String symbol = text.getText();
                 addButton.setEnabled(SchemeScannerUtilities.isIdentifier(symbol) && (list.indexOf(symbol) == -1));
@@ -212,12 +216,14 @@ public class SyntaxPreferences extends SchemePreferencePage {
         });
 
         addButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 addEntry(text, addButton, listViewer);
             }
         });
 
         deleteButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 list.remove(list.getSelectionIndices());
             }
@@ -234,23 +240,25 @@ public class SyntaxPreferences extends SchemePreferencePage {
         reText.setLayoutData(data);
 
         reText.addKeyListener(new KeyAdapter() {
+        	@Override
             public void keyReleased(KeyEvent e) {
-                String eventText = reText.getText();
-                try {
-                    Pattern.compile(eventText);
-                    setValid(true);
-                    setErrorMessage(null);
-                }
-                catch (PatternSyntaxException exception) {
-                    setValid(false);
-                    setErrorMessage("Invalid regular expression");
-                }
-            }
+        		String eventText = reText.getText();
+        		try {
+        			Pattern.compile(eventText);
+        			setValid(true);
+        			setErrorMessage(null);
+        		}
+        		catch (PatternSyntaxException exception) {
+        			setValid(false);
+        			setErrorMessage("Invalid regular expression");
+        		}
+        	}
         });
 
         return new SyntaxCategoryWidgets(list, reText, listViewer);
     }
 
+    @Override
     protected void doPerformDefaults() {
         mDefineWidgets.viewer.setInput(DEFAULT_DEFINES);
         mDefineWidgets.reTextbox.setText("");
@@ -277,6 +285,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
         store.setDefault(SYNTAX_CONSTANT_RE, "");
     }
 
+    @Override
     protected void initializeValues() {
         KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
         mDefineWidgets.viewer.setInput(manager.getDefines());
@@ -292,21 +301,22 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
     }
 
+    @Override
     protected void storeValues() {
-        KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
+    	KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
 
-        manager.clear();
-        manager.setDefines(mDefineWidgets.listbox.getItems());
-        manager.setDefineRegularExpression(mDefineWidgets.reTextbox.getText());
-        manager.setConstants(mConstantWidgets.listbox.getItems());
-        manager.setConstantRegularExpression(mConstantWidgets.reTextbox.getText());
-        manager.setKeywords(mKeywordWidgets.listbox.getItems());
-        manager.setKeywordRegularExpression(mKeywordWidgets.reTextbox.getText());
-        manager.setMutators(mMutatorWidgets.listbox.getItems());
-        manager.setMutatorRegularExpression(mMutatorWidgets.reTextbox.getText());
-        manager.setSpecials(mSpecialWidgets.listbox.getItems());
-        manager.setSpecialRegularExpression(mSpecialWidgets.reTextbox.getText());
-        manager.saveValues();
+    	manager.clear();
+    	manager.setDefines(mDefineWidgets.listbox.getItems());
+    	manager.setDefineRegularExpression(mDefineWidgets.reTextbox.getText());
+    	manager.setConstants(mConstantWidgets.listbox.getItems());
+    	manager.setConstantRegularExpression(mConstantWidgets.reTextbox.getText());
+    	manager.setKeywords(mKeywordWidgets.listbox.getItems());
+    	manager.setKeywordRegularExpression(mKeywordWidgets.reTextbox.getText());
+    	manager.setMutators(mMutatorWidgets.listbox.getItems());
+    	manager.setMutatorRegularExpression(mMutatorWidgets.reTextbox.getText());
+    	manager.setSpecials(mSpecialWidgets.listbox.getItems());
+    	manager.setSpecialRegularExpression(mSpecialWidgets.reTextbox.getText());
+    	manager.saveValues();
     }
 
     private void addEntry(final Text text, final Button addButton, final ListViewer listViewer) {
