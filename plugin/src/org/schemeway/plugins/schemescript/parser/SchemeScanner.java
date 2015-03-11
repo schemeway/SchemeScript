@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004 Nu Echo Inc.
- * 
+ *
  * This is free software. For terms and warranty disclaimer, see ./COPYING
  */
 package org.schemeway.plugins.schemescript.parser;
@@ -11,8 +11,8 @@ import org.eclipse.jface.text.*;
 
 public class SchemeScanner {
 
-	private static final Pattern NUMBER_REGEXP = Pattern.compile("([0-9]+(\\.[0-9]+(e[+-]?[0-9]+)?)?)|(#x[0-9a-fA-f]+)|(#o[0-7]+)|(#b[01]+)"); 
-	
+	private static final Pattern NUMBER_REGEXP = Pattern.compile("([0-9]+(\\.[0-9]+(e[+-]?[0-9]+)?)?)|(#x[0-9a-fA-f]+)|(#o[0-7]+)|(#b[01]+)");
+
     public SchemeScanner() {
     }
 
@@ -150,11 +150,38 @@ public class SchemeScanner {
 		}
 	}
 
-	private SchemeToken parseDefaultToken(char ch) throws BadLocationException {
-        if (SchemeScannerUtilities.isIdentifierPartChar(ch)) {
+	/**
+	 * Detect an inline hex escape, like \x&gt;hex&lt;&amp;, and consume all but the
+	 * last character of it.
+	 *
+	 * @param ch The current result of lookahead()
+	 * @return True if an inline hex escape was consumed
+	 */
+	private boolean consumeInlineHexEscape(char ch) throws BadLocationException {
+        // R6RS allows "\x<hex>;" as part of a symbol / identifier
+        boolean isInlineEscape = (ch == '\\' && lookahead(1) == 'x');
+        if(!isInlineEscape)
+            return false;
+
+        consume(); // Consume \\
+        consume(); // Consume x
+
+        // Now consume hex digits
+        ch = lookahead();
+        while(ch != EOR && Character.digit(ch, 16) >= 0) {
             consume();
             ch = lookahead();
-            while (ch != EOR && SchemeScannerUtilities.isIdentifierPartChar(ch)) {
+        }
+
+        // Assuming for now that ch == ';', we could signal an error if not
+
+        return true;
+	}
+	private SchemeToken parseDefaultToken(char ch) throws BadLocationException {
+        if (SchemeScannerUtilities.isIdentifierPartChar(ch) || consumeInlineHexEscape(ch)) {
+            consume();
+            ch = lookahead();
+            while (ch != EOR && (SchemeScannerUtilities.isIdentifierPartChar(ch) || consumeInlineHexEscape(ch))) {
                 consume();
                 ch = lookahead();
             }
@@ -236,7 +263,7 @@ public class SchemeScanner {
             else if (ch == '\\' && !backslashSeen) {
                 backslashSeen = true;
             }
-            else 
+            else
                 backslashSeen = false;
             ch = lookahead();
         }
@@ -264,7 +291,7 @@ public class SchemeScanner {
 		}
 	}
 
-	
+
 	private String readToEndOfLine() {
 		int startPosition = getPosition();
 		if (isEndPosition(startPosition)) {
@@ -314,7 +341,7 @@ public class SchemeScanner {
             	consume();
             	return SchemeToken.createUnquote(getTokenOffset(), getTokenLength());
             }
-            case ';': 
+            case ';':
             {
             	consume();
             	return SchemeToken.createSexprCommentPrefix(getTokenOffset());
@@ -344,7 +371,7 @@ public class SchemeScanner {
                 return parseDefaultToken(ch);
         }
     }
-    
+
     // -- Helpers
 
     private SchemeToken parseCharacterToken() throws BadLocationException {
@@ -386,6 +413,10 @@ public class SchemeScanner {
 
     private final char lookahead() throws BadLocationException {
         return (mTokenEnd < mRangeEnd) ? mDocument.getChar(mTokenEnd) : EOR;
+    }
+    private final char lookahead(int n) throws BadLocationException {
+        int pos = mTokenEnd+n;
+        return (pos < mRangeEnd) ? mDocument.getChar(pos) : EOR;
     }
 
     private int getPosition() {

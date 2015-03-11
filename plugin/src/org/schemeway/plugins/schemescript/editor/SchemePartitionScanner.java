@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004 Nu Echo Inc.
- * 
+ *
  * This is free software. For terms and warranty disclaimer, see ./COPYING
  */
 package org.schemeway.plugins.schemescript.editor;
@@ -29,6 +29,7 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 	private static final int STATE_ESCAPE = 4;
 	private static final int STATE_SHARP_LT = 5;
 	private static final int STATE_DONE = 6;
+    private static final int STATE_INLINE_HEX_ESCAPE = 7;
 
 	private IDocument mDocument;
 	private int mEnd;
@@ -120,7 +121,7 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 		consume();
 		SchemeReader reader = new SchemeReader();
 		Region region = reader.nextExpression(mDocument, mPosition, mDocument.getLength());
-		
+
 		mPosition = region.getOffset() + region.getLength();
 
 		return TOKEN_COMMENT;
@@ -257,6 +258,10 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 					mPosition--;
 					mState = STATE_DONE;
 				}
+				else if (mState == STATE_INLINE_HEX_ESCAPE) {
+				    mState = STATE_DEFAULT;
+				    consume();
+				}
 				else {
 					consume();
 				}
@@ -282,11 +287,42 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 					mState = STATE_CHARACTER;
 				}
 				else {
-					mState = STATE_DEFAULT;
+					mState = STATE_ESCAPE;
 				}
 				consume();
 				break;
 			}
+			case 'x': {
+				if (mState == STATE_ESCAPE) {
+					mState = STATE_INLINE_HEX_ESCAPE;
+					consume();
+				}
+				else if (endOfDefaultPartition()) {
+					mState = STATE_DONE;
+				}
+				else {
+					mState = STATE_DEFAULT;
+					consume();
+				}
+				break;
+			}
+			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+			case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
+			case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': {
+				if(mState == STATE_INLINE_HEX_ESCAPE && Character.digit(ch, 16) >= 0) {
+				    // Stay in STATE_INLINE_HEX_ESCAPE
+				    consume();
+				}
+				else if (endOfDefaultPartition()) {
+					mState = STATE_DONE;
+				}
+				else {
+					mState = STATE_DEFAULT;
+					consume();
+				}
+				break;
+			}
+
 			case '|': {
 				if (mState == STATE_SHARP) {
 					mState = STATE_DONE;
