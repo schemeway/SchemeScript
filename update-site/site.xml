@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.schemeway.features.schemescript_1.3.0.alpha12.jar" id="org.schemeway.features.schemescript" version="1.3.0.alpha12">
+   <feature url="features/org.schemeway.features.schemescript_1.3.0.rc1.jar" id="org.schemeway.features.schemescript" version="1.3.0.rc1">
       <category name="org.schemeway.update-site.plugins"/>
    </feature>
    <category-def name="org.schemeway.update-site.plugins" label="Schemeway Plugins"/>
