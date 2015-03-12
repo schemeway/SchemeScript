@@ -29,7 +29,7 @@ public class SchemePartitionScanner implements IPartitionTokenScanner {
 	private static final int STATE_ESCAPE = 4;
 	private static final int STATE_SHARP_LT = 5;
 	private static final int STATE_DONE = 6;
-    private static final int STATE_INLINE_HEX_ESCAPE = 7;
+	private static final int STATE_INLINE_HEX_ESCAPE = 7;
 
 	private IDocument mDocument;
 	private int mEnd;
