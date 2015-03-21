@@ -16,7 +16,7 @@ Installation
 To install the plugin:
 
 * click on `Help > Install New Software...`
-* click on `Add...` and enter the plugin update site location: `http://schemeway.github.com/SchemeScript/update-site`
+* click on `Add...` and enter the plugin update site location: `http://schemeway.github.io/SchemeScript/update-site`
 * select the latest SchemeScript feature
 * click `Next` and follow the instructions
 
