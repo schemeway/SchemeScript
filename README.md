@@ -23,7 +23,7 @@ To install the plugin:
 Usage
 ------------
 
-TODO
+
 
 Contributing
 ------------
@@ -40,13 +40,3 @@ Bug Reports
 Please file any bug reports in the bug tracker at github:
 
 https://github.com/schemeway/SchemeScript/issues
-
-TODO's:
-------------
-
-* How to debug
-* Maybe create a wiki boy
-* Kawa references
-* Automated testing
-* Reference the SchemeScript User Manual somehow 
-
