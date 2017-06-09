@@ -20,3 +20,23 @@ To install the plugin:
 * select the latest SchemeScript feature
 * click `Next` and follow the instructions
 
+Usage
+------------
+
+
+
+Contributing
+------------
+
+You can contribute by: 
+* testing the latest version 
+* creating bug reports
+* forking the repository on github and create pull requests. 
+
+
+Bug Reports
+------------
+
+Please file any bug reports in the bug tracker at github:
+
+https://github.com/schemeway/SchemeScript/issues
