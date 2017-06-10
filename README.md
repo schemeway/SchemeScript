@@ -23,7 +23,9 @@ To install the plugin:
 Usage
 ------------
 
+Check our [UserGuide](https://github.com/schemeway/SchemeScript/wiki) in the wiki section of our GitHub repo.
 
+More usage guidelines to be added, soon.
 
 Contributing
 ------------
