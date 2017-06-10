@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.2"?>
-<plugin>
+<?eclipse version="4.6"?>
+<plugin name="SchemeScript" id="org.schemeway.plugins.schemescript">
 
      <extension-point id="interpreters" name="interpreters" schema="schema/interpreters.exsd"/>
    <extension
@@ -194,6 +194,9 @@
                description="Extract parameter"
                categoryId="Scheme Editing"
                id="org.schemeway.plugins.schemescript.sexp.extract-parameter" />
+--> 
+<!--
+	! WHY IS THIS COMMENTED OUT ?
 -->
       <command name="Create function"
                description="Create new function from prototype"
@@ -967,5 +970,5 @@
             searchResultClass="org.schemeway.plugins.schemescript.dictionary.SymbolSearchResult">
       </viewPage>
    </extension>
-  
+   
 </plugin>
