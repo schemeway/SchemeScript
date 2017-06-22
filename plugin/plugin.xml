@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
 <?eclipse version="4.6"?>
-<plugin name="SchemeScript" id="org.schemeway.plugins.schemescript">
+<plugin>
 
      <extension-point id="interpreters" name="interpreters" schema="schema/interpreters.exsd"/>
    <extension
