@@ -6,7 +6,9 @@
          <meta.schema plugin="org.schemeway.plugins.schemescript" id="interpreters" name="interpreters"/>
       </appInfo>
       <documentation>
-         This extension is used to add support for new Scheme interpreters. All Scheme interpreters must implement the &lt;code&gt;org.schemeway.plugins.schemescript.interpreter.Interpreter&lt;/code&gt; interface.
+         This extension is used to add support for new Scheme interpreters. 
+         All Scheme interpreters must implement the 
+         &lt;code&gt;org.schemeway.plugins.schemescript.interpreter.Interpreter&lt;/code&gt; interface.
       </documentation>
    </annotation>
 
