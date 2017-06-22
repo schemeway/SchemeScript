@@ -5,8 +5,8 @@
  */
 package org.schemeway.plugins.schemescript.interpreter;
 
-import gnu.mapping.*;
 import gnu.math.*;
+import gnu.kawa.io.*;
 
 import java.io.*;
 
@@ -165,7 +165,7 @@ public class ExternalInterpreter implements Interpreter {
         try {
             final InPort inport = InPort.openFile(filename);
             try  {
-                return new read().apply1(inport);
+                return Integer.parseInt(read_line.apply(inport, "trim").toString());
             }
             finally {
                 inport.close();
