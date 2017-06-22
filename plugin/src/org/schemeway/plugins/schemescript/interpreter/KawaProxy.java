@@ -31,6 +31,7 @@ public final class KawaProxy {
     		public void run() {
     	        try {
     	            load.load.apply1(filename);
+    	           
     	        }
     	        catch (Throwable e) {
     	            SchemeScriptPlugin.logException("Unable to load initialization files", e);
@@ -40,21 +41,22 @@ public final class KawaProxy {
 	}
 	
 	// Dereferences a symbol in the global environment.
+	// Fix by Harry Pantazis, car and cdr are protected now. 
 	public static Object get(final String symbolName) {
         final Pair box = new Pair();
-
+        
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				try {
 					Object object = Environment.getCurrent().get(symbolName);
-					box.car = object;
+					box.setCar(object);
 				} catch (Throwable e) {
 					SchemeScriptPlugin.logException("Error while referencing Scheme symbol", e);
-					box.car = null;
+					box.setCar(null);
 				}
 			}
 		});
-		return box.car;
+		return box.getCar();
 	}
     
     // Sets a symbol in the global environment

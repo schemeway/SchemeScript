@@ -7,14 +7,17 @@ package org.schemeway.plugins.schemescript.interpreter;
 
 import gnu.expr.*;
 import gnu.kawa.functions.*;
-import gnu.lists.*;
 import gnu.mapping.*;
+import gnu.lists.*;
+import gnu.kawa.io.*;
 import gnu.text.*;
+import kawa.standard.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map;
 
-import kawa.standard.*;
+//import kawa.standard.*;
 
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
@@ -28,7 +31,8 @@ public class KawaProcess implements IInterpreterProcess {
 
         public KawaStreamsProxy() {
             OutPort.setOutDefault(new OutPort(new OutputStreamWriter(mOutputMonitor), false, true));
-            OutPort.outDefault().objectFormat = DisplayFormat.getSchemeFormat(true);
+            
+            OutPort.outDefault().pushFormat(DisplayFormat.getSchemeFormat(true));
             OutPort.setErrDefault(new OutPort(new OutputStreamWriter(mErrorMonitor), false, true));
             disableExit();
         }
@@ -133,6 +137,7 @@ public class KawaProcess implements IInterpreterProcess {
             getInstance().getStreamsProxy().write(text);
         }
         catch (IOException exception) {
+            exception.printStackTrace();
             // should not happen!
         }
     }
@@ -154,7 +159,7 @@ public class KawaProcess implements IInterpreterProcess {
         try {
             int opts = gnu.expr.Language.PARSE_IMMEDIATE;
             try {
-                Compilation comp = interp.parse(lexer, opts);
+                Compilation comp = interp.parse(lexer, opts, null);
                 boolean sawError = messages.checkErrors(perr, 20);
                 if (comp == null) // ??? end-of-file
                     return; // break;
@@ -162,7 +167,7 @@ public class KawaProcess implements IInterpreterProcess {
                     return; // continue;
                 comp.getModule().setName("atInteractiveLevel$" + (++mCounter));
 
-                ModuleExp.evalModule(env, ctx, comp);
+                ModuleExp.evalModule(env, ctx, comp, null, out);
                 if (messages.checkErrors(perr, 20))
                     return;
                 ctx.runUntilDone();
