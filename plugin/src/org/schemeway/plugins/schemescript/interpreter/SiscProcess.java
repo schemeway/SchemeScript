@@ -72,7 +72,7 @@ public class SiscProcess implements IInterpreterProcess {
 	}
 
 	private ILaunch mLaunch;
-	private Map mAttributes = new HashMap();
+	private Map<String, String> mAttributes = new HashMap<String, String>();
 	private SiscStreamsProxy mStreamsProxy;
 
 	private static SiscProcess mInstance;

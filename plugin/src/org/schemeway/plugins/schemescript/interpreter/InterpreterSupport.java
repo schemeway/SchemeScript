@@ -32,7 +32,7 @@ public class InterpreterSupport {
     }
 
     private static InterpreterType[] parseTypes(IExtension[] extensions) {
-        List types = new ArrayList(20);
+        List<InterpreterType> types = new ArrayList<InterpreterType>(20);
         
         for (int i = 0; i < extensions.length; i++) {
             IExtension extension = extensions[i];

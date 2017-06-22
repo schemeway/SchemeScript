@@ -11,7 +11,7 @@ import org.eclipse.debug.core.model.*;
 
 class MonitoredOutputStream extends OutputStream implements IStreamMonitor {
 
-    private List mListeners = new LinkedList();
+    private List<IStreamListener> mListeners = new LinkedList<IStreamListener>();
 	public static final String PROMPT = "> ";
 
     public MonitoredOutputStream() {
@@ -33,7 +33,7 @@ class MonitoredOutputStream extends OutputStream implements IStreamMonitor {
 
     // send the string to all listeners.
     private void writeString(String text) {
-        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
+        for (Iterator<IStreamListener> iter = mListeners.iterator(); iter.hasNext();) {
             IStreamListener listener = (IStreamListener) iter.next();
             listener.streamAppended(text, this);
         }

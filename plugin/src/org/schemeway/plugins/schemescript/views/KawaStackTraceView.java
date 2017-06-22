@@ -182,7 +182,7 @@ public class KawaStackTraceView extends ViewPart {
 	}
 
 	private void setException(Throwable exception) {
-		List throwables = new ArrayList();
+		List<Throwable> throwables = new ArrayList<Throwable>();
 		for (; exception != null; exception = exception.getCause())
 			throwables.add(exception);
 

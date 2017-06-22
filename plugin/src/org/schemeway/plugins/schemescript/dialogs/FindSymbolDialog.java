@@ -69,7 +69,7 @@ public final class FindSymbolDialog extends Dialog {
         mSymbols.removeAll();
         if (!text.equals("")) {
             SymbolEntry[] entries = DictionaryUtils.findCompletions(text);
-            TreeSet set = new TreeSet();
+            TreeSet<String> set = new TreeSet<String>();
             
             for(int i=0; i<entries.length; i++) {
                 if (entries[i].getFile() != null) 

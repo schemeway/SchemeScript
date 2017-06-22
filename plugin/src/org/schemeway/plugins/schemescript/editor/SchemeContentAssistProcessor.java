@@ -115,7 +115,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
 		}
     }
 
-    private static class ProposalComparator implements Comparator {
+    private static class ProposalComparator implements Comparator<Object> {
         public int compare(Object o1, Object o2) {
             if (o1 instanceof SchemeCompletionProposal && o2 instanceof SchemeCompletionProposal) {
                 SchemeCompletionProposal p1 = (SchemeCompletionProposal) o1;
@@ -172,7 +172,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         try {
             String symbol = SchemeTextUtilities.findSymbolBeforePoint(viewer, offset);
             if (symbol != null) {
-                List proposals = new LinkedList();
+                List<ICompletionProposal> proposals = new LinkedList<ICompletionProposal>();
                 int len = symbol.length();
                 SymbolEntry[] matchingEntries = DictionaryUtils.findCompletions(symbol);
                 for (int index = 0; index < matchingEntries.length; index++) {
@@ -196,10 +196,10 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         return result;
     }
 
-    private List removeDuplicates(List list) {
+    private List<ICompletionProposal> removeDuplicates(List<ICompletionProposal> list) {
         int listLength = list.size();
-        List newList = new ArrayList(listLength);
-        Set nameSet = new HashSet();
+        List<ICompletionProposal> newList = new ArrayList<ICompletionProposal>(listLength);
+        Set<String> nameSet = new HashSet<String>();
         
         for (int i=0; i<listLength; i++) {
             ICompletionProposal proposal = (ICompletionProposal)list.get(i);
@@ -227,7 +227,7 @@ public class SchemeContentAssistProcessor implements IContentAssistProcessor {
         }
         
         if (symbol != null) {
-            List informations = new LinkedList();
+            List<IContextInformation> informations = new LinkedList<IContextInformation>();
             SymbolEntry[] matchingEntries = DictionaryUtils.findUserDefinitions(symbol);
             for (int index = 0; index < matchingEntries.length; index++) {
                 informations.add(makeContextInfo(matchingEntries[index]));

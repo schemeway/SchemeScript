@@ -24,7 +24,7 @@ public final class DictionaryUtils {
 			Procedure getDictionaryEntries = (Procedure) object;
 			try {
 				LList entryList = (LList) getDictionaryEntries.apply1(symbol);
-				List entries = new ArrayList();
+				List<Object> entries = new ArrayList<Object>();
 				addEntriesToJavaList(entryList, entries);
 				return (SymbolEntry[]) entries.toArray(new SymbolEntry[entries.size()]);
 			}
@@ -42,7 +42,7 @@ public final class DictionaryUtils {
 			Procedure getDictionaryEntries = (Procedure) object;
 			try {
 				LList entryList = (LList) getDictionaryEntries.apply1(resource);
-				List entries = new ArrayList();
+				List<Object> entries = new ArrayList<Object>();
 				addEntriesToJavaList(entryList, entries);
 				return (SymbolEntry[]) entries.toArray(new SymbolEntry[entries.size()]);
 			}
@@ -61,7 +61,7 @@ public final class DictionaryUtils {
 			Procedure proc = (Procedure) object;
 			try {
 				LList entryList = (LList) proc.apply1(prefix);
-				LinkedList entries = new LinkedList();
+				LinkedList<Object> entries = new LinkedList<Object>();
 				addEntriesToJavaList(entryList, entries);
 				return (SymbolEntry[]) entries.toArray(new SymbolEntry[entries.size()]);
 			}
@@ -72,11 +72,11 @@ public final class DictionaryUtils {
 		return new SymbolEntry[0];
 	}
 
-	private static void addEntriesToJavaList(LList entryList, List entries) {
+	private static void addEntriesToJavaList(LList entryList, List<Object> entries) {
 		while (entryList instanceof Pair) {
 			Pair pair = (Pair) entryList;
-			entries.add(pair.car);
-			entryList = (LList) pair.cdr;
+			entries.add(pair.getCar());
+			entryList = (LList) pair.getCdr();
 		}
 	}
 

@@ -18,10 +18,10 @@ public class SchemeIndentationManager {
         DEFAULT_SCHEME = new IndentationRule(null, IndentationRule.DEFAULT, 0);
     }
 
-    private Map mRulesMap;
+    private Map<String, IndentationRule> mRulesMap;
 
     public SchemeIndentationManager() {
-        mRulesMap = new HashMap();
+        mRulesMap = new HashMap<String, IndentationRule>();
     }
 
     public void clear() {

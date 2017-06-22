@@ -11,12 +11,12 @@ import org.eclipse.core.runtime.*;
 import org.schemeway.plugins.schemescript.indentation.*;
 
 public class IndentationSchemeList {
-    List mSchemes;
-    List mSchemeListeners;
+    List<IndentationRule> mSchemes;
+    List<IIndentationSchemeChangeListener> mSchemeListeners;
 
     public IndentationSchemeList(IndentationRule[] initialSchemes) {
-        mSchemes = new ArrayList();
-        mSchemeListeners = new ArrayList();
+        mSchemes = new ArrayList<IndentationRule>();
+        mSchemeListeners = new ArrayList<IIndentationSchemeChangeListener>();
         setSchemes(initialSchemes);
     }
 

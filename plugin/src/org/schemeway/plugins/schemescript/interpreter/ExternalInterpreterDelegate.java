@@ -33,7 +33,7 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
                 error("Scheme interpreter not set in the preferences");
 
             Process inferiorProcess = DebugPlugin.exec(cmdline, getWorkingDirectory(), getEnvironment());
-            Map attributes = new HashMap();
+            Map<String, String> attributes = new HashMap<String, String>();
             attributes.put(IProcess.ATTR_PROCESS_TYPE, "scheme");
             DebugPlugin.newProcess(launch, inferiorProcess, getInterpreterName(), attributes);
         }
@@ -57,7 +57,7 @@ public class ExternalInterpreterDelegate implements ILaunchConfigurationDelegate
     }
     
     private static String[] parseCommandLine(String command) throws CoreException {
-        List list = new ArrayList(10);
+        List<String> list = new ArrayList<String>(10);
         
         int len = command.length();
         int index = 0;

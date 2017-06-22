@@ -36,7 +36,7 @@ public final class ContentUtilities {
 		return node;
 	}
 
-	public static OutlineNode createNodesForEntryRecursively(IDocument document, SymbolEntry entry, List topNodes, HashMap entriesProcessed) throws BadLocationException {
+	public static OutlineNode createNodesForEntryRecursively(IDocument document, SymbolEntry entry, List<OutlineNode> topNodes, HashMap<SymbolEntry, OutlineNode> entriesProcessed) throws BadLocationException {
 	    OutlineNode node = (OutlineNode) entriesProcessed.get(entry);
 	    if (node == null) {
 	        node = createNodeForEntry(document, entry);
@@ -54,11 +54,11 @@ public final class ContentUtilities {
 		return node;
 	}
 
-	public static void addDefinitions(SchemeEditor editor, List topNodes, boolean recurse) throws BadLocationException {
+	public static void addDefinitions(SchemeEditor editor, List<OutlineNode> topNodes, boolean recurse) throws BadLocationException {
 	    IDocument document = editor.getDocument();
 	    IEditorInput input = editor.getEditorInput();
 	    	
-	    HashMap entriesProcessed = new HashMap();
+	    HashMap<SymbolEntry, OutlineNode> entriesProcessed = new HashMap<SymbolEntry, OutlineNode>();
 	
 	    if (input instanceof IFileEditorInput) {
 	        IFileEditorInput editorInput = (IFileEditorInput) input;
@@ -83,7 +83,7 @@ public final class ContentUtilities {
 		return DictionaryUtils.findDefinitionsForResource(editorInput.getFile());
 	}
 
-	public static void addSections(IDocument document, List nodes) throws BadLocationException, BadPositionCategoryException
+	public static void addSections(IDocument document, List<OutlineNode> nodes) throws BadLocationException, BadPositionCategoryException
 	{
 	    Position position;
 	    int offset = 0;

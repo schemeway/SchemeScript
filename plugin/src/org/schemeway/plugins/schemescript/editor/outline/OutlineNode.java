@@ -14,7 +14,7 @@ public class OutlineNode {
 
 	public String name;
 	public Position position;
-	public List children;
+	public List<OutlineNode> children;
 	public OutlineNode parent;
 	public String type;
 	public int level;
@@ -25,7 +25,7 @@ public class OutlineNode {
 		this.position = thePosition;
 		this.parent = null;
 		this.level = theLevel;
-		this.children = new LinkedList();
+		this.children = new LinkedList<OutlineNode>();
 	}
 
 	public void addSubsection(OutlineNode section) {

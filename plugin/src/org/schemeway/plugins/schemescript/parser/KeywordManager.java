@@ -20,11 +20,11 @@ public final class KeywordManager {
 	public final static String TYPE_CONSTANT = "constant";
 	public final static String TYPE_OTHER = "other";
 
-	private Set mDefines = new HashSet();
-	private Set mKeywords = new HashSet();
-	private Set mMutators = new HashSet();
-	private Set mSpecials = new HashSet();
-	private Set mConstants = new HashSet();
+	private Set<String> mDefines = new HashSet<String>();
+	private Set<String> mKeywords = new HashSet<String>();
+	private Set<String> mMutators = new HashSet<String>();
+	private Set<String> mSpecials = new HashSet<String>();
+	private Set<String> mConstants = new HashSet<String>();
 
 	private KeywordManager mDelegate = null;
 
@@ -50,7 +50,7 @@ public final class KeywordManager {
 		mConstants.clear();
 	}
 	
-	private void setNames(String[] names, Set set) {
+	private void setNames(String[] names, Set<String> set) {
 		for (int index = 0; index < names.length; index++) {
 			set.add(names[index]);
 		}

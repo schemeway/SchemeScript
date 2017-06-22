@@ -99,9 +99,15 @@ public final class SchemeTextUtilities {
 	}
 
 	private static SymbolEntry[] boostPriorities(SymbolEntry[] entries, final IResource localResource) {
-		List list = Arrays.asList(entries);
+		List<SymbolEntry> list = Arrays.asList(entries);
 
-		Collections.sort(list, new Comparator() {
+		extracted(localResource, list);
+
+		return (SymbolEntry[]) list.toArray(new SymbolEntry[list.size()]);
+	}
+
+    private static void extracted(final IResource localResource, List<SymbolEntry> list) {
+        Collections.sort(list, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				SymbolEntry e1 = (SymbolEntry) o1;
 				SymbolEntry e2 = (SymbolEntry) o2;
@@ -119,7 +125,5 @@ public final class SchemeTextUtilities {
 					return -1;
 			}
 		});
-
-		return (SymbolEntry[]) list.toArray(new SymbolEntry[list.size()]);
-	}
+    }
 }

@@ -37,7 +37,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
     /**
      * A collection of listeners
      */
-    private List fListeners= new ArrayList(1);
+    private List<IStreamListener> fListeners= new ArrayList<IStreamListener>(1);
     
     /**
      * Whether content is being buffered

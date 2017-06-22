@@ -114,7 +114,11 @@ public class SchemeReader {
 	}
 
 	private class ParsingException extends Exception {
-		private int mOffset;
+		/**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+        private int mOffset;
 
 		public ParsingException(String message, int offset) {
 			super(message);

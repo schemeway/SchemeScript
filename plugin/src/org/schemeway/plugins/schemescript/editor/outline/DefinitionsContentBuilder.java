@@ -15,7 +15,7 @@ import org.schemeway.plugins.schemescript.editor.*;
 public class DefinitionsContentBuilder implements OutlineContentBuilder {
 
 	public OutlineNode[] buildNodes(SchemeEditor editor) throws BadLocationException, BadPositionCategoryException {
-		List nodes = new ArrayList();
+		List<OutlineNode> nodes = new ArrayList<OutlineNode>();
 
 		ContentUtilities.addDefinitions(editor, nodes, true);
 		Collections.sort(nodes, ContentUtilities.NODE_COMPARATOR);

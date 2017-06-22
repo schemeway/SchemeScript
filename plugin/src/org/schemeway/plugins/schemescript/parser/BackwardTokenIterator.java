@@ -17,13 +17,13 @@ public final class BackwardTokenIterator implements ISchemeTokenIterator {
     private int mPosition;
     private int mStart;
     private int mLineStart;
-    private Stack mTokenBuffer;
+    private Stack<SchemeToken> mTokenBuffer;
     private String mType;
 
     public BackwardTokenIterator(IDocument document) {
         mDocument = document;
         mScanner = new SchemeScanner();
-        mTokenBuffer = new Stack();
+        mTokenBuffer = new Stack<SchemeToken>();
     }
 
     public SchemeToken nextToken() {

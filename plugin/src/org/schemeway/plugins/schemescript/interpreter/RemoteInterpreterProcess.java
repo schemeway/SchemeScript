@@ -62,7 +62,7 @@ public class RemoteInterpreterProcess implements IInterpreterProcess
     private Socket mSocket;
     private IStreamsProxy mProxy;
     private ILaunch mLaunch;
-    private HashMap mAttributes = new HashMap();
+    private HashMap<String, String> mAttributes = new HashMap<String, String>();
     
     private RemoteInterpreterProcess() {
         try {

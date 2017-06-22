@@ -60,7 +60,7 @@ public class SchemeToggleBreakpointsTarget implements IToggleBreakpointsTarget {
             manager.removeBreakpoint(breakpoint, true);
         }
         else {
-            breakpoint = JDIDebugModel.createStratumBreakpoint(resource, SCHEME_STRATUM, sourceName, sourcePath, "*", lineno, -1, -1, 0, true, new HashMap());
+            breakpoint = JDIDebugModel.createStratumBreakpoint(resource, SCHEME_STRATUM, sourceName, sourcePath, "*", lineno, -1, -1, 0, true, new HashMap<String, Object>());
             manager.addBreakpoint(breakpoint);
         }
     }

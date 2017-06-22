@@ -11,10 +11,10 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
 
 public class SelectionStack {
-    private List mStack; 
+    private List<Region> mStack; 
     
     public SelectionStack() {
-        mStack = new LinkedList();
+        mStack = new LinkedList<Region>();
     }
     
     public void push(Region selection, Region previousSelection){

@@ -47,7 +47,7 @@ public class SchemeTextHover implements ITextHover {
 	}
 
 	private String[] findDefinitions(IDocument document, IRegion hoverRegion) {
-		List defs = new ArrayList();
+		List<String> defs = new ArrayList<String>();
 
 		try {
 			String symbol = document.get(hoverRegion.getOffset(), hoverRegion.getLength());
@@ -67,7 +67,7 @@ public class SchemeTextHover implements ITextHover {
 	}
 
 	private String[] findAnnotations(ITextViewer textViewer, IRegion hoverRegion) {
-		List messages = new ArrayList();
+		List<String> messages = new ArrayList<String>();
 
 		if (textViewer instanceof ISourceViewer) {
 			ISourceViewer sourceViewer = (ISourceViewer) textViewer;

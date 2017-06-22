@@ -13,13 +13,13 @@ import org.eclipse.core.resources.*;
  */
 public class SymbolReferencesTable {
 	
-	private Map mSymbolReferences = Collections.synchronizedMap(new HashMap());
+	private Map<String, List> mSymbolReferences = Collections.synchronizedMap(new HashMap<String, List>());
 
 	public void addEntry(String symbol, IResource resource, int offset, int length) {
-		List references = (List) mSymbolReferences.get(symbol);
+		List<Reference> references = (List) mSymbolReferences.get(symbol);
 
 		if (references == null) {
-			references = new ArrayList();
+			references = new ArrayList<Reference>();
 			mSymbolReferences.put(symbol, references);
 		}
 
@@ -41,7 +41,7 @@ public class SymbolReferencesTable {
 			return new Reference[0];
 		}
 		
-		List filteredReferences = Collections.synchronizedList(new ArrayList());
+		List<Reference> filteredReferences = Collections.synchronizedList(new ArrayList<Reference>());
 		for (Iterator iter = references.iterator(); iter.hasNext();) {
 			Reference reference = (Reference) iter.next();
 			if (resource == null || reference.resource.equals(resource)) {
@@ -73,10 +73,10 @@ public class SymbolReferencesTable {
 	}
 	
 	public synchronized void removeReferences(IResource resource) {
-		Map remainingReferences = new HashMap();
+		Map<String, List> remainingReferences = new HashMap<String, List>();
 		
-		Set keyset = mSymbolReferences.keySet();
-		for (Iterator iter = keyset.iterator(); iter.hasNext();) {
+		Set<String> keyset = mSymbolReferences.keySet();
+		for (Iterator<String> iter = keyset.iterator(); iter.hasNext();) {
 			String symbol = (String) iter.next();
 			removeReferences(remainingReferences, symbol, resource);
 		}
@@ -84,13 +84,13 @@ public class SymbolReferencesTable {
 		mSymbolReferences = Collections.synchronizedMap(remainingReferences);
 	}
 	
-	private void removeReferences(Map remainingReferences, String symbol, IResource resource) {
+	private void removeReferences(Map<String, List> remainingReferences, String symbol, IResource resource) {
 		List references = (List) mSymbolReferences.get(symbol);
 		if (references == null) {
 			return;
 		}
 		
-		List filteredReferences = new ArrayList();
+		List<Reference> filteredReferences = new ArrayList<Reference>();
 		for (Iterator iter = references.iterator(); iter.hasNext();) {
 			Reference reference = (Reference) iter.next();
 			if (resource == null || !reference.resource.equals(resource)) {

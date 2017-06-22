@@ -69,7 +69,7 @@ public class KawaProcess implements IInterpreterProcess {
         }
     }
 
-    private Map mAttributes = new HashMap();
+    private Map<String, String> mAttributes = new HashMap<String, String>();
     private ILaunch mLaunch;
     private static KawaProcess mInstance = null;
     private static KawaStreamsProxy mProxyInstance = new KawaStreamsProxy();
