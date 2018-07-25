@@ -46,6 +46,10 @@
            (choose-from-list "Symbol multiply declared" "Choose the module to require:" entries)))))
 
 
+(define (use-private-alias?)
+  (ActionPreferences:usePrivateAlias))
+
+
 (define (add-require-clause #!optional (symbol (symbol-near-point)) (buffer (current-buffer)))
   (let ((modulename (symbol->module-name symbol buffer)))
     (when modulename
@@ -73,7 +77,8 @@
       (if (or (looking-at "(module-name " sexp-start buffer)
               (looking-at "(module-static " sexp-start buffer)
               (looking-at "(module-extends " sexp-start buffer)
-              (looking-at "(module-export " sexp-start buffer))
+              (looking-at "(module-export " sexp-start buffer)
+              (looking-at "(module-compile-options " sexp-start buffer))
           (loop sexp-end)
           start))))
 
@@ -82,6 +87,14 @@
   (let loop ((start start))
     (let-values (((sexp-start sexp-end) (%forward-sexp start buffer)))
       (if (looking-at "(require " sexp-start buffer)
+          (loop sexp-end)
+          start))))
+
+
+(define (skip-define-alias-clauses buffer start)
+  (let loop ((start start))
+    (let-values (((sexp-start sexp-end) (%forward-sexp start buffer)))
+      (if (looking-at "(define-alias " sexp-start buffer)
           (loop sexp-end)
           start))))
 
@@ -102,18 +115,19 @@
 
 
 (define (find-best-alias-clause buffer start insertion)
-  (let loop ((start start) (needs-newline #t))
-    (let-values (((sexp-start sexp-end) (%forward-sexp start buffer)))
-      (if (looking-at "(define-alias " sexp-start buffer)
-          (let-values (((name-start name-end) (%forward-sexp sexp-start buffer)))
-            (let ((text (buffer-text name-start name-end buffer)))
-              (cond ((string=? insertion text)
-                     (values #f #f))
-                    ((string<? insertion text)
-                     (values sexp-start #f))
-                    (else
-                     (loop sexp-end #f)))))
-          (values start needs-newline)))))
+  (let ((sexp-prefix (format #f "(~a " (if (use-private-alias?) "define-private-alias" "define-alias"))))
+    (let loop ((start start) (needs-newline #t))
+      (let-values (((sexp-start sexp-end) (%forward-sexp start buffer)))
+        (if (looking-at sexp-prefix sexp-start buffer)
+            (let-values (((name-start name-end) (%forward-sexp sexp-start buffer)))
+              (let ((text (buffer-text name-start name-end buffer)))
+                (cond ((string=? insertion text)
+                       (values #f #f))
+                      ((string<? insertion text)
+                       (values sexp-start #f))
+                      (else
+                       (loop sexp-end #f)))))
+            (values start needs-newline))))))
 
 
 (define (first-non-comment-line-offset buffer)
@@ -129,7 +143,8 @@
   (let-values (((alias type) (compute-alias-info (symbol->string symbol))))
     (when alias
       (when type
-        (let* ((insertion (format #f "(define-alias <~a> <~a>)" alias type)))
+        (let* ((binding   (if (use-private-alias?) "define-private-alias" "define-alias"))
+               (insertion (format #f "(~a <~a> <~a>)" binding alias type)))
           (let-values (((point needs-newline-before) (find-best-alias-insertion-point insertion buffer)))
             (when point
               (let* ((line   (offset-line point buffer))
@@ -146,7 +161,10 @@
 (define (find-best-alias-insertion-point insertion buffer)
   (let* ((start (first-non-comment-line-offset buffer))
          (start (skip-module-headers buffer start))
-         (start (skip-require-clauses buffer start)))
+         (start (skip-require-clauses buffer start))
+         (start (if (use-private-alias?)
+                    (skip-define-alias-clauses buffer start)
+                    start)))
     (find-best-alias-clause buffer start insertion)))
 
 

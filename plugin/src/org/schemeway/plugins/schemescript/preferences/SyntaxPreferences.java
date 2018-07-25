@@ -70,6 +70,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
                 "define-record-type",
                 "define-unit",
                 "define-alias",
+                "define-private-alias",
                 "define-base-unit"
     };
     private final static String[] DEFAULT_KEYWORDS = new String[] {
@@ -125,6 +126,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
                 "#!eof", "#!null", "#!void"
     };
 
+    @Override
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -199,12 +201,14 @@ public class SyntaxPreferences extends SchemePreferencePage {
         listViewer.setSorter(new ViewerSorter());
 
         list.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 deleteButton.setEnabled(list.getSelectionCount() > 0);
             }
         });
 
         text.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent event) {
                 String symbol = text.getText();
                 addButton.setEnabled(SchemeScannerUtilities.isIdentifier(symbol) && (list.indexOf(symbol) == -1));
@@ -212,12 +216,14 @@ public class SyntaxPreferences extends SchemePreferencePage {
         });
 
         addButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 addEntry(text, addButton, listViewer);
             }
         });
 
         deleteButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 list.remove(list.getSelectionIndices());
             }
@@ -234,6 +240,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
         reText.setLayoutData(data);
 
         reText.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 String eventText = reText.getText();
                 try {
@@ -251,6 +258,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
         return new SyntaxCategoryWidgets(list, reText, listViewer);
     }
 
+    @Override
     protected void doPerformDefaults() {
         mDefineWidgets.viewer.setInput(DEFAULT_DEFINES);
         mDefineWidgets.reTextbox.setText("");
@@ -277,6 +285,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
         store.setDefault(SYNTAX_CONSTANT_RE, "");
     }
 
+    @Override
     protected void initializeValues() {
         KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
         mDefineWidgets.viewer.setInput(manager.getDefines());
@@ -292,6 +301,7 @@ public class SyntaxPreferences extends SchemePreferencePage {
 
     }
 
+    @Override
     protected void storeValues() {
         KeywordManager manager = SchemeScriptPlugin.getDefault().getTextTools().getKeywordManager();
 
